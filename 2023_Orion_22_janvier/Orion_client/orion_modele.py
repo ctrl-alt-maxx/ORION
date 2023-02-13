@@ -35,6 +35,11 @@ class Trou_de_vers():
         self.porte_a.jouer_prochain_coup()
         self.porte_b.jouer_prochain_coup()
 
+class Ressources():
+    def __init__(self, type, rarete, tempsExtraction):
+        self.type = type
+        self.rarete = rarete
+        self.tempsExtraction = tempsExtraction
 
 class Etoile():
     def __init__(self, parent, x, y):
