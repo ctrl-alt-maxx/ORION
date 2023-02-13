@@ -46,7 +46,7 @@ class Etoile():
         self.taille = random.randrange(4, 8)
         self.ressources = {"metal": 1000,
                            "energie": 10000,
-                           "existentielle": 100}
+                           "existentielle": 100}#test pour git
 
 
 class Vaisseau():
