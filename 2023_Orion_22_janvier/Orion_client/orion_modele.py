@@ -191,6 +191,13 @@ class Joueur():
                     elif rep[0] == "Porte_de_ver":
                         pass
 
+class Installation():
+    def __init__(self, parent, type, niveau, cout, temps):
+        self.parent = parent
+        self.type = type
+        self.niveau = niveau
+        self.cout = cout
+        self.temps = temps
 
 # IA- nouvelle classe de joueur
 class IA(Joueur):
