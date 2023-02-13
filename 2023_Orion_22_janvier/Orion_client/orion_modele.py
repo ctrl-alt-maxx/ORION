@@ -42,16 +42,16 @@ class Ressources():
         self.tempsExtraction = tempsExtraction
 
 class Etoile():
-    def __init__(self, parent, x, y):
+    def __init__(self, parent, x, y,ressource, proprietaire,):
+
         self.id = get_prochain_id()
         self.parent = parent
         self.proprietaire = ""
         self.x = x
         self.y = y
         self.taille = random.randrange(4, 8)
-        self.ressources = {"metal": 1000,
-                           "energie": 10000,
-                           "existentielle": 100}#test pour git plusbfhfhfhf
+        self.ressources = ressource
+        self.proprietaire = proprietaire
 
 
 class Vaisseau():
