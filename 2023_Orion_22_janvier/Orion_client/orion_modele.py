@@ -192,8 +192,9 @@ class Joueur():
                         pass
 
 class Installation():
-    def __init__(self, parent, type, niveau, cout, temps):
+    def __init__(self, parent, proprietaire, type, niveau, cout, temps):
         self.parent = parent
+        self.proprietaire = proprietaire
         self.type = type
         self.niveau = niveau
         self.cout = cout
