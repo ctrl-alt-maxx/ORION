@@ -200,6 +200,16 @@ class Installation():
         self.cout = cout
         self.temps = temps
 
+class Usine(Installation):
+    def __init__(self, parent, proprietaire, type, niveau, cout, temps, production):
+        Installation.__init__(self, parent, proprietaire, type, niveau, cout, temps)
+        self.production = production
+
+class Entrepot(Installation):
+    def __init(self, parent, proprietaire, type, niveau, cout, temps, capacite):
+        Installation.__init__(self, parent, proprietaire, type, niveau, cout, temps)
+        self.capacite = capacite
+
 # IA- nouvelle classe de joueur
 class IA(Joueur):
     def __init__(self, parent, nom, etoilemere, couleur):
