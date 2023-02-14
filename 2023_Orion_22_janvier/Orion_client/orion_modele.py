@@ -7,7 +7,7 @@ from id import *
 from helper import Helper as hlp
 
 
-class Porte_de_vers():
+class Porte_de_vers(): # Porte dans laquelle on rentre dans le trou de vers
     def __init__(self, parent, x, y, couleur, taille):
         self.parent = parent
         self.id = get_prochain_id()
@@ -17,29 +17,24 @@ class Porte_de_vers():
         self.pulse = random.randrange(self.pulsemax)
         self.couleur = couleur
 
-    def jouer_prochain_coup(self):
+    def jouer_prochain_coup(self): # Affichage
         self.pulse += 1
         if self.pulse >= self.pulsemax:
             self.pulse = 0
 
 
-class Trou_de_vers():
+class Trou_de_vers(): # Chemin jusqu'à l'autre porte de vers
     def __init__(self, x1, y1, x2, y2):
         self.id = get_prochain_id()
         taille = random.randrange(6, 20)
-        self.porte_a = Porte_de_vers(self, x1, y1, "red", taille)
+        self.porte_a = Porte_de_vers(self, x1, y1, "red", taille)   # Crée les deux portes de vers
         self.porte_b = Porte_de_vers(self, x2, y2, "orange", taille)
-        self.liste_transit = []  # pour mettre les vaisseaux qui ne sont plus dans l'espace mais maintenant l'hyper-espace
+        self.liste_transit = []                                     # pour mettre les vaisseaux qui ne sont plus dans l'espace mais maintenant l'hyper-espace
 
     def jouer_prochain_coup(self):
         self.porte_a.jouer_prochain_coup()
         self.porte_b.jouer_prochain_coup()
 
-class Ressources():
-    def __init__(self, type, rarete, tempsExtraction):
-        self.type = type
-        self.rarete = rarete
-        self.tempsExtraction = tempsExtraction
 
 class Etoile():
     def __init__(self, parent, x, y):
@@ -51,33 +46,14 @@ class Etoile():
         self.taille = random.randrange(4, 8)
         self.ressources = {"metal": 1000,
                            "energie": 10000,
-                           "existentielle": 100}#test pour git plusbfhfhfhf
-
-class Position():
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-
-class Deplacement():
-    def __init__(self, positionOrigine, positionDestination):
-        self.positionOrigine = positionOrigine
-        self.positionDestination = positionDestination
+                           "existentielle": 100}
 
 
 class Vaisseau():
-    def __init__(self, parent, nom, x, y,niveau_Vaisseau,type_Vaisseau,estAccoste,tempsConstruction,Vie,Icone):
+    def __init__(self, parent, nom, x, y):
         self.parent = parent
         self.id = get_prochain_id()
         self.proprietaire = nom
-        self.type_Vaisseau = type_Vaisseau
-        self.niveau_Vaisseau = niveau_Vaisseau
-        self.tempsConstruction = tempsConstruction
-        self.estAccoste = estAccoste
-        self.Deplacement = None
-        #HP du vaiseau
-        self.Vie = Vie
-        #Image du vaisseau
-        self.Icone = Icone
         self.x = x
         self.y = y
         self.espace_cargo = 0
@@ -85,15 +61,15 @@ class Vaisseau():
         self.taille = 5
         self.vitesse = 2
         self.cible = 0
-        self.type_cible = None
-        self.angle_cible = 0
-        self.arriver = {"Etoile": self.arriver_etoile,
+        self.type_cible = None                              # Type de cible (Etoile ou Porte de vers)
+        self.angle_cible = 0                                # Angle de direction
+        self.arriver = {"Etoile": self.arriver_etoile,      # Action à executer selon le type de cible (Etoile ou Porte de vers)
                         "Porte_de_vers": self.arriver_porte}
 
     def jouer_prochain_coup(self, trouver_nouveau=0):
-        if self.cible != 0:
+        if self.cible != 0:                                 #Si il y a une cible qui a été choisi
             return self.avancer()
-        elif trouver_nouveau:
+        elif trouver_nouveau:                               # Déplacement AI
             cible = random.choice(self.parent.parent.etoiles)
             self.acquerir_cible(cible, "Etoile")
 
@@ -108,21 +84,20 @@ class Vaisseau():
             y = self.cible.y
             self.x, self.y = hlp.getAngledPoint(self.angle_cible, self.vitesse, self.x, self.y)
             if hlp.calcDistance(self.x, self.y, x, y) <= self.vitesse:
-                type_obj = type(self.cible).__name__
-                rep = self.arriver[type_obj]()
+                type_obj = type(self.cible).__name__        # Trouver le type de la cible (Etoile, Porte de vers)
+                rep = self.arriver[type_obj]()              # Lancer l'action à faire selon le type de cible
                 return rep
 
     def arriver_etoile(self):
-        self.parent.log.append(
-            ["Arrive:", self.parent.parent.cadre_courant, "Etoile", self.id, self.cible.id, self.cible.proprietaire])
+        self.parent.log.append(["Arrive:", self.parent.parent.cadre_courant, "Etoile", self.id, self.cible.id, self.cible.proprietaire])  # OUTIL POUR DEBUGAGE
         if not self.cible.proprietaire:
-            self.cible.proprietaire = self.proprietaire
+            self.cible.proprietaire = self.proprietaire     # Associer un nouveau propriétaire à la planète
         cible = self.cible
-        self.cible = 0
+        self.cible = 0                                      # Retour de la cible à zéro soit rien
         return ["Etoile", cible]
 
     def arriver_porte(self):
-        self.parent.log.append(["Arrive:", self.parent.parent.cadre_courant, "Porte", self.id, self.cible.id, ])
+        self.parent.log.append(["Arrive:", self.parent.parent.cadre_courant, "Porte", self.id, self.cible.id, ]) # OUTIL POUR DEBUGAGE
         cible = self.cible
         trou = cible.parent
         if cible == trou.porte_a:
@@ -166,7 +141,7 @@ class Joueur():
         if type_vaisseau == "Cargo":
             v = Cargo(self, self.nom, self.etoilemere.x + 10, self.etoilemere.y)
         else:
-            v = Vaisseau(self, self.nom, self.etoilemere.x + 10, self.etoilemere.y, 1, "a",True,15,15,0)
+            v = Vaisseau(self, self.nom, self.etoilemere.x + 10, self.etoilemere.y)
         self.flotte[type_vaisseau][v.id] = v
 
         if self.nom == self.parent.parent.mon_nom:
@@ -215,24 +190,6 @@ class Joueur():
                     elif rep[0] == "Porte_de_ver":
                         pass
 
-class Installation():
-    def __init__(self, parent, proprietaire, type, niveau, cout, temps):
-        self.parent = parent
-        self.proprietaire = proprietaire
-        self.type = type
-        self.niveau = niveau
-        self.cout = cout
-        self.temps = temps
-
-class Usine(Installation):
-    def __init__(self, parent, proprietaire, type, niveau, cout, temps, production):
-        Installation.__init__(self, parent, proprietaire, type, niveau, cout, temps)
-        self.production = production
-
-class Entrepot(Installation):
-    def __init(self, parent, proprietaire, type, niveau, cout, temps, capacite):
-        Installation.__init__(self, parent, proprietaire, type, niveau, cout, temps)
-        self.capacite = capacite
 
 # IA- nouvelle classe de joueur
 class IA(Joueur):
@@ -362,3 +319,4 @@ class Modele():
                     self.actions_a_faire[cadrecle].append(action)
     # NE PAS TOUCHER - FIN
 ##############################################################################
+
