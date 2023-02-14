@@ -35,3 +35,6 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 html_theme = 'alabaster'
 html_static_path = ['_static']
+
+# TUTORIAL
+## https://dev.to/dev0928/how-to-generate-professional-documentation-with-sphinx-4n78
