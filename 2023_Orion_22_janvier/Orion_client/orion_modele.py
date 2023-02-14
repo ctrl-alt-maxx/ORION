@@ -73,7 +73,7 @@ class Vaisseau():
         self.niveau_Vaisseau = niveau_Vaisseau
         self.tempsConstruction = tempsConstruction
         self.estAccoste = estAccoste
-        self.Deplacement = null
+        self.Deplacement = None
         #HP du vaiseau
         self.Vie = Vie
         #Image du vaisseau
@@ -166,7 +166,7 @@ class Joueur():
         if type_vaisseau == "Cargo":
             v = Cargo(self, self.nom, self.etoilemere.x + 10, self.etoilemere.y)
         else:
-            v = Vaisseau(self, self.nom, self.etoilemere.x + 10, self.etoilemere.y)
+            v = Vaisseau(self, self.nom, self.etoilemere.x + 10, self.etoilemere.y, 1, "a",True,15,15,0)
         self.flotte[type_vaisseau][v.id] = v
 
         if self.nom == self.parent.parent.mon_nom:
