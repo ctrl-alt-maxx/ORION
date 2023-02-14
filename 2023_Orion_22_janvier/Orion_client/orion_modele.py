@@ -60,12 +60,31 @@ class Etoile():
         self.inventaire = None  # inventaire = [] d'inventaire de ce que possede le joueur
         self.vie = vie # nbr de vie de la planete
 
+class Position():
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+class Deplacement():
+    def __init__(self, positionOrigine, positionDestination):
+        self.positionOrigine = positionOrigine
+        self.positionDestination = positionDestination
+
 
 class Vaisseau():
-    def __init__(self, parent, nom, x, y):
+    def __init__(self, parent, nom, x, y,niveau_Vaisseau,type_Vaisseau,estAccoste,tempsConstruction,Vie,Icone):
         self.parent = parent
         self.id = get_prochain_id()
         self.proprietaire = nom
+        self.type_Vaisseau = type_Vaisseau
+        self.niveau_Vaisseau = niveau_Vaisseau
+        self.tempsConstruction = tempsConstruction
+        self.estAccoste = estAccoste
+        self.Deplacement = None
+        #HP du vaiseau
+        self.Vie = Vie
+        #Image du vaisseau
+        self.Icone = Icone
         self.x = x
         self.y = y
         self.espace_cargo = 0
@@ -154,7 +173,7 @@ class Joueur():
         if type_vaisseau == "Cargo":
             v = Cargo(self, self.nom, self.etoilemere.x + 10, self.etoilemere.y)
         else:
-            v = Vaisseau(self, self.nom, self.etoilemere.x + 10, self.etoilemere.y)
+            v = Vaisseau(self, self.nom, self.etoilemere.x + 10, self.etoilemere.y, 1, "a",True,15,15,0)
         self.flotte[type_vaisseau][v.id] = v
 
         if self.nom == self.parent.parent.mon_nom:
@@ -203,6 +222,24 @@ class Joueur():
                     elif rep[0] == "Porte_de_ver":
                         pass
 
+class Installation():
+    def __init__(self, parent, proprietaire, type, niveau, cout, temps):
+        self.parent = parent
+        self.proprietaire = proprietaire
+        self.type = type
+        self.niveau = niveau
+        self.cout = cout
+        self.temps = temps
+
+class Usine(Installation):
+    def __init__(self, parent, proprietaire, type, niveau, cout, temps, production):
+        Installation.__init__(self, parent, proprietaire, type, niveau, cout, temps)
+        self.production = production
+
+class Entrepot(Installation):
+    def __init(self, parent, proprietaire, type, niveau, cout, temps, capacite):
+        Installation.__init__(self, parent, proprietaire, type, niveau, cout, temps)
+        self.capacite = capacite
 
 # IA- nouvelle classe de joueur
 class IA(Joueur):
