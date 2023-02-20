@@ -77,7 +77,8 @@ class Vue():
         self.canevas_splash.create_window(320, 200, window=self.nomsplash, width=400, height=30)
         self.canevas_splash.create_window(210, 250, window=self.urlsplash, width=360, height=30)
         self.canevas_splash.create_window(480, 250, window=self.btnurlconnect, width=100, height=30)
-        # les boutons d'actions
+        # les boutons d'actions -> FENETRE CONNEXION
+
         self.btncreerpartie = Button(text="Creer partie", font=("Arial", 12), state=DISABLED, command=self.creer_partie)
         self.btninscrirejoueur = Button(text="Inscrire joueur", font=("Arial", 12), state=DISABLED,
                                         command=self.inscrire_joueur)
@@ -91,7 +92,7 @@ class Vue():
 
         # on retourne ce cadre pour l'insérer dans le dictionnaires des cadres
         return self.cadre_splash
-
+    #ON ARRIVE DANS FENETRE LOBBY -----------------------------------------------------
     ######## le lobby (où on attend les inscriptions)
     def creer_cadre_lobby(self):
         # le cadre lobby, pour isncription des autres joueurs, remplace le splash
@@ -110,6 +111,9 @@ class Vue():
         # on retourne ce cadre pour l'insérer dans le dictionnaires des cadres
         return self.cadrelobby
 
+    #FIN FENETRE LOBBY --------------------------------------------------------------------------
+
+    #FENETRE DU JEU -----------------------------------------------------------------------------
     def creer_cadre_partie(self):
         self.cadrepartie = Frame(self.cadre_app, width=600, height=200, bg="yellow")
         self.cadrejeu = Frame(self.cadrepartie, width=600, height=200, bg="teal")
@@ -129,6 +133,8 @@ class Vue():
 
         self.cadrejeu.columnconfigure(0, weight=1)
         self.cadrejeu.rowconfigure(0, weight=1)
+
+        # SI JE CLICK DANS L'ESPACE OU SUR UNE ETOILE OU QUELQUONQUE OBJET DANS LE JEU
         self.canevas.bind("<Button>", self.cliquer_cosmos)
         self.canevas.tag_bind(ALL, "<Button>", self.cliquer_cosmos)
 
@@ -147,29 +153,31 @@ class Vue():
         return self.cadrepartie
 
     def creer_cadre_outils(self):
-        self.cadreoutils = Frame(self.cadrepartie, width=200, height=200, bg="darkgrey")
+        self.cadreoutils = Frame(self.cadrepartie, width=200, height=200, bg="darkgrey")  #petite fenetre sur la gauche (celle juste au dessus de la mini map)
         self.cadreoutils.pack(side=LEFT, fill=Y)
 
-        self.cadreinfo = Frame(self.cadreoutils, width=200, height=200, bg="darkgrey")
+        self.cadreinfo = Frame(self.cadreoutils, width=200, height=200, bg="darkgrey")#??????????
         self.cadreinfo.pack(fill=BOTH)
 
-        self.cadreinfogen = Frame(self.cadreinfo, width=200, height=200, bg="grey50")
+        self.cadreinfogen = Frame(self.cadreinfo, width=200, height=200, bg="grey50")#petite fenetre en haut a gauche (JAJA et bouton MINI)
         self.cadreinfogen.pack(fill=BOTH)
         self.labid = Label(self.cadreinfogen, text="Inconnu")
-        self.labid.bind("<Button>", self.centrer_planemetemere)
+        self.labid.bind("<Button>", self.centrer_planetemere)#bouton qui est utilise lorsque je clique sur JAJA, ca nous place sur notre planete mere
         self.labid.pack()
         self.btnmini = Button(self.cadreinfogen, text="MINI")
         self.btnmini.bind("<Button>", self.afficher_mini)
         self.btnmini.pack()
 
-        self.cadreinfochoix = Frame(self.cadreinfo, height=200, width=200, bg="grey30")
-        self.btncreervaisseau = Button(self.cadreinfochoix, text="Vaisseau")
+        # PETITE FENETRE POUR LES 2 BOUTONS VAISSEAU ET CARGO-----------------------------------------------------------------------------
+        self.cadreinfochoix = Frame(self.cadreinfo, height=200, width=200,
+                                    bg="blue")  # fenetre ou il y a bouton vaisseau et cargo
+        self.btncreervaisseau = Button(self.cadreinfochoix, text="Vaisseau")  # pour creer un vaisseau
         self.btncreervaisseau.bind("<Button>", self.creer_vaisseau)
         self.btncreercargo = Button(self.cadreinfochoix, text="Cargo")
         self.btncreercargo.bind("<Button>", self.creer_vaisseau)
-
         self.btncreervaisseau.pack()
         self.btncreercargo.pack()
+        # ---------------------------------------------------------------------------------------------------------------------------------
 
         self.cadreinfoliste = Frame(self.cadreinfo)
 
@@ -184,12 +192,14 @@ class Vue():
 
         self.cadreinfoliste.pack(side=BOTTOM, expand=1, fill=BOTH)
 
+        # MINI MAP
         self.cadreminimap = Frame(self.cadreoutils, height=200, width=200, bg="black")
         self.canevas_minimap = Canvas(self.cadreminimap, width=self.taille_minimap, height=self.taille_minimap,
                                       bg="pink")
         self.canevas_minimap.bind("<Button>", self.positionner_minicanevas)
         self.canevas_minimap.pack()
         self.cadreminimap.pack(side=BOTTOM)
+        # FIN MINI MAP------------------------------------------------------
 
         self.cadres["jeu"] = self.cadrepartie
         # fonction qui affiche le nombre d'items sur le jeu
@@ -343,7 +353,7 @@ class Vue():
         #                                  fill=mod.joueurs[i].couleur,
         #                                  tags=(j.proprietaire, str(j.id),  "Etoile"))
 
-    def centrer_planemetemere(self, evt):
+    def centrer_planetemere(self, evt):
         self.centrer_objet(self.modele.joueurs[self.mon_nom].etoilemere)
 
     def centrer_objet(self, objet):
