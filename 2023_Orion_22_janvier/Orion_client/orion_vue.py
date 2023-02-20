@@ -153,7 +153,7 @@ class Vue():
         return self.cadrepartie
 
     def creer_cadre_outils(self):
-        self.cadreoutils = Frame(self.cadrepartie, width=200, height=200, bg="darkgrey")  #petite fenetre sur la gauche (celle juste au dessus de la mini map)
+        self.cadreoutils = Frame(self.cadrepartie, width=200, height=200, bg="blue")  #petite fenetre sur la gauche (celle juste au dessus de la mini map)
         self.cadreoutils.pack(side=LEFT, fill=Y)
 
         self.cadreinfo = Frame(self.cadreoutils, width=200, height=200, bg="darkgrey")#??????????
@@ -177,6 +177,12 @@ class Vue():
         self.btncreercargo.bind("<Button>", self.creer_vaisseau)
         self.btncreervaisseau.pack()
         self.btncreercargo.pack()
+
+        #creer boutontest ici
+        self.btnTest = Button(self.cadreinfochoix, text="menu test")
+        self.btnTest.pack()
+
+
         # ---------------------------------------------------------------------------------------------------------------------------------
 
         self.cadreinfoliste = Frame(self.cadreinfo)

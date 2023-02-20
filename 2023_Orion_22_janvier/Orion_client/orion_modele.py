@@ -275,7 +275,7 @@ class Modele():
         self.etoiles = []
         self.trou_de_vers = []
         self.cadre_courant = None
-        self.creeretoiles(joueurs, 1)
+        self.creeretoiles(joueurs)
         nb_trou = int((self.hauteur * self.largeur) / 5000000)
         self.creer_troudevers(nb_trou)
 
