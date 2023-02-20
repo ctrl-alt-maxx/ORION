@@ -211,12 +211,9 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
         for i in self.flotte: #Chaque type de vaisseau
              for j in self.flotte[i]:
                 j = self.flotte[i][j]
-                rep = j.jouer_prochain_coup(chercher_nouveau) #Contient le type de la cible
+                rep = j.jouer_prochain_coup(chercher_nouveau) #Retourne liste ["TypeObjet", objet]
                 if rep:
                     if rep[0] == "Etoile":
-                        # NOTE  est-ce qu'on doit retirer l'etoile de la liste du modele
-                        #       quand on l'attribue aux etoilescontrolees
-                        #       et que ce passe-t-il si l'etoile a un proprietaire ???
                         self.etoilescontrolees.append(rep[1])
                         self.parent.parent.afficher_etoile(self.nom, rep[1])
                     elif rep[0] == "Porte_de_ver":
@@ -242,6 +239,7 @@ class Entrepot(Installation):
         self.capacite = capacite
 
 # IA- nouvelle classe de joueur
+"""
 class IA(Joueur):
     def __init__(self, parent, nom, etoilemere, couleur):
         Joueur.__init__(self, parent, nom, etoilemere, couleur)
@@ -264,7 +262,7 @@ class IA(Joueur):
             self.cooldown = random.randrange(self.cooldownmax) + self.cooldownmax
         else:
             self.cooldown -= 1
-
+"""
 
 class Modele():
     def __init__(self, parent, joueurs):
@@ -290,15 +288,15 @@ class Modele():
             y2 = random.randrange(self.hauteur - (2 * bordure)) + bordure
             self.trou_de_vers.append(Trou_de_vers(x1, y1, x2, y2))
 
-    def creeretoiles(self, joueurs, ias=0):
+    def creeretoiles(self, joueurs):
         bordure = 10
         for i in range(self.nb_etoiles):
             x = random.randrange(self.largeur - (2 * bordure)) + bordure
             y = random.randrange(self.hauteur - (2 * bordure)) + bordure
             self.etoiles.append(Etoile(self,x,y,"allo",None,"n",None,None,None,100))
-        np = len(joueurs) + ias
+        np = len(joueurs) #np = number of players
         etoile_occupee = []
-        while np:
+        while np:   #Choisi les étoiles mères et les retire de la liste d'étoiles
             p = random.choice(self.etoiles)
             if p not in etoile_occupee:
                 etoile_occupee.append(p)
@@ -308,7 +306,7 @@ class Modele():
         couleurs = ["red", "blue", "lightgreen", "yellow",
                     "lightblue", "pink", "gold", "purple"]
         for i in joueurs:
-            etoile = etoile_occupee.pop(0)
+            etoile = etoile_occupee.pop(0) #Attribution d'une étoile mère à un joueur
             self.joueurs[i] = Joueur(self, i, etoile, couleurs.pop(0))
             x = etoile.x
             y = etoile.y
@@ -316,13 +314,7 @@ class Modele():
             for e in range(5):
                 x1 = random.randrange(x - dist, x + dist)
                 y1 = random.randrange(y - dist, y + dist)
-                self.etoiles.append(Etoile(self, x1, y1,None,None,None,None,None,None,100))
-
-        # IA- creation des ias
-        couleursia = ["orange", "green", "cyan",
-                      "SeaGreen1", "turquoise1", "firebrick1"]
-        for i in range(ias):
-            self.joueurs["IA_" + str(i)] = IA(self, "IA_" + str(i), etoile_occupee.pop(0), couleursia.pop(0))
+                self.etoiles.append(Etoile(self, x1, y1,None,None,None,None,None,None,100)) #Remet l'étoile mère dans la liste d'étoile
 
     ##############################################################################
     def jouer_prochain_coup(self, cadre):
