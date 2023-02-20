@@ -453,20 +453,20 @@ class Vue():
                                  tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact"))
 
     def cliquer_cosmos(self, evt):
-        t = self.canevas.gettags(CURRENT)
-        if t:  # il y a des tags
-            if t[0] == self.mon_nom:  # et
-                self.ma_selection = [self.mon_nom, t[1], t[2]]
-                if t[2] == "Etoile":
+        tags = self.canevas.gettags(CURRENT)
+        if tags:  # Il y a des tags => On a cliqué sur un objet de la carte (Vaisseau, Étoile, ...)
+            if tags[0] == self.mon_nom:
+                self.ma_selection = [self.mon_nom, tags[1], tags[2]]
+                if tags[2] == "Etoile":
                     self.montrer_etoile_selection()
-                elif t[2] == "Flotte":
+                elif tags[2] == "Flotte":
                     self.montrer_flotte_selection()
-            elif ("Etoile" in t or "Porte_de_ver" in t) and t[0] != self.mon_nom:
-                if self.ma_selection:
-                    self.parent.cibler_flotte(self.ma_selection[1], t[1], t[2])
+            elif ("Etoile" == tags[2] or "Porte_de_ver" == tags[2]): #Si c'est un objet qui nous appartient pas
+                if self.ma_selection: # Si une sélection de nos vaisseaux a été faites, on les envoi sur l'étoile avec "cibler_flotte"
+                    self.parent.cibler_flotte(self.ma_selection[1], tags[1], tags[2])
                 self.ma_selection = None
                 self.canevas.delete("marqueur")
-        else:  # aucun tag => rien sous la souris - sinon au minimum il y aurait CURRENT
+        else:  # Aucun tag => On a cliqué dans le vide, donc pas sur un objet de la carte.
             print("Region inconnue")
             self.ma_selection = None
             self.canevas.delete("marqueur")
