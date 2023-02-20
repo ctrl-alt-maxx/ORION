@@ -24,17 +24,30 @@ class Controleur():
         self.joueurs = []
         """liste des noms de joueurs pour le lobby"""
 
-        self.prochainsplash = None  # requis pour sortir de cette boucle et passer au lobby du jeu
-        self.onjoue = 1  # indicateur que le jeu se poursuive - sinon on attend qu'un autre joueur nous rattrape
-        self.maindelai = 50  # delai en ms de la boucle de jeu
-        self.moduloappeler_serveur = 2  # frequence des appel au serveur, evite de passer son temps a communiquer avec le serveur
-        self.urlserveur = "http://127.0.0.1:8000"  # 127.0.0.1 pour tests,"http://votreidentifiant.pythonanywhere.com" pour web
-        # self.urlserveur= "http://jmdeschamps.pythonanywhere.com"
-        self.modele = None  # la variable contenant la partie, après initialiserpartie()
-        self.vue = Vue(self, self.urlserveur, self.mon_nom,
-                       "Non connecté")  # la vue pour l'affichage et les controles du jeu
+        self.prochainsplash = None
+        """requis pour sortir de cette boucle et passer au lobby du jeu"""
 
-        self.vue.root.mainloop()  # la boucle des evenements (souris, click, clavier)
+        self.onjoue = 1
+        """indicateur que le jeu se poursuive - sinon on attend qu'un autre joueur nous rattrape"""
+
+        self.maindelai = 50
+        """delai en ms de la boucle de jeu"""
+
+        self.moduloappeler_serveur = 2
+        """frequence des appel au serveur, evite de passer son temps a communiquer avec le serveur"""
+
+        self.urlserveur = "http://127.0.0.1:8000"
+        """127.0.0.1 pour tests,"http://votreidentifiant.pythonanywhere.com" pour web
+        self.urlserveur= "http://jmdeschamps.pythonanywhere.com" """
+
+        self.modele = None
+        """la variable contenant la partie, après initialiserpartie()"""
+
+        self.vue = Vue(self, self.urlserveur, self.mon_nom, "Non connecté")
+        """la vue pour l'affichage et les controles du jeu"""
+
+        self.vue.root.mainloop()
+        """la boucle des evenements (souris, click, clavier)"""
 
     ######################################################################################################
     ### FONCTIONS RESERVEES - INTERDICTION DE MODIFIER SANS AUTORISATION PREALABLE SAUF CHOIX DE RANDOM SEED LIGNE 94-95
