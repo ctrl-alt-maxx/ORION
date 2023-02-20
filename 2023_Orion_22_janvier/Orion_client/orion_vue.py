@@ -353,7 +353,7 @@ class Vue():
         #                                  fill=mod.joueurs[i].couleur,
         #                                  tags=(j.proprietaire, str(j.id),  "Etoile"))
 
-    def centrer_planetemere(self, evt):
+    def centrer_planetemere(self, evt):#pour centre etoile pricincipal du joueur
         self.centrer_objet(self.modele.joueurs[self.mon_nom].etoilemere)
 
     def centrer_objet(self, objet):
@@ -389,13 +389,14 @@ class Vue():
         self.canevas.delete("marqueur")
         self.cadreinfochoix.pack_forget()
 
-    def afficher_jeu(self):
+    def afficher_jeu(self):#LA ON AFFICHE BEAUCOUP DE CHOSE!!!:)-------------------------------------------------------------
         mod = self.modele
         self.canevas.delete("artefact")
         self.canevas.delete("objet_spatial")
+        self.canevas.delete("marqueur")
 
-        if self.ma_selection != None:
-            joueur = mod.joueurs[self.ma_selection[0]]
+        if self.ma_selection != None:  # SI JE NE SELECTIONNE RIEN
+            joueur = mod.joueurs[self.ma_selection[0]]  # joueurs[] liste des nom des joueurs
             if self.ma_selection[2] == "Etoile":
                 for i in joueur.etoilescontrolees:
                     if i.id == self.ma_selection[1]:
@@ -404,7 +405,7 @@ class Vue():
                         t = 10 * self.zoom
                         self.canevas.create_oval(x - t, y - t, x + t, y + t,
                                                  dash=(2, 2), outline=mod.joueurs[self.mon_nom].couleur,
-                                                 tags=("multiselection", "marqueur"))
+                                                 tags=("multiselection", "marqueur"))  # fonction dans pyCharme
             elif self.ma_selection[2] == "Flotte":
                 for j in joueur.flotte:
                     for i in joueur.flotte[j]:
@@ -416,7 +417,7 @@ class Vue():
                             self.canevas.create_rectangle(x - t, y - t, x + t, y + t,
                                                           dash=(2, 2), outline=mod.joueurs[self.mon_nom].couleur,
                                                           tags=("multiselection", "marqueur"))
-        # afficher asset des joueurs
+        # afficher asset (LES RESSOURCES QU'A LE JOUEUR) des joueurs
         for i in mod.joueurs.keys():
             i = mod.joueurs[i]
             vaisseau_local = []
@@ -424,11 +425,11 @@ class Vue():
                 for j in i.flotte[k]:
                     j = i.flotte[k][j]
                     tailleF = j.taille * self.zoom
-                    if k == "Vaisseau":
+                    if k == "Vaisseau":  # CREATION DU CARRE ROUGE REPRESENTANT LE VAISSEAU
                         self.canevas.create_rectangle((j.x - tailleF), (j.y - tailleF),
                                                       (j.x + tailleF), (j.y + tailleF), fill=i.couleur,
                                                       tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact"))
-                    elif k == "Cargo":
+                    elif k == "Cargo":  # CREATION DU CARGO
                         # self.dessiner_cargo(j,tailleF,i,k)
                         self.dessiner_cargo(j, tailleF, i, k)
                         # self.canevas.create_oval((j.x - tailleF), (j.y - tailleF),
@@ -462,15 +463,16 @@ class Vue():
                                  (j.x + tailleF), (j.y + tailleF), fill=i.couleur,
                                  tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact"))
 
-    def cliquer_cosmos(self, evt):
-        t = self.canevas.gettags(CURRENT)
+    def cliquer_cosmos(self, evt):  # DES QUE LON CLIQUE QUELQUE PART DANS LE JEU
+        t = self.canevas.gettags(CURRENT)  # self.canevas = Canvas(self.cadrejeu, width=800, height=600,
         if t:  # il y a des tags
             if t[0] == self.mon_nom:  # et
                 self.ma_selection = [self.mon_nom, t[1], t[2]]
                 if t[2] == "Etoile":
-                    self.montrer_etoile_selection()
+                    self.montrer_etoile_selection()  # TAG LA SELECTION DE MON ETOILE
                 elif t[2] == "Flotte":
-                    self.montrer_flotte_selection()
+                    self.montrer_flotte_selection()  # Ca tag mon vaisseau mais il faut enlever le tag quand je reclick dessus
+
             elif ("Etoile" in t or "Porte_de_ver" in t) and t[0] != self.mon_nom:
                 if self.ma_selection:
                     self.parent.cibler_flotte(self.ma_selection[1], t[1], t[2])
@@ -481,10 +483,10 @@ class Vue():
             self.ma_selection = None
             self.canevas.delete("marqueur")
 
-    def montrer_etoile_selection(self):
+    def montrer_etoile_selection(self):  # montrer le tag de letoile selectionne
         self.cadreinfochoix.pack(fill=BOTH)
 
-    def montrer_flotte_selection(self):
+    def montrer_flotte_selection(self):  # montrer le tag du vaisseau selectionne
         print("À IMPLANTER - FLOTTE de ", self.mon_nom)
 
     # Methodes pour multiselect#########################################################
