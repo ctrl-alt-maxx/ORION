@@ -26,7 +26,7 @@ class Vue():
         self.cadre_app.pack(expand=1, fill=BOTH)
         # # un dictionnaire pour conserver les divers cadres du jeu, creer plus bas
         self.cadres = {}
-        self.creer_cadres(urlserveur, mon_nom, msg_initial)
+        self.creer_cadres(urlserveur, mon_nom, msg_initial)#DONC ON APPEL CREER CADRE!!!
         self.changer_cadre("splash")
         # PROTOCOLE POUR INTERCEPTER LA FERMETURE DU ROOT - qui termine l'application
         # self.root.protocol("WM_DELETE_WINDOW", self.demander_abandon)
@@ -46,23 +46,25 @@ class Vue():
     def changer_cadre(self, nomcadre):
         cadre = self.cadres[nomcadre]
         if self.cadre_actif:
-            self.cadre_actif.pack_forget()
+            self.cadre_actif.pack_forget() #pour cacher les widget
         self.cadre_actif = cadre
         self.cadre_actif.pack(expand=1, fill=BOTH)
 
     ###### LES CADRES ############################################################################################
-    def creer_cadres(self, urlserveur, mon_nom, msg_initial):
+    def creer_cadres(self, urlserveur, mon_nom, msg_initial):#msg_initila = "non connecte (au debut)"
         self.cadres["splash"] = self.creer_cadre_splash(urlserveur, mon_nom, msg_initial)
         self.cadres["lobby"] = self.creer_cadre_lobby()
         self.cadres["partie"] = self.creer_cadre_partie()
 
     # le splash (ce qui 'splash' à l'écran lors du démarrage)
     # sera le cadre visuel initial lors du lancement de l'application
-    def creer_cadre_splash(self, urlserveur, mon_nom, msg_initial):
-        self.cadre_splash = Frame(self.cadre_app)
+
+    def creer_cadre_splash(self, urlserveur, mon_nom, msg_initial):#creation fenetre connexion
+        self.cadre_splash = Frame(self.cadre_app)#self.cadre_app = Frame(self.root, width=500, height=400, bg="red")
+
         # un canvas est utilisé pour 'dessiner' les widgets de cette fenêtre voir 'create_window' plus bas
-        self.canevas_splash = Canvas(self.cadre_splash, width=600, height=480, bg="pink")
-        self.canevas_splash.pack()
+        self.canevas_splash = Canvas(self.cadre_splash, width=600, height=480, bg="pink")#pour fenetre connexion (on la met dans cardre_splash)
+        self.canevas_splash.pack()#affiche fenetre
 
         # creation ds divers widgets (champ de texte 'Entry' et boutons cliquables (Button)
         self.etatdujeu = Label(text=msg_initial, font=("Arial", 18), borderwidth=2, relief=RIDGE)
@@ -77,7 +79,8 @@ class Vue():
         self.canevas_splash.create_window(320, 200, window=self.nomsplash, width=400, height=30)
         self.canevas_splash.create_window(210, 250, window=self.urlsplash, width=360, height=30)
         self.canevas_splash.create_window(480, 250, window=self.btnurlconnect, width=100, height=30)
-        # les boutons d'actions -> FENETRE CONNEXION
+
+        # les boutons d'actions -> POUR FENETRE CONNEXION
 
         self.btncreerpartie = Button(text="Creer partie", font=("Arial", 12), state=DISABLED, command=self.creer_partie)
         self.btninscrirejoueur = Button(text="Inscrire joueur", font=("Arial", 12), state=DISABLED,
@@ -85,35 +88,37 @@ class Vue():
         self.btnreset = Button(text="Reinitialiser partie", font=("Arial", 9), state=DISABLED,
                                command=self.reset_partie)
 
-        # on place les autres boutons
+        # on place les autres boutons -> TJR DANS FENETRE CONNEXION
         self.canevas_splash.create_window(420, 350, window=self.btncreerpartie, width=200, height=30)
         self.canevas_splash.create_window(420, 400, window=self.btninscrirejoueur, width=200, height=30)
         self.canevas_splash.create_window(420, 450, window=self.btnreset, width=200, height=30)
 
         # on retourne ce cadre pour l'insérer dans le dictionnaires des cadres
         return self.cadre_splash
-    #ON ARRIVE DANS FENETRE LOBBY -----------------------------------------------------
+
+    #ON ARRIVE DANS FENETRE LOBBY-------------------------------------------------------------------------------------
     ######## le lobby (où on attend les inscriptions)
-    def creer_cadre_lobby(self):
+    def creer_cadre_lobby(self):#quand je click sur bouton "creer partie jarrive ici (dans la fenetre lobby)
         # le cadre lobby, pour isncription des autres joueurs, remplace le splash
-        self.cadrelobby = Frame(self.cadre_app)
+        self.cadrelobby = Frame(self.cadre_app) #self.cadre_app = Frame(self.root, width=500, height=400, bg="red")
         self.canevaslobby = Canvas(self.cadrelobby, width=640, height=480, bg="lightblue")
-        self.canevaslobby.pack()
+        self.canevaslobby.pack()#affichage
         # widgets du lobby
         # un listbox pour afficher les joueurs inscrit pour la partie à lancer
         self.listelobby = Listbox(borderwidth=2, relief=GROOVE)
 
         # bouton pour lancer la partie, uniquement accessible à celui qui a creer la partie dans le splash
         self.btnlancerpartie = Button(text="Lancer partie", state=DISABLED, command=self.lancer_partie)
+        self.parent.lancer_partie()#lancer_partie dans ce fichier: ligne 273
+
         # affichage des widgets dans le canevaslobby (similaire au splash)
-        self.canevaslobby.create_window(440, 240, window=self.listelobby, width=200, height=400)
+        self.canevaslobby.create_window(440, 240, window=self.listelobby, width=200, height=400)#self.canevaslobby = Canvas(self.cadrelobby, width=640, height=480, bg="lightblue")
         self.canevaslobby.create_window(200, 400, window=self.btnlancerpartie, width=100, height=30)
         # on retourne ce cadre pour l'insérer dans le dictionnaires des cadres
         return self.cadrelobby
+#FIN FENETRE LOBBY------------------------------------------------------------------------------------------------------------------------
 
-    #FIN FENETRE LOBBY --------------------------------------------------------------------------
-
-    #FENETRE DU JEU -----------------------------------------------------------------------------
+#FENETRE DU JEU-------------------------------------------------------------------------------------------------------------------------
     def creer_cadre_partie(self):
         self.cadrepartie = Frame(self.cadre_app, width=600, height=200, bg="yellow")
         self.cadrejeu = Frame(self.cadrepartie, width=600, height=200, bg="teal")
@@ -133,9 +138,7 @@ class Vue():
 
         self.cadrejeu.columnconfigure(0, weight=1)
         self.cadrejeu.rowconfigure(0, weight=1)
-
-        # SI JE CLICK DANS L'ESPACE OU SUR UNE ETOILE OU QUELQUONQUE OBJET DANS LE JEU
-        self.canevas.bind("<Button>", self.cliquer_cosmos)
+        self.canevas.bind("<Button>", self.cliquer_cosmos) #SI JE CLICK DANS LESPACE OU SUR UNE ETOILE OU QUELQUONQUE OBJET DANS LE JEU
         self.canevas.tag_bind(ALL, "<Button>", self.cliquer_cosmos)
 
         # faire une multiselection
@@ -153,31 +156,30 @@ class Vue():
         return self.cadrepartie
 
     def creer_cadre_outils(self):
-        self.cadreoutils = Frame(self.cadrepartie, width=200, height=200, bg="darkgrey")  #petite fenetre sur la gauche (celle juste au dessus de la mini map)
+        self.cadreoutils = Frame(self.cadrepartie, width=200, height=200, bg="darkgrey") #petite fenetre sur la gauche (celle juste au dessus de la mini map)
         self.cadreoutils.pack(side=LEFT, fill=Y)
 
-        self.cadreinfo = Frame(self.cadreoutils, width=200, height=200, bg="darkgrey")#??????????
+        self.cadreinfo = Frame(self.cadreoutils, width=200, height=200, bg="blue")#??????????
         self.cadreinfo.pack(fill=BOTH)
 
-        self.cadreinfogen = Frame(self.cadreinfo, width=200, height=200, bg="grey50")#petite fenetre en haut a gauche (JAJA et bouton MINI)
+        self.cadreinfogen = Frame(self.cadreinfo, width=200, height=200, bg="grey50") #petite fenetre en haut a gauche (JAJA et bouton MINI)
         self.cadreinfogen.pack(fill=BOTH)
         self.labid = Label(self.cadreinfogen, text="Inconnu")
-        self.labid.bind("<Button>", self.centrer_planetemere)#bouton qui est utilise lorsque je clique sur JAJA, ca nous place sur notre planete mere
+        self.labid.bind("<Button>", self.centrer_planemetemere)#bouton qui est utilise lorsque je clique sur JAJA, ca nous place sur notre planete mere
         self.labid.pack()
-        self.btnmini = Button(self.cadreinfogen, text="MINI")
+        self.btnmini = Button(self.cadreinfogen, text="MINI")#POUR BOUTON MINI
         self.btnmini.bind("<Button>", self.afficher_mini)
         self.btnmini.pack()
 
-        # PETITE FENETRE POUR LES 2 BOUTONS VAISSEAU ET CARGO-----------------------------------------------------------------------------
-        self.cadreinfochoix = Frame(self.cadreinfo, height=200, width=200,
-                                    bg="blue")  # fenetre ou il y a bouton vaisseau et cargo
-        self.btncreervaisseau = Button(self.cadreinfochoix, text="Vaisseau")  # pour creer un vaisseau
+        #PETITE FENETRE POUR LES 2 BOUTONS VAISSEAU ET CARGO-----------------------------------------------------------------------------
+        self.cadreinfochoix = Frame(self.cadreinfo, height=200, width=200, bg="blue")# fenetre ou il y a bouton vaisseau et cargo
+        self.btncreervaisseau = Button(self.cadreinfochoix, text="Vaisseau") #pour creer un vaisseau
         self.btncreervaisseau.bind("<Button>", self.creer_vaisseau)
         self.btncreercargo = Button(self.cadreinfochoix, text="Cargo")
         self.btncreercargo.bind("<Button>", self.creer_vaisseau)
         self.btncreervaisseau.pack()
         self.btncreercargo.pack()
-        # ---------------------------------------------------------------------------------------------------------------------------------
+        #---------------------------------------------------------------------------------------------------------------------------------
 
         self.cadreinfoliste = Frame(self.cadreinfo)
 
@@ -192,14 +194,14 @@ class Vue():
 
         self.cadreinfoliste.pack(side=BOTTOM, expand=1, fill=BOTH)
 
-        # MINI MAP
+        #MINI MAP
         self.cadreminimap = Frame(self.cadreoutils, height=200, width=200, bg="black")
         self.canevas_minimap = Canvas(self.cadreminimap, width=self.taille_minimap, height=self.taille_minimap,
                                       bg="pink")
         self.canevas_minimap.bind("<Button>", self.positionner_minicanevas)
         self.canevas_minimap.pack()
         self.cadreminimap.pack(side=BOTTOM)
-        # FIN MINI MAP------------------------------------------------------
+        #FIN MINI MAP------------------------------------------------------
 
         self.cadres["jeu"] = self.cadrepartie
         # fonction qui affiche le nombre d'items sur le jeu
@@ -310,7 +312,7 @@ class Vue():
         yl = self.canevas.winfo_height()
 
     def afficher_decor(self, mod):
-        # on cree un arriere fond de petites etoieles NPC pour le look
+        # on cree un arriere fond de petites etoiles NPC pour le look
         for i in range(len(mod.etoiles) * 50):
             x = random.randrange(int(mod.largeur))
             y = random.randrange(int(mod.hauteur))
@@ -353,7 +355,7 @@ class Vue():
         #                                  fill=mod.joueurs[i].couleur,
         #                                  tags=(j.proprietaire, str(j.id),  "Etoile"))
 
-    def centrer_planetemere(self, evt):#pour centre etoile pricincipal du joueur
+    def centrer_planemetemere(self, evt):#pour centre etoile pricincipal du joueur
         self.centrer_objet(self.modele.joueurs[self.mon_nom].etoilemere)
 
     def centrer_objet(self, objet):
@@ -395,8 +397,8 @@ class Vue():
         self.canevas.delete("objet_spatial")
         self.canevas.delete("marqueur")
 
-        if self.ma_selection != None:  # SI JE NE SELECTIONNE RIEN
-            joueur = mod.joueurs[self.ma_selection[0]]  # joueurs[] liste des nom des joueurs
+        if self.ma_selection != None: #SI JE NE SELECTIONNE RIEN
+            joueur = mod.joueurs[self.ma_selection[0]]#joueurs[] liste des nom des joueurs
             if self.ma_selection[2] == "Etoile":
                 for i in joueur.etoilescontrolees:
                     if i.id == self.ma_selection[1]:
@@ -405,7 +407,7 @@ class Vue():
                         t = 10 * self.zoom
                         self.canevas.create_oval(x - t, y - t, x + t, y + t,
                                                  dash=(2, 2), outline=mod.joueurs[self.mon_nom].couleur,
-                                                 tags=("multiselection", "marqueur"))  # fonction dans pyCharme
+                                                 tags=("multiselection", "marqueur"))#fonction dans pyCharme
             elif self.ma_selection[2] == "Flotte":
                 for j in joueur.flotte:
                     for i in joueur.flotte[j]:
@@ -425,11 +427,11 @@ class Vue():
                 for j in i.flotte[k]:
                     j = i.flotte[k][j]
                     tailleF = j.taille * self.zoom
-                    if k == "Vaisseau":  # CREATION DU CARRE ROUGE REPRESENTANT LE VAISSEAU
+                    if k == "Vaisseau":#CREATION DU CARRE ROUGE REPRESENTANT LE VAISSEAU
                         self.canevas.create_rectangle((j.x - tailleF), (j.y - tailleF),
                                                       (j.x + tailleF), (j.y + tailleF), fill=i.couleur,
                                                       tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact"))
-                    elif k == "Cargo":  # CREATION DU CARGO
+                    elif k == "Cargo":#CREATION DU CARGO
                         # self.dessiner_cargo(j,tailleF,i,k)
                         self.dessiner_cargo(j, tailleF, i, k)
                         # self.canevas.create_oval((j.x - tailleF), (j.y - tailleF),
@@ -463,15 +465,15 @@ class Vue():
                                  (j.x + tailleF), (j.y + tailleF), fill=i.couleur,
                                  tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact"))
 
-    def cliquer_cosmos(self, evt):  # DES QUE LON CLIQUE QUELQUE PART DANS LE JEU
-        t = self.canevas.gettags(CURRENT)  # self.canevas = Canvas(self.cadrejeu, width=800, height=600,
+    def cliquer_cosmos(self, evt):# DES QUE LON CLIQUE QUELQUE PART DANS LE JEU
+        t = self.canevas.gettags(CURRENT)      #self.canevas = Canvas(self.cadrejeu, width=800, height=600,
         if t:  # il y a des tags
             if t[0] == self.mon_nom:  # et
                 self.ma_selection = [self.mon_nom, t[1], t[2]]
                 if t[2] == "Etoile":
-                    self.montrer_etoile_selection()  # TAG LA SELECTION DE MON ETOILE
+                    self.montrer_etoile_selection()#TAG LA SELECTION DE MON ETOILE
                 elif t[2] == "Flotte":
-                    self.montrer_flotte_selection()  # Ca tag mon vaisseau mais il faut enlever le tag quand je reclick dessus
+                    self.montrer_flotte_selection()#Ca tag mon vaisseau mais il faut enlever le tag quand je reclick dessus
 
             elif ("Etoile" in t or "Porte_de_ver" in t) and t[0] != self.mon_nom:
                 if self.ma_selection:
@@ -483,15 +485,17 @@ class Vue():
             self.ma_selection = None
             self.canevas.delete("marqueur")
 
-    def montrer_etoile_selection(self):  # montrer le tag de letoile selectionne
+    def montrer_etoile_selection(self):#montrer le tag de letoile selectionne
         self.cadreinfochoix.pack(fill=BOTH)
 
-    def montrer_flotte_selection(self):  # montrer le tag du vaisseau selectionne
+
+    def montrer_flotte_selection(self):#montrer le tag du vaisseau selectionne
         print("À IMPLANTER - FLOTTE de ", self.mon_nom)
+
 
     # Methodes pour multiselect#########################################################
     def debuter_multiselection(self, evt):
-        self.debutselect = (self.canevas.canvasx(evt.x), self.canevas.canvasy(evt.y))
+        self.debutselect = (self.canevas.canvasx(evt.x), self.canevas.canvasy(evt.y)) #canvasx -> methode python
         x1, y1 = (self.canevas.canvasx(evt.x), self.canevas.canvasy(evt.y))
         self.selecteur_actif = self.canevas.create_rectangle(x1, y1, x1 + 1, y1 + 1, outline="red", width=2,
                                                              dash=(2, 2), tags=("", "selecteur", "", ""))
