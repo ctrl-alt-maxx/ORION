@@ -208,10 +208,10 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
         self.avancer_flotte()
 
     def avancer_flotte(self, chercher_nouveau=0):
-        for i in self.flotte:
-            for j in self.flotte[i]:
+        for i in self.flotte: #Chaque type de vaisseau
+             for j in self.flotte[i]:
                 j = self.flotte[i][j]
-                rep = j.jouer_prochain_coup(chercher_nouveau)
+                rep = j.jouer_prochain_coup(chercher_nouveau) #Contient le type de la cible
                 if rep:
                     if rep[0] == "Etoile":
                         # NOTE  est-ce qu'on doit retirer l'etoile de la liste du modele
@@ -295,7 +295,7 @@ class Modele():
         for i in range(self.nb_etoiles):
             x = random.randrange(self.largeur - (2 * bordure)) + bordure
             y = random.randrange(self.hauteur - (2 * bordure)) + bordure
-            self.etoiles.append(Etoile(self, x, y))
+            self.etoiles.append(Etoile(self,x,y,"allo",None,"n",None,None,None,100))
         np = len(joueurs) + ias
         etoile_occupee = []
         while np:
@@ -316,7 +316,7 @@ class Modele():
             for e in range(5):
                 x1 = random.randrange(x - dist, x + dist)
                 y1 = random.randrange(y - dist, y + dist)
-                self.etoiles.append(Etoile(self, x1, y1))
+                self.etoiles.append(Etoile(self, x1, y1,None,None,None,None,None,None,100))
 
         # IA- creation des ias
         couleursia = ["orange", "green", "cyan",
