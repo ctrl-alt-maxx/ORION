@@ -7,7 +7,7 @@ from id import *
 from helper import Helper as hlp
 
 
-class Porte_de_vers():
+class Porte_de_vers(): #Porte dans laquelle on rentre dans le trou de ver
     def __init__(self, parent, x, y, couleur, taille):
         self.parent = parent
         self.id = get_prochain_id()
@@ -17,13 +17,13 @@ class Porte_de_vers():
         self.pulse = random.randrange(self.pulsemax)
         self.couleur = couleur
 
-    def jouer_prochain_coup(self):
+    def jouer_prochain_coup(self): #Affichage
         self.pulse += 1
         if self.pulse >= self.pulsemax:
             self.pulse = 0
 
 
-class Trou_de_vers():
+class Trou_de_vers(): #Chemin jusqu'à l'autre porte de vers
     def __init__(self, x1, y1, x2, y2):
         self.id = get_prochain_id()
         taille = random.randrange(6, 20)
@@ -32,7 +32,7 @@ class Trou_de_vers():
         self.liste_transit = []  # pour mettre les vaisseaux qui ne sont plus dans l'espace mais maintenant l'hyper-espace
 
     def jouer_prochain_coup(self):
-        self.porte_a.jouer_prochain_coup()
+        self.porte_a.jouer_prochain_coup() #Exécute affichage des portes
         self.porte_b.jouer_prochain_coup()
 
 class Ressources():
@@ -42,16 +42,23 @@ class Ressources():
         self.tempsExtraction = tempsExtraction
 
 class Etoile():
-    def __init__(self, parent, x, y):
+    def __init__(self, parent, x, y, nomEtoile, ressource, proprietaire,installation,vaisseaux,inventaire, vie):
+
         self.id = get_prochain_id()
         self.parent = parent
-        self.proprietaire = ""
+        #self.proprietaire = ""
         self.x = x
         self.y = y
         self.taille = random.randrange(4, 8)
-        self.ressources = {"metal": 1000,
-                           "energie": 10000,
-                           "existentielle": 100}#test pour git plusbfhfhfhf
+        self.nomEtoile = nomEtoile
+        self.ressources = ressource ## ressources = [] ressources
+        self.proprietaire = proprietaire #proprietaire = etoile owner
+        self.installation = installation #installation = [] des installations du joueur
+        self.vaisseaux = vaisseaux # [] de vaisseaux pose sur letoile
+        self.estEclaire = False #etoile selectionne ou pas True ou False = False au debut du jeu
+        self.niveauEtoile = 1 #niveau de l'étoile = 1/2/3 = toutes les étoiles seront de niveau 1 au debut du jeu
+        self.inventaire = None  # inventaire = [] d'inventaire de ce que possede le joueur
+        self.vie = vie # nbr de vie de la planete
 
 class Position():
     def __init__(self, x, y):
@@ -85,44 +92,44 @@ class Vaisseau():
         self.taille = 5
         self.vitesse = 2
         self.cible = 0
-        self.type_cible = None
-        self.angle_cible = 0
-        self.arriver = {"Etoile": self.arriver_etoile,
+        self.type_cible = None                              # Type de cible (Étoile ou porte de ver)
+        self.angle_cible = 0                                # Angle de direction
+        self.arriver = {"Etoile": self.arriver_etoile,      # Action à exécuter selon le type de cible(Étoile ou porte de vers)
                         "Porte_de_vers": self.arriver_porte}
 
     def jouer_prochain_coup(self, trouver_nouveau=0):
-        if self.cible != 0:
+        if self.cible != 0:                                     #S'il y a une cible qui a été choisie (donc cliquée)
             return self.avancer()
-        elif trouver_nouveau:
+        elif trouver_nouveau:                                   #Déplacement AI
             cible = random.choice(self.parent.parent.etoiles)
             self.acquerir_cible(cible, "Etoile")
 
-    def acquerir_cible(self, cible, type_cible):
+    def acquerir_cible(self, cible, type_cible):                #Utilisé seulement par l'AI
         self.type_cible = type_cible
         self.cible = cible
         self.angle_cible = hlp.calcAngle(self.x, self.y, self.cible.x, self.cible.y)
 
-    def avancer(self):
+    def avancer(self):                                  #Permet le déplacement d'un vaisseau
         if self.cible != 0:
             x = self.cible.x
             y = self.cible.y
             self.x, self.y = hlp.getAngledPoint(self.angle_cible, self.vitesse, self.x, self.y)
             if hlp.calcDistance(self.x, self.y, x, y) <= self.vitesse:
-                type_obj = type(self.cible).__name__
-                rep = self.arriver[type_obj]()
+                type_obj = type(self.cible).__name__                        #Trouver le type de la cible (Étoile, Porte de vers)
+                rep = self.arriver[type_obj]()                              #Lancer l'action à faire selon le type de cible (arriver_etoile ou arriver_porte)
                 return rep
 
-    def arriver_etoile(self):
-        self.parent.log.append(
-            ["Arrive:", self.parent.parent.cadre_courant, "Etoile", self.id, self.cible.id, self.cible.proprietaire])
+    def arriver_etoile(self):   #Fonction pour prendre possession d'une étoile
+        #self.parent.log.append(                                                                                            journal de débogagge (inutile)
+            #["Arrive:", self.parent.parent.cadre_courant, "Etoile", self.id, self.cible.id, self.cible.proprietaire])
         if not self.cible.proprietaire:
-            self.cible.proprietaire = self.proprietaire
+            self.cible.proprietaire = self.proprietaire     #Associer un nouveau propriétaire
         cible = self.cible
         self.cible = 0
         return ["Etoile", cible]
 
-    def arriver_porte(self):
-        self.parent.log.append(["Arrive:", self.parent.parent.cadre_courant, "Porte", self.id, self.cible.id, ])
+    def arriver_porte(self): #Fonction pour aller dans un trou de vers
+        #self.parent.log.append(["Arrive:", self.parent.parent.cadre_courant, "Porte", self.id, self.cible.id, ])           journal de débogage (inutile)
         cible = self.cible
         trou = cible.parent
         if cible == trou.porte_a:
@@ -135,7 +142,7 @@ class Vaisseau():
         return ["Porte_de_ver", cible]
 
 
-class Cargo(Vaisseau):
+class Cargo(Vaisseau):  #TODO À CHANGER
     def __init__(self, parent, nom, x, y):
         Vaisseau.__init__(self, parent, nom, x, y)
         self.cargo = 1000
@@ -146,7 +153,7 @@ class Cargo(Vaisseau):
         self.ang = 0
 
 
-class Joueur():
+class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter attaquant
     def __init__(self, parent, nom, etoilemere, couleur):
         self.id = get_prochain_id()
         self.parent = parent
@@ -154,14 +161,14 @@ class Joueur():
         self.etoilemere = etoilemere
         self.etoilemere.proprietaire = self.nom
         self.couleur = couleur
-        self.log = []
-        self.etoilescontrolees = [etoilemere]
-        self.flotte = {"Vaisseau": {},
+        #self.log = []      journal de débogage
+        self.etoilescontrolees = [etoilemere]   #tableau de toutes les étoiles de l'empire contenant l'étoile mère par défaut
+        self.flotte = {"Vaisseau": {},  #Dictionnaire contenant un dictionnaire de tous les vaisseaux par type de vaisseau
                        "Cargo": {}}
-        self.actions = {"creervaisseau": self.creervaisseau,
-                        "ciblerflotte": self.ciblerflotte}
+        self.actions = {"creervaisseau": self.creervaisseau,    #Appel la fonction de création de vaisseau : À DÉPLACER DANS LA CLASS ENTREPOT
+                        "ciblerflotte": self.ciblerflotte}      #Appel la fonction
 
-    def creervaisseau(self, params):
+    def creervaisseau(self, params): #Fonction qui permet de créer un vaisseau \\\ À DÉPLACER DANS LA CLASSE ENTREPOT : IL FAUT CRÉER UN VAISSEAU DANS UN ENTREPOT, PAS PAR LE JOUEUR
         type_vaisseau = params[0]
         if type_vaisseau == "Cargo":
             v = Cargo(self, self.nom, self.etoilemere.x + 10, self.etoilemere.y)
@@ -173,8 +180,8 @@ class Joueur():
             self.parent.parent.lister_objet(type_vaisseau, v.id)
         return v
 
-    def ciblerflotte(self, ids):
-        idori, iddesti, type_cible = ids
+    def ciblerflotte(self, ids): #Cette fonction sera complètement refaite.
+        idori, iddesti, type_cible = ids        #idor = origine, iddesti = destination
         ori = None
         for i in self.flotte.keys():
             if idori in self.flotte[i]:
@@ -201,10 +208,10 @@ class Joueur():
         self.avancer_flotte()
 
     def avancer_flotte(self, chercher_nouveau=0):
-        for i in self.flotte:
-            for j in self.flotte[i]:
+        for i in self.flotte: #Chaque type de vaisseau
+             for j in self.flotte[i]:
                 j = self.flotte[i][j]
-                rep = j.jouer_prochain_coup(chercher_nouveau)
+                rep = j.jouer_prochain_coup(chercher_nouveau) #Contient le type de la cible
                 if rep:
                     if rep[0] == "Etoile":
                         # NOTE  est-ce qu'on doit retirer l'etoile de la liste du modele
@@ -288,7 +295,7 @@ class Modele():
         for i in range(self.nb_etoiles):
             x = random.randrange(self.largeur - (2 * bordure)) + bordure
             y = random.randrange(self.hauteur - (2 * bordure)) + bordure
-            self.etoiles.append(Etoile(self, x, y))
+            self.etoiles.append(Etoile(self,x,y,"allo",None,"n",None,None,None,100))
         np = len(joueurs) + ias
         etoile_occupee = []
         while np:
@@ -309,7 +316,7 @@ class Modele():
             for e in range(5):
                 x1 = random.randrange(x - dist, x + dist)
                 y1 = random.randrange(y - dist, y + dist)
-                self.etoiles.append(Etoile(self, x1, y1))
+                self.etoiles.append(Etoile(self, x1, y1,None,None,None,None,None,None,100))
 
         # IA- creation des ias
         couleursia = ["orange", "green", "cyan",
