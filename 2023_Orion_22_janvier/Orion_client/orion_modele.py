@@ -204,6 +204,7 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
                         ori.acquerir_cible(cible, type_cible)
                         return
 
+
     def jouer_prochain_coup(self):
         self.avancer_flotte()
 
@@ -214,8 +215,14 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
                 rep = j.jouer_prochain_coup(chercher_nouveau) #Retourne liste ["TypeObjet", objet]
                 if rep:
                     if rep[0] == "Etoile":
-                        self.etoilescontrolees.append(rep[1])
-                        self.parent.parent.afficher_etoile(self.nom, rep[1])
+                        xEtoile = rep[1].x
+                        yEtoile = rep[1].y
+                        xVaisseau = j.x
+                        yVaisseau = j.y
+                        if(abs(xEtoile - xVaisseau) <= 100 and abs(yEtoile - yVaisseau) <= 100): #Création de la hitbox
+                            print("Hitbox collided")
+                            self.etoilescontrolees.append(rep[1])
+                            self.parent.parent.afficher_etoile(self.nom, rep[1])
                     elif rep[0] == "Porte_de_ver":
                         pass
 
