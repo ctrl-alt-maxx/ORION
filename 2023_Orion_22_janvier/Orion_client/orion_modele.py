@@ -36,10 +36,10 @@ class Trou_de_vers(): #Chemin jusqu'à l'autre porte de vers
         self.porte_b.jouer_prochain_coup()
 
 class Ressources():
-    def __init__(self, type, rarete, tempsExtraction):
+    def __init__(self, type, rarete):
         self.type = type
         self.rarete = rarete
-        self.tempsExtraction = tempsExtraction
+        self.tempsExtraction = rarete * rarete * 5;
 
 class Etoile():
     def __init__(self, parent, x, y, nomEtoile, ressource, proprietaire,installation,vaisseaux,inventaire, vie):
@@ -204,6 +204,7 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
                         ori.acquerir_cible(cible, type_cible)
                         return
 
+
     def jouer_prochain_coup(self):
         self.avancer_flotte()
 
@@ -214,8 +215,14 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
                 rep = j.jouer_prochain_coup(chercher_nouveau) #Retourne liste ["TypeObjet", objet]
                 if rep:
                     if rep[0] == "Etoile":
-                        self.etoilescontrolees.append(rep[1])
-                        self.parent.parent.afficher_etoile(self.nom, rep[1])
+                        xEtoile = rep[1].x
+                        yEtoile = rep[1].y
+                        xVaisseau = j.x
+                        yVaisseau = j.y
+                        if(abs(xEtoile - xVaisseau) <= 100 and abs(yEtoile - yVaisseau) <= 100): #Création de la hitbox
+                            print("Hitbox collided")
+                            self.etoilescontrolees.append(rep[1])
+                            self.parent.parent.afficher_etoile(self.nom, rep[1])
                     elif rep[0] == "Porte_de_ver":
                         pass
 
@@ -238,32 +245,6 @@ class Entrepot(Installation):
         Installation.__init__(self, parent, proprietaire, type, niveau, cout, temps)
         self.capacite = capacite
 
-# IA- nouvelle classe de joueur
-"""
-class IA(Joueur):
-    def __init__(self, parent, nom, etoilemere, couleur):
-        Joueur.__init__(self, parent, nom, etoilemere, couleur)
-        self.cooldownmax = 1000
-        self.cooldown = 20
-
-    def jouer_prochain_coup(self):
-        # for i in self.flotte:
-        #     for j in self.flotte[i]:
-        #         j=self.flotte[i][j]
-        #         rep=j.jouer_prochain_coup(1)
-        #         if rep:
-        #             self.etoilescontrolees.append(rep[1])
-        self.avancer_flotte(1)
-
-        if self.cooldown == 0:
-            v = self.creervaisseau(["Vaisseau"])
-            cible = random.choice(self.parent.etoiles)
-            v.acquerir_cible(cible, "Etoile")
-            self.cooldown = random.randrange(self.cooldownmax) + self.cooldownmax
-        else:
-            self.cooldown -= 1
-"""
-
 class Modele():
     def __init__(self, parent, joueurs):
         self.parent = parent
@@ -275,7 +256,7 @@ class Modele():
         self.etoiles = []
         self.trou_de_vers = []
         self.cadre_courant = None
-        self.creeretoiles(joueurs, 1)
+        self.creeretoiles(joueurs)
         nb_trou = int((self.hauteur * self.largeur) / 5000000)
         self.creer_troudevers(nb_trou)
 
@@ -293,14 +274,15 @@ class Modele():
         for i in range(self.nb_etoiles):
             x = random.randrange(self.largeur - (2 * bordure)) + bordure
             y = random.randrange(self.hauteur - (2 * bordure)) + bordure
-            self.etoiles.append(Etoile(self,x,y,"allo",None,"n",None,None,None,100))
+            nom = "Etoile" + str(i)
+            ressourcesExploitables = self.genererRessources()
+            self.etoiles.append(Etoile(self,x,y,nom,ressourcesExploitables,"neutre",None,None,None,100))
         np = len(joueurs) #np = number of players
         etoile_occupee = []
-        while np:   #Choisi les étoiles mères et les retire de la liste d'étoiles
+        while np:   #Choisi les étoiles mères
             p = random.choice(self.etoiles)
             if p not in etoile_occupee:
                 etoile_occupee.append(p)
-                self.etoiles.remove(p)
                 np -= 1
 
         couleurs = ["red", "blue", "lightgreen", "yellow",
@@ -308,13 +290,13 @@ class Modele():
         for i in joueurs:
             etoile = etoile_occupee.pop(0) #Attribution d'une étoile mère à un joueur
             self.joueurs[i] = Joueur(self, i, etoile, couleurs.pop(0))
-            x = etoile.x
-            y = etoile.y
-            dist = 500
-            for e in range(5):
-                x1 = random.randrange(x - dist, x + dist)
-                y1 = random.randrange(y - dist, y + dist)
-                self.etoiles.append(Etoile(self, x1, y1,None,None,None,None,None,None,100)) #Remet l'étoile mère dans la liste d'étoile
+
+
+    def genererRessources(self):
+        #Ajouter algorithme de génération des ressources ici
+        ressourcesExploitables = {"Fer": 30,
+                                  "Hydrogène": 45}
+        return ressourcesExploitables
 
     ##############################################################################
     def jouer_prochain_coup(self, cadre):
