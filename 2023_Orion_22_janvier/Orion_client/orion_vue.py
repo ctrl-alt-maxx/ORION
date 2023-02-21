@@ -8,6 +8,7 @@ from helper import Helper as hlp
 import math
 
 import random
+import tkinter as tk
 
 
 class Vue():
@@ -152,8 +153,12 @@ class Vue():
         self.cadrejeu.pack(side=LEFT, expand=1, fill=BOTH)
         return self.cadrepartie
 
+
+
+
     def creer_cadre_outils(self):
-        self.cadreoutils = Frame(self.cadrepartie, width=200, height=200, bg="blue")  #petite fenetre sur la gauche (celle juste au dessus de la mini map)
+        self.cadreoutils = Frame(self.cadrepartie, width=200, height=200, bg="blue")  #petite fenetre sur la gauche (celle juste au dessus de la mini map)->ici que l<on affiche le menu
+
         self.cadreoutils.pack(side=LEFT, fill=Y)
 
         self.cadreinfo = Frame(self.cadreoutils, width=200, height=200, bg="darkgrey")#??????????
@@ -171,15 +176,19 @@ class Vue():
         # PETITE FENETRE POUR LES 2 BOUTONS VAISSEAU ET CARGO-----------------------------------------------------------------------------
         self.cadreinfochoix = Frame(self.cadreinfo, height=200, width=200,
                                     bg="blue")  # fenetre ou il y a bouton vaisseau et cargo
+
         self.btncreervaisseau = Button(self.cadreinfochoix, text="Vaisseau")  # pour creer un vaisseau
         self.btncreervaisseau.bind("<Button>", self.creer_vaisseau)
+
         self.btncreercargo = Button(self.cadreinfochoix, text="Cargo")
         self.btncreercargo.bind("<Button>", self.creer_vaisseau)
+
         self.btncreervaisseau.pack()
         self.btncreercargo.pack()
 
         #creer boutontest ici
         self.btnTest = Button(self.cadreinfochoix, text="menu test")
+        self.btnTest.config(command=self.methode_test)
         self.btnTest.pack()
 
 
@@ -211,12 +220,18 @@ class Vue():
         # fonction qui affiche le nombre d'items sur le jeu
         self.canevas.bind("<Shift-Button-3>", self.calc_objets)
 
+
+
     def connecter_serveur(self):
         self.btninscrirejoueur.config(state=NORMAL)
         self.btncreerpartie.config(state=NORMAL)
         self.btnreset.config(state=NORMAL)
         url_serveur = self.urlsplash.get()
         self.parent.connecter_serveur(url_serveur)
+
+    def methode_test(self):
+        print("xxxxxxx")
+        fenetre = tk.Toplevel(self.cadreoutils)#cree une fenetre dans cadreoutils
 
     def centrer_liste_objet(self, evt):
         info = self.info_liste.get(self.info_liste.curselection())
@@ -267,6 +282,7 @@ class Vue():
 
     def reset_partie(self):
         rep = self.parent.reset_partie()
+
 
     def creer_partie(self):
         nom = self.nomsplash.get()
@@ -394,6 +410,8 @@ class Vue():
         self.ma_selection = None
         self.canevas.delete("marqueur")
         self.cadreinfochoix.pack_forget()
+
+
 
     def afficher_jeu(self):#LA ON AFFICHE BEAUCOUP DE CHOSE!!!:)-------------------------------------------------------------
         mod = self.modele
