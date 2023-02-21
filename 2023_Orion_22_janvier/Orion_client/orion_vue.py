@@ -191,7 +191,7 @@ class Vue():
         # creer boutonInstallation ici
         self.btnInstallation = Button(self.cadreinfochoix, text="Installation")
         """pour ouvrir le menu d'installation"""
-        self.btnInstallation.config(command=self.methode_test)
+        self.btnInstallation.config(command=self.methode_installation)
         self.btnInstallation.pack()
 
         # creer boutonResource ici
@@ -236,7 +236,7 @@ class Vue():
         url_serveur = self.urlsplash.get()
         self.parent.connecter_serveur(url_serveur)
 
-    def methode_test(self):  # afficher
+    def methode_installation(self):  # afficher
         print("xxxxxxx")
         # enlever les autre label
         # lFer.pack_forget()
@@ -247,9 +247,14 @@ class Vue():
         # lPlutonium.pack_forget()
         # lTitane.pack_forget()
 
-        label = Label(self.cadreoutils, text="dddd", anchor=CENTER)
-        label.pack()
-        btnAmelioEtoile = Button(self.cadreoutils, text="Ameliorer Étoile")
+        print("xxxxxxx")
+        testHp = "3"  # il faudra recuperer la vrai valeur ici
+
+        label = Label(self.cadreoutils, text="hp Etoile:" + testHp, bd=1, relief="solid", width=15, height=4, anchor=W,
+                      justify=LEFT)
+        label.pack(side=LEFT)
+
+        btnAmelioEtoile = Button(self.cadreoutils, text="Ameliorer Étoile")  # faire fonction pour unpack()
         btnAmelioEtoile.pack()
 
     def methode_resource(self):  # afficher
