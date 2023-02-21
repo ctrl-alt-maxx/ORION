@@ -177,7 +177,7 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
         self.flotte[type_vaisseau][v.id] = v
 
         if self.nom == self.parent.parent.mon_nom:
-            self.parent.parent.lister_objet(type_vaisseau, v.id)
+            self.parent.parent.lister_objet(type_vaisseau, v.id, v.niveau_Vaisseau)
         return v
 
     def ciblerflotte(self, ids): #Cette fonction sera complètement refaite.

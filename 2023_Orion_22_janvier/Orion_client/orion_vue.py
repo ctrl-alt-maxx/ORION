@@ -379,8 +379,8 @@ class Vue():
         self.canevas.itemconfig(id, tags=(joueur, id, "Etoile",))
 
     # ajuster la liste des vaisseaux
-    def lister_objet(self, obj, id):
-        self.info_liste.insert(END, obj + "; " + id)
+    def lister_objet(self, obj, id, niveau):
+        self.info_liste.insert(END, obj + "; " + id + "; Niv. " + str(niveau))
 
     def creer_vaisseau(self, evt):
         type_vaisseau = evt.widget.cget("text")
