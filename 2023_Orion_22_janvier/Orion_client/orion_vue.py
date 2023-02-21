@@ -174,23 +174,32 @@ class Vue():
         self.btnmini.pack()
 
         # PETITE FENETRE POUR LES 2 BOUTONS VAISSEAU ET CARGO-----------------------------------------------------------------------------
-        self.cadreinfochoix = Frame(self.cadreinfo, height=200, width=200,
-                                    bg="blue")  # fenetre ou il y a bouton vaisseau et cargo
+        self.cadreinfochoix = Frame(self.cadreinfo, height=200, width=200, bg="light grey")
+        """fenetre ou il y a bouton vaisseau et cargo"""
 
-        self.btncreervaisseau = Button(self.cadreinfochoix, text="Vaisseau")  # pour creer un vaisseau
+        self.btncreervaisseau = Button(self.cadreinfochoix, text="Vaisseau")
+        """pour creer un vaisseau"""
         self.btncreervaisseau.bind("<Button>", self.creer_vaisseau)
 
         self.btncreercargo = Button(self.cadreinfochoix, text="Cargo")
+        """pour creer un cargo"""
         self.btncreercargo.bind("<Button>", self.creer_vaisseau)
 
-        self.btncreervaisseau.pack()
-        self.btncreercargo.pack()
+        # self.btncreervaisseau.pack()
+        # self.btncreercargo.pack()
 
-        #creer boutontest ici
+        # creer boutonInstallation ici
         self.btnInstallation = Button(self.cadreinfochoix, text="Installation")
+        """pour ouvrir le menu d'installation"""
         self.btnInstallation.config(command=self.methode_test)
         self.btnInstallation.pack()
 
+        # creer boutonResource ici
+        self.btnResource = Button(self.cadreinfochoix, text="Resource")
+        """pour ouvrir le menu de ressource"""
+        self.btnResource.config(command=self.methode_resource)
+        self.btnResource.pack()
+        self.eteAfficher = False
 
         # ---------------------------------------------------------------------------------------------------------------------------------
 
@@ -220,8 +229,6 @@ class Vue():
         # fonction qui affiche le nombre d'items sur le jeu
         self.canevas.bind("<Shift-Button-3>", self.calc_objets)
 
-
-
     def connecter_serveur(self):
         self.btninscrirejoueur.config(state=NORMAL)
         self.btncreerpartie.config(state=NORMAL)
@@ -229,14 +236,54 @@ class Vue():
         url_serveur = self.urlsplash.get()
         self.parent.connecter_serveur(url_serveur)
 
-    def methode_test(self):#afficher
+    def methode_test(self):  # afficher
         print("xxxxxxx")
-        #fenetre = tk.Toplevel(self.cadreoutils)#cree une fenetre dans cadreoutils
-        #fenetre = Frame(self.cadreoutils, height=100, width=100, bg="black")
-        label = Label(self.cadreoutils,text="dddd", anchor=CENTER)
+        # enlever les autre label
+        # lFer.pack_forget()
+        # lOr.pack_forget()
+        # lCuivre.pack_forget()
+        # lHydrogene.pack_forget()
+        # lAntimatiere.pack_forget()
+        # lPlutonium.pack_forget()
+        # lTitane.pack_forget()
+
+        label = Label(self.cadreoutils, text="dddd", anchor=CENTER)
         label.pack()
         btnAmelioEtoile = Button(self.cadreoutils, text="Ameliorer Étoile")
         btnAmelioEtoile.pack()
+
+    def methode_resource(self):  # afficher
+
+        global lFer
+        global lOr
+        global lCuivre
+        global lHydrogene
+        global lAntimatiere
+        global lPlutonium
+        global lTitane
+
+        lFer = Label(self.cadreoutils, text="Fer", anchor=CENTER, width=25, height=2, border=2, borderwidth=1,
+                     relief="solid", bg="green")
+        lHydrogene = Label(self.cadreoutils, text="Hydrogene", anchor=CENTER, width=25, height=2, border=2,
+                           borderwidth=1, relief="solid", bg="green")
+        lOr = Label(self.cadreoutils, text="Or", anchor=CENTER, width=25, height=2, border=2, borderwidth=1,
+                    relief="solid", bg="yellow")
+        lCuivre = Label(self.cadreoutils, text="Cuivre", anchor=CENTER, width=25, height=2, border=2, borderwidth=1,
+                        relief="solid", bg="green")
+        lTitane = Label(self.cadreoutils, text="Titane", anchor=CENTER, width=25, height=2, border=2, borderwidth=1,
+                        relief="solid", bg="red")
+        lPlutonium = Label(self.cadreoutils, text="Plutonium", anchor=CENTER, width=25, height=2, border=2,
+                           borderwidth=1, relief="solid", bg="yellow")
+        lAntimatiere = Label(self.cadreoutils, text="????", anchor=CENTER, width=25, height=2, border=2, borderwidth=1,
+                             relief="solid", bg="purple")
+
+        lFer.pack()
+        lCuivre.pack()
+        lOr.pack()
+        lTitane.pack()
+        lHydrogene.pack()
+        lPlutonium.pack()
+        lAntimatiere.pack()
 
     def centrer_liste_objet(self, evt):
         info = self.info_liste.get(self.info_liste.curselection())
