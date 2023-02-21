@@ -187,9 +187,9 @@ class Vue():
         self.btncreercargo.pack()
 
         #creer boutontest ici
-        self.btnTest = Button(self.cadreinfochoix, text="Installation")
-        self.btnTest.config(command=self.methode_test)
-        self.btnTest.pack()
+        self.btnInstallation = Button(self.cadreinfochoix, text="Installation")
+        self.btnInstallation.config(command=self.methode_test)
+        self.btnInstallation.pack()
 
 
         # ---------------------------------------------------------------------------------------------------------------------------------
