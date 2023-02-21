@@ -185,8 +185,8 @@ class Vue():
         """pour creer un cargo"""
         self.btncreercargo.bind("<Button>", self.creer_vaisseau)
 
-        self.btncreervaisseau.pack()
-        self.btncreercargo.pack()
+        #self.btncreervaisseau.pack()
+        #self.btncreercargo.pack()
 
         #creer boutonInstallation ici
         self.btnInstallation = Button(self.cadreinfochoix, text="Installation")
@@ -199,6 +199,7 @@ class Vue():
         """pour ouvrir le menu de ressource"""
         self.btnResource.config(command=self.methode_resource)
         self.btnResource.pack()
+        self.eteAfficher = False
 
 
 
@@ -251,11 +252,25 @@ class Vue():
 
 
     def methode_resource(self):#afficher
-        print("xxxxxxx")
-        #
-        label = Label(self.cadreoutils,text="dddd", anchor=CENTER)
-        label.pack()
-        btnAmelioEtoile = Button(self.cadreoutils, text="Ameliorer Étoile")
+
+
+        lFer = Label(self.cadreoutils,text="Fer", anchor=CENTER,width=25, height=2,border=2,borderwidth=1,relief="solid")
+        lHydrogene = Label(self.cadreoutils,text="Hydrogene", anchor=CENTER,width=25, height=2,border=2,borderwidth=1,relief="solid")
+        lOr = Label(self.cadreoutils,text="Or", anchor=CENTER,width=25, height=2,border=2,borderwidth=1,relief="solid")
+        lCuivre = Label(self.cadreoutils,text="Cuivre", anchor=CENTER,width=25, height=2,border=2,borderwidth=1,relief="solid")
+        lTitane = Label(self.cadreoutils,text="Titane", anchor=CENTER,width=25, height=2,border=2,borderwidth=1,relief="solid")
+        lPlutonium = Label(self.cadreoutils,text="Plutonium", anchor=CENTER,width=25, height=2,border=2,borderwidth=1,relief="solid")
+        lAntimatiere = Label(self.cadreoutils,text="????", anchor=CENTER,width=25, height=2,border=2,borderwidth=1,relief="solid")
+
+        lFer.pack()
+        lCuivre.pack()
+        lOr.pack()
+        lTitane.pack()
+        lHydrogene.pack()
+        lPlutonium.pack()
+        lAntimatiere.pack()
+
+
     def centrer_liste_objet(self, evt):
         info = self.info_liste.get(self.info_liste.curselection())
         print(info)
