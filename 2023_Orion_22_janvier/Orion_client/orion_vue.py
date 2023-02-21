@@ -2,10 +2,12 @@
 ##  version 2022 14 mars - jmd
 
 from tkinter import *
+from tkinter.ttk import *
 from tkinter.simpledialog import *
 from tkinter.messagebox import *
 from helper import Helper as hlp
 import math
+from PIL import Image
 
 import random
 
@@ -190,7 +192,14 @@ class Vue():
         self.cadreinfoliste.columnconfigure(0, weight=1)
         self.cadreinfoliste.rowconfigure(0, weight=1)
 
-        self.cadreinfoliste.pack(side=BOTTOM, expand=1, fill=BOTH)
+        self.cadreinfoliste.pack(fill=BOTH)
+
+        # IMAGE VAISSEAU + VIE
+        self.cadreinfoimage = Frame(self.cadreinfo, width=200, height=228, background="black")
+        self.barrevie = Progressbar(self.cadreinfoimage, orient=HORIZONTAL, mode='determinate', length=100)
+
+        self.cadreinfoimage.pack(side=BOTTOM, fill=BOTH) # Debug, à cacher plus tard
+        self.barrevie.pack(fill=BOTH)
 
         # MINI MAP
         self.cadreminimap = Frame(self.cadreoutils, height=200, width=200, bg="black")
