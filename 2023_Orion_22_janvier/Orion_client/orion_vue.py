@@ -37,7 +37,6 @@ class Vue():
         # # variable pour suivre le trace du multiselect
         self.debut_selection = []
         self.selecteur_actif = None
-        self.shipSelected = ""
 
     def demander_abandon(self):
         rep = askokcancel("Vous voulez vraiment quitter?")
@@ -351,7 +350,6 @@ class Vue():
             self.canevas.create_oval(i.x - t, i.y - t, i.x + t, i.y + t,
                                      fill="grey80", outline=col,
                                      tags=(i.proprietaire, str(i.id), "Etoile",))
-            # self.canevas.create_text(i.x, i.y - 20, text=i.id, fill="white") Ligne pour afficher les ids de toutes les planètes
         # affichage des etoiles possedees par les joueurs
         for i in mod.joueurs.keys():
             for j in mod.joueurs[i].etoilescontrolees:
@@ -359,7 +357,6 @@ class Vue():
                 self.canevas.create_oval(j.x - t, j.y - t, j.x + t, j.y + t,
                                          fill=mod.joueurs[i].couleur,
                                          tags=(j.proprietaire, str(j.id), "Etoile"))
-                # self.canevas.create_text(j.x, j.y - 20, text=j.id, fill="white") Ligne pour afficher les ids des planètes mères
                 # on affiche dans minimap
                 minix = j.x / self.modele.largeur * self.taille_minimap
                 miniy = j.y / self.modele.hauteur * self.taille_minimap
@@ -496,28 +493,24 @@ class Vue():
                                  tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact"))
 
     def cliquer_cosmos(self, evt):  # DES QUE LON CLIQUE QUELQUE PART DANS LE JEU
-        tags = self.canevas.gettags(CURRENT)  # self.canevas = Canvas(self.cadrejeu, width=800, height=600,
-        if tags:  # Il y a des tags => On a cliqué sur un objet de la carte (Vaisseau, Étoile, ...)
-            if tags[0] == self.mon_nom:
-                self.ma_selection = [self.mon_nom, tags[1], tags[2]]
-                if tags[2] == "Etoile":
-                    self.montrer_etoile_selection()
-                    if self.shipSelected:
-                        self.parent.cibler_flotte(self.shipSelected, tags[1], tags[2])
-                        self.shipSelected = ""
-                        self.ma_selection = None
-                    else:
-                        self.montrer_etoile_selection()
-                elif tags[2] == "Flotte":
-                    self.montrer_flotte_selection()
-                    self.shipSelected = self.ma_selection[1]
-            elif ("Etoile" == tags[2] or "Porte_de_ver" == tags[2]):  # Si c'est un objet qui nous appartient pas
-                if self.ma_selection:  # Si une sélection de nos vaisseaux a été faites, on les envoi sur l'étoile avec "cibler_flotte"
-                    self.parent.cibler_flotte(self.ma_selection[1], tags[1], tags[2])
+        t = self.canevas.gettags(CURRENT)  # self.canevas = Canvas(self.cadrejeu, width=800, height=600,
+        if t:  # il y a des tags
+            if t[0] == self.mon_nom:  # et
+                self.ma_selection = [self.mon_nom, t[1], t[2]]
+                if t[2] == "Etoile":
+                    self.montrer_etoile_selection()  # TAG LA SELECTION DE MON ETOILE
+                elif t[2] == "Flotte":
+                    self.montrer_flotte_selection()  # Ca tag mon vaisseau mais il faut enlever le tag quand je reclick dessus
+
+            elif ("Etoile" in t or "Porte_de_ver" in t) and t[0] != self.mon_nom:
+                if self.ma_selection:
+                    self.parent.cibler_flotte(self.ma_selection[1], t[1], t[2])
                 self.ma_selection = None
-        else:  # Aucun tag => On a cliqué dans le vide, donc pas sur un objet de la carte.
+                self.canevas.delete("marqueur")
+        else:  # aucun tag => rien sous la souris - sinon au minimum il y aurait CURRENT
             print("Region inconnue")
             self.ma_selection = None
+            self.canevas.delete("marqueur")
 
     def montrer_etoile_selection(self):  # montrer le tag de letoile selectionne
         self.cadreinfochoix.pack(fill=BOTH)
