@@ -157,7 +157,7 @@ class Vue():
 
 
     def creer_cadre_outils(self):
-        self.cadreoutils = Frame(self.cadrepartie, width=200, height=200, bg="grey")  #petite fenetre sur la gauche (celle juste au dessus de la mini map)->ici que l<on affiche le menu
+        self.cadreoutils = Frame(self.cadrepartie, width=200, height=200, bg="blue")  #petite fenetre sur la gauche (celle juste au dessus de la mini map)->ici que l<on affiche le menu
 
         self.cadreoutils.pack(side=LEFT, fill=Y)
 
@@ -174,7 +174,7 @@ class Vue():
         self.btnmini.pack()
 
         # PETITE FENETRE POUR LES 2 BOUTONS VAISSEAU ET CARGO-----------------------------------------------------------------------------
-        self.cadreinfochoix = Frame(self.cadreinfo, height=200, width=200,bg="light grey")
+        self.cadreinfochoix = Frame(self.cadreinfo, height=200, width=200,bg="blue")
         """fenetre ou il y a bouton vaisseau et cargo"""
 
         self.btncreervaisseau = Button(self.cadreinfochoix, text="Vaisseau")
@@ -187,9 +187,6 @@ class Vue():
 
         #self.btncreervaisseau.pack()
         #self.btncreercargo.pack()
-
-
-
 
         #creer boutonInstallation ici
         self.btnInstallation = Button(self.cadreinfochoix, text="Installation")
@@ -246,16 +243,8 @@ class Vue():
 
     def methode_test(self):#afficher
         print("xxxxxxx")
-        #enlever les autre label
-        #lFer.pack_forget()
-        #lOr.pack_forget()
-        #lCuivre.pack_forget()
-        #lHydrogene.pack_forget()
-        #lAntimatiere.pack_forget()
-        #lPlutonium.pack_forget()
-        #lTitane.pack_forget()
-
-
+        #fenetre = tk.Toplevel(self.cadreoutils)#cree une fenetre dans cadreoutils
+        #fenetre = Frame(self.cadreoutils, height=100, width=100, bg="black")
         label = Label(self.cadreoutils,text="dddd", anchor=CENTER)
         label.pack()
         btnAmelioEtoile = Button(self.cadreoutils, text="Ameliorer Étoile")
@@ -264,21 +253,14 @@ class Vue():
 
     def methode_resource(self):#afficher
 
-        global lFer
-        global lOr
-        global lCuivre
-        global lHydrogene
-        global lAntimatiere
-        global lPlutonium
-        global lTitane
 
-        lFer = Label(self.cadreoutils,text="Fer", anchor=CENTER,width=25, height=2,border=2,borderwidth=1,relief="solid",bg="green")
-        lHydrogene = Label(self.cadreoutils,text="Hydrogene", anchor=CENTER,width=25, height=2,border=2,borderwidth=1,relief="solid",bg="green")
-        lOr = Label(self.cadreoutils,text="Or", anchor=CENTER,width=25, height=2,border=2,borderwidth=1,relief="solid" ,bg="yellow")
-        lCuivre = Label(self.cadreoutils,text="Cuivre", anchor=CENTER,width=25, height=2,border=2,borderwidth=1,relief="solid",bg="green")
-        lTitane = Label(self.cadreoutils,text="Titane", anchor=CENTER,width=25, height=2,border=2,borderwidth=1,relief="solid",bg="red")
-        lPlutonium = Label(self.cadreoutils,text="Plutonium", anchor=CENTER,width=25, height=2,border=2,borderwidth=1,relief="solid",bg="yellow")
-        lAntimatiere = Label(self.cadreoutils,text="????", anchor=CENTER,width=25, height=2,border=2,borderwidth=1,relief="solid",bg="purple")
+        lFer = Label(self.cadreoutils,text="Fer", anchor=CENTER,width=25, height=2,border=2,borderwidth=1,relief="solid")
+        lHydrogene = Label(self.cadreoutils,text="Hydrogene", anchor=CENTER,width=25, height=2,border=2,borderwidth=1,relief="solid")
+        lOr = Label(self.cadreoutils,text="Or", anchor=CENTER,width=25, height=2,border=2,borderwidth=1,relief="solid")
+        lCuivre = Label(self.cadreoutils,text="Cuivre", anchor=CENTER,width=25, height=2,border=2,borderwidth=1,relief="solid")
+        lTitane = Label(self.cadreoutils,text="Titane", anchor=CENTER,width=25, height=2,border=2,borderwidth=1,relief="solid")
+        lPlutonium = Label(self.cadreoutils,text="Plutonium", anchor=CENTER,width=25, height=2,border=2,borderwidth=1,relief="solid")
+        lAntimatiere = Label(self.cadreoutils,text="????", anchor=CENTER,width=25, height=2,border=2,borderwidth=1,relief="solid")
 
         lFer.pack()
         lCuivre.pack()
