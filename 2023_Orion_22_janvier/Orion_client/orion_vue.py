@@ -230,13 +230,18 @@ class Vue():
         self.parent.connecter_serveur(url_serveur)
 
     def methode_test(self):#afficher
+
         print("xxxxxxx")
-        #fenetre = tk.Toplevel(self.cadreoutils)#cree une fenetre dans cadreoutils
-        #fenetre = Frame(self.cadreoutils, height=100, width=100, bg="black")
-        label = Label(self.cadreoutils,text="dddd", anchor=CENTER)
-        label.pack()
-        btnAmelioEtoile = Button(self.cadreoutils, text="Ameliorer Étoile")
+        testHp = "3" #il faudra recuperer la vrai valeur ici
+
+        label = Label(self.cadreoutils, text="hp Etoile:" + testHp, bd=1, relief="solid", width=15, height=4, anchor=W, justify=LEFT)
+        label.pack(side=LEFT)
+
+        btnAmelioEtoile = Button(self.cadreoutils, text="Ameliorer Étoile")#faire fonction pour unpack()
         btnAmelioEtoile.pack()
+
+    
+
 
     def centrer_liste_objet(self, evt):
         info = self.info_liste.get(self.info_liste.curselection())
