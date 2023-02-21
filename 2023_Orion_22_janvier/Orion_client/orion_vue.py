@@ -187,7 +187,7 @@ class Vue():
         self.btncreercargo.pack()
 
         #creer boutontest ici
-        self.btnTest = Button(self.cadreinfochoix, text="menu test")
+        self.btnTest = Button(self.cadreinfochoix, text="Installation")
         self.btnTest.config(command=self.methode_test)
         self.btnTest.pack()
 
@@ -229,9 +229,14 @@ class Vue():
         url_serveur = self.urlsplash.get()
         self.parent.connecter_serveur(url_serveur)
 
-    def methode_test(self):
+    def methode_test(self):#afficher
         print("xxxxxxx")
-        fenetre = tk.Toplevel(self.cadreoutils)#cree une fenetre dans cadreoutils
+        #fenetre = tk.Toplevel(self.cadreoutils)#cree une fenetre dans cadreoutils
+        #fenetre = Frame(self.cadreoutils, height=100, width=100, bg="black")
+        label = Label(self.cadreoutils,text="dddd", anchor=CENTER)
+        label.pack()
+        btnAmelioEtoile = Button(self.cadreoutils, text="Ameliorer Étoile")
+        btnAmelioEtoile.pack()
 
     def centrer_liste_objet(self, evt):
         info = self.info_liste.get(self.info_liste.curselection())
