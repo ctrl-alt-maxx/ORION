@@ -42,7 +42,7 @@ class Ressources():
         self.tempsExtraction = rarete * rarete * 5;
 
 class Etoile():
-    def __init__(self, parent, x, y, nomEtoile, ressource, proprietaire,installation,vaisseaux,inventaire, vie):
+    def __init__(self, parent, x, y, nomEtoile, ressource, vie):
 
         self.id = get_prochain_id()
         self.parent = parent
@@ -52,9 +52,9 @@ class Etoile():
         self.taille = random.randrange(4, 8)
         self.nomEtoile = nomEtoile
         self.ressources = ressource ## ressources = [] ressources
-        self.proprietaire = proprietaire #proprietaire = etoile owner
-        self.installation = installation #installation = [] des installations du joueur
-        self.vaisseaux = vaisseaux # [] de vaisseaux pose sur letoile
+        self.proprietaire = "neutre" #proprietaire = etoile owner
+        self.installation = None #installation = [] des installations du joueur
+        self.vaisseaux = None # [] de vaisseaux pose sur letoile
         self.estEclaire = False #etoile selectionne ou pas True ou False = False au debut du jeu
         self.niveauEtoile = 1 #niveau de l'étoile = 1/2/3 = toutes les étoiles seront de niveau 1 au debut du jeu
         self.inventaire = None  # inventaire = [] d'inventaire de ce que possede le joueur
@@ -259,6 +259,13 @@ class Modele():
         self.creeretoiles(joueurs)
         nb_trou = int((self.hauteur * self.largeur) / 5000000)
         self.creer_troudevers(nb_trou)
+        self.ressources = {"Fer": Ressources("Fer", 1),
+                           "Cuivre": Ressources("Cuivre", 1),
+                           "Or": Ressources("Or", 2),
+                           "Titane": Ressources("Titane", 3),
+                           "Hydrogene": Ressources("Hydrogene", 1),
+                           "Plutonium": Ressources("Plutonium", 2),
+                           "Antimatiere": Ressources("Antimatiere", 3)}
 
     def creer_troudevers(self, n):
         bordure = 10
@@ -274,9 +281,10 @@ class Modele():
         for i in range(self.nb_etoiles):
             x = random.randrange(self.largeur - (2 * bordure)) + bordure
             y = random.randrange(self.hauteur - (2 * bordure)) + bordure
-            nom = "Etoile" + str(i)
-            ressourcesExploitables = self.genererRessources()
-            self.etoiles.append(Etoile(self,x,y,nom,ressourcesExploitables,"neutre",None,None,None,100))
+            nom:str = "Etoile" + str(i)
+            classe:int = random.randrange(0, 100) #attribue aléatoirement une rareté à l'étoile
+            ressourcesExploitables = self.genererRessources(classe)
+            self.etoiles.append(Etoile(self,x,y,nom,ressourcesExploitables,100))
         np = len(joueurs) #np = number of players
         etoile_occupee = []
         while np:   #Choisi les étoiles mères
@@ -292,10 +300,52 @@ class Modele():
             self.joueurs[i] = Joueur(self, i, etoile, couleurs.pop(0))
 
 
-    def genererRessources(self):
-        #Ajouter algorithme de génération des ressources ici
-        ressourcesExploitables = {"Fer": 30,
-                                  "Hydrogène": 45}
+    def genererRessources(self, classe:int):
+        #Ajouter algorithme de génération des ressources ici - ressources possibles : Fer, Cuivre, Or, Titane || Hydrogène, Plutonium, Antimatière
+        ressourcesExploitables = []
+        ressource = []
+        nbRessources:int = 1
+        isFer:bool = True #il y aua toujours du fer sur une étoile
+        isCuivre:bool = False
+        isOr:bool = False
+        isTitane:bool = False
+
+        isHydrogene:bool = False
+        isPlutonium:bool = False
+        isAntimatiere:bool = False
+
+        rareteMateriaux:int = random.randrange(0, 100) #représente un "dé"
+        rareteEnergie:int = random.randrange(0, 100)
+
+        if rareteMateriaux >= 40:
+            isCuivre = True
+            nbRessources +=1
+            if rareteMateriaux >= 70:
+                isOr = True
+                nbRessources += 1
+                if rareteMateriaux >= 90:
+                    isTitane = True
+                    nbRessources += 1
+        if rareteEnergie >= 25:
+            isHydrogene = True
+            nbRessources += 1
+            if rareteMateriaux >= 75:
+                isPlutonium = True
+                nbRessources += 1
+                if rareteEnergie >= 97:
+                    isAntimatiere = True
+                    nbRessources += 1
+
+        distFer:float = -0.1375 * nbRessources +1 #distribution du fer / étoile (un %)
+        ressource.append(self.ressources.get("Fer"), distFer)
+        ressourcesExploitables.append(ressource)
+        if isCuivre:
+            distCuivre:float = 0.07 + (0.5 - 0.07) / (1 + pow((nbRessources/3), 2.5)) #TODO À CHANGER
+            ressource.append(self.ressources.get("Cuivre"), distCuivre)
+            ressourcesExploitables.append(ressource)
+        if isOr:
+
+
         return ressourcesExploitables
 
     ##############################################################################
