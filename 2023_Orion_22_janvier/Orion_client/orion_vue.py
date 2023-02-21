@@ -174,22 +174,33 @@ class Vue():
         self.btnmini.pack()
 
         # PETITE FENETRE POUR LES 2 BOUTONS VAISSEAU ET CARGO-----------------------------------------------------------------------------
-        self.cadreinfochoix = Frame(self.cadreinfo, height=200, width=200,
-                                    bg="blue")  # fenetre ou il y a bouton vaisseau et cargo
+        self.cadreinfochoix = Frame(self.cadreinfo, height=200, width=200,bg="blue")
+        """fenetre ou il y a bouton vaisseau et cargo"""
 
-        self.btncreervaisseau = Button(self.cadreinfochoix, text="Vaisseau")  # pour creer un vaisseau
+        self.btncreervaisseau = Button(self.cadreinfochoix, text="Vaisseau")
+        """pour creer un vaisseau"""
         self.btncreervaisseau.bind("<Button>", self.creer_vaisseau)
 
         self.btncreercargo = Button(self.cadreinfochoix, text="Cargo")
+        """pour creer un cargo"""
         self.btncreercargo.bind("<Button>", self.creer_vaisseau)
 
         self.btncreervaisseau.pack()
         self.btncreercargo.pack()
 
-        #creer boutontest ici
+        #creer boutonInstallation ici
         self.btnInstallation = Button(self.cadreinfochoix, text="Installation")
+        """pour ouvrir le menu d'installation"""
         self.btnInstallation.config(command=self.methode_test)
         self.btnInstallation.pack()
+
+        #creer boutonResource ici
+        self.btnResource = Button(self.cadreinfochoix, text="Resource")
+        """pour ouvrir le menu de ressource"""
+        self.btnResource.config(command=self.methode_resource)
+        self.btnResource.pack()
+
+
 
 
         # ---------------------------------------------------------------------------------------------------------------------------------
@@ -238,6 +249,13 @@ class Vue():
         btnAmelioEtoile = Button(self.cadreoutils, text="Ameliorer Étoile")
         btnAmelioEtoile.pack()
 
+
+    def methode_resource(self):#afficher
+        print("xxxxxxx")
+        #
+        label = Label(self.cadreoutils,text="dddd", anchor=CENTER)
+        label.pack()
+        btnAmelioEtoile = Button(self.cadreoutils, text="Ameliorer Étoile")
     def centrer_liste_objet(self, evt):
         info = self.info_liste.get(self.info_liste.curselection())
         print(info)

@@ -5,8 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5230c19c-badf-43e0-8902-db29fa556a9c" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/C41.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/C41.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/2023_Orion_22_janvier/Orion_client/orion_vue.py" beforeDir="false" afterPath="$PROJECT_DIR$/2023_Orion_22_janvier/Orion_client/orion_vue.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/2023_Orion_22_janvier/RTS_serveur/RTS_serveur_DB.db" beforeDir="false" afterPath="$PROJECT_DIR$/2023_Orion_22_janvier/RTS_serveur/RTS_serveur_DB.db" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -24,6 +27,11 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "node.js.selected.package.tslint": "(autodetect)"
+  }
+}]]></component>
   <component name="RunManager" selected="Python.orion_client_main">
     <configuration name="RTS_serveur_APP" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="C41" />
@@ -37,6 +45,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/2023_Orion_22_janvier/RTS_serveur/RTS_serveur_APP.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
@@ -58,6 +67,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/2023_Orion_22_janvier/Orion_client/orion_client_main.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
@@ -89,5 +99,9 @@
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/orion_vue_py$orion_client_main.coverage" NAME="orion_client_main Coverage Results" MODIFIED="1676989457994" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/2023_Orion_22_janvier/Orion_client" />
+    <SUITE FILE_PATH="coverage/orion_vue_py$RTS_serveur_APP.coverage" NAME="RTS_serveur_APP Coverage Results" MODIFIED="1676988839137" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/2023_Orion_22_janvier/RTS_serveur" />
   </component>
 </project>
