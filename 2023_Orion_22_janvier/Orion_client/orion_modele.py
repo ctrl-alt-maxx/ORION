@@ -302,7 +302,10 @@ class Modele():
             p = random.choice(self.etoiles)
             if p not in etoile_occupee:
                 etoile_occupee.append(p)
-                self.etoiles.remove(p)
+                #self.etoiles.remove(p)
+                ### Ligne qui enlève la planète mère de la liste des planètes pour éviter de la répéter
+                ### Il faut l'enlever pour le déplacement des vaisseaux. Je ne connais pas les répercussions pour le moment.
+                ### Possible de remplacer par le changement de la fonction lors de la création des étoiles dans la vue.
                 np -= 1
 
         couleurs = ["red", "blue", "lightgreen", "yellow",

@@ -36,6 +36,7 @@ class Vue():
         # # variable pour suivre le trace du multiselect
         self.debut_selection = []
         self.selecteur_actif = None
+        self.shipSelected = False
 
     def demander_abandon(self):
         rep = askokcancel("Vous voulez vraiment quitter?")
@@ -313,6 +314,7 @@ class Vue():
             self.canevas.create_oval(i.x - t, i.y - t, i.x + t, i.y + t,
                                      fill="grey80", outline=col,
                                      tags=(i.proprietaire, str(i.id), "Etoile",))
+            #self.canevas.create_text(i.x, i.y - 20, text=i.id, fill="white") Ligne pour afficher les ids de toutes les planètes
         # affichage des etoiles possedees par les joueurs
         for i in mod.joueurs.keys():
             for j in mod.joueurs[i].etoilescontrolees:
@@ -320,6 +322,7 @@ class Vue():
                 self.canevas.create_oval(j.x - t, j.y - t, j.x + t, j.y + t,
                                          fill=mod.joueurs[i].couleur,
                                          tags=(j.proprietaire, str(j.id), "Etoile"))
+                #self.canevas.create_text(j.x, j.y - 20, text=j.id, fill="white") Ligne pour afficher les ids des planètes mères
                 # on affiche dans minimap
                 minix = j.x / self.modele.largeur * self.taille_minimap
                 miniy = j.y / self.modele.hauteur * self.taille_minimap
@@ -383,6 +386,7 @@ class Vue():
         mod = self.modele
         self.canevas.delete("artefact")
         self.canevas.delete("objet_spatial")
+        self.canevas.delete("marqueur")
 
         if self.ma_selection != None:
             joueur = mod.joueurs[self.ma_selection[0]]
@@ -458,18 +462,22 @@ class Vue():
             if tags[0] == self.mon_nom:
                 self.ma_selection = [self.mon_nom, tags[1], tags[2]]
                 if tags[2] == "Etoile":
-                    self.montrer_etoile_selection()
+                    if self.shipSelected:
+                        self.parent.cibler_flotte(self.shipSelected, tags[1], tags[2])
+                        self.shipSelected = ""
+                        self.ma_selection = None
+                    else:
+                        self.montrer_etoile_selection()
                 elif tags[2] == "Flotte":
                     self.montrer_flotte_selection()
+                    self.shipSelected = self.ma_selection[1]
             elif ("Etoile" == tags[2] or "Porte_de_ver" == tags[2]): #Si c'est un objet qui nous appartient pas
                 if self.ma_selection: # Si une sélection de nos vaisseaux a été faites, on les envoi sur l'étoile avec "cibler_flotte"
                     self.parent.cibler_flotte(self.ma_selection[1], tags[1], tags[2])
                 self.ma_selection = None
-                self.canevas.delete("marqueur")
         else:  # Aucun tag => On a cliqué dans le vide, donc pas sur un objet de la carte.
             print("Region inconnue")
             self.ma_selection = None
-            self.canevas.delete("marqueur")
 
     def montrer_etoile_selection(self):
         self.cadreinfochoix.pack(fill=BOTH)
