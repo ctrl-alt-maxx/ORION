@@ -183,8 +183,8 @@ class Vue():
         """pour creer un cargo"""
         self.btncreercargo.bind("<Button>", self.creer_vaisseau)
 
-        # self.btncreervaisseau.pack()
-        # self.btncreercargo.pack()
+        self.btncreervaisseau.pack()
+        self.btncreercargo.pack()
 
         # creer boutonInstallation ici
         self.btnInstallation = Button(self.cadreinfochoix, text="Installation")
@@ -221,7 +221,8 @@ class Vue():
         s.configure("red.Horizontal.TProgressbar", foreground='red', background='red')
 
         self.cadreinfoimage = Frame(self.cadreoutils, width=200, height=228, background="black")
-        self.barrevie = Progressbar(self.cadreoutils, style="red.Horizontal.TProgressbar", orient=HORIZONTAL, mode="determinate", length=100)
+        self.barrevie = Progressbar(self.cadreoutils, style="red.Horizontal.TProgressbar", orient=HORIZONTAL,
+                                    mode="determinate", length=100)
 
         # MINI MAP
         self.cadreminimap = Frame(self.cadreoutils, height=200, width=200, bg="black")
@@ -474,8 +475,8 @@ class Vue():
         self.canevas.itemconfig(id, tags=(joueur, id, "Etoile",))
 
     # ajuster la liste des vaisseaux
-    def lister_objet(self, obj, id):
-        self.info_liste.insert(END, obj + "; " + id)
+    def lister_objet(self, obj, id, niveau):
+        self.info_liste.insert(END, obj + "; " + id + "; Nv." + str(niveau))
 
     def creer_vaisseau(self, evt):
         type_vaisseau = evt.widget.cget("text")
