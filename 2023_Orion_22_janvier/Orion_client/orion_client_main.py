@@ -237,6 +237,10 @@ class Controleur():
     def lister_objet(self, objet, id, niveau):
         self.vue.lister_objet(objet, id, niveau)
 
+    def recupEtoile(self, id):
+        recup = self.modele.recupererEtoile(id)
+        return recup
+
 
 if __name__ == "__main__":
     c = Controleur()
