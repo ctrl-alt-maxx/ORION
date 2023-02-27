@@ -171,9 +171,9 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
     def creervaisseau(self, params): #Fonction qui permet de créer un vaisseau \\\ À DÉPLACER DANS LA CLASSE ENTREPOT : IL FAUT CRÉER UN VAISSEAU DANS UN ENTREPOT, PAS PAR LE JOUEUR
         type_vaisseau = params[0]
         if type_vaisseau == "Cargo":
-            v = Cargo(self, self.nom, self.etoilemere.x + 10, self.etoilemere.y)
+            v = Cargo(self, self.nom, int(params[1]) + 10, int(params[2]))
         else:
-            v = Vaisseau(self, self.nom, self.etoilemere.x + 10, self.etoilemere.y, 1, "a",True,15,15,0)
+            v = Vaisseau(self, self.nom, int(params[1]) + 10, int(params[2]), 1, "a", True, 15, 15, 0)
         self.flotte[type_vaisseau][v.id] = v
 
         if self.nom == self.parent.parent.mon_nom:

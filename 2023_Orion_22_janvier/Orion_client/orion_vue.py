@@ -37,6 +37,7 @@ class Vue():
         # # variable pour suivre le trace du multiselect
         self.debut_selection = []
         self.selecteur_actif = None
+        self.shipSelected = ""
 
         #cree un bouton global que lon va pouvoir reutiliser
         self.boutonAmeliorerEtoile = Button()
@@ -54,6 +55,8 @@ class Vue():
 
         self.clickUneFoisSurInsta = 0 #pour que le frame ne reaparaisse pas si je clique 2 fois de suite sur le meme bouton
         self.clickUneFoisSurRessource = 0
+
+        self.selectedTags = None
 
     def demander_abandon(self):
         rep = askokcancel("Vous voulez vraiment quitter?")
@@ -201,7 +204,7 @@ class Vue():
         """pour creer un cargo"""
         self.btncreercargo.bind("<Button>", self.creer_vaisseau)
 
-        # self.btncreervaisseau.pack()
+        self.btncreervaisseau.pack()
         # self.btncreercargo.pack()
 
         # creer boutonInstallation ici--------------------------------------------------------------------------------------------
@@ -414,7 +417,7 @@ class Vue():
         yl = self.canevas.winfo_height()
 
     def afficher_decor(self, mod):
-        # on cree un arriere fond de petites etoieles NPC pour le look
+        # on cree un arriere fond de petites etoiles NPC pour le look
         for i in range(len(mod.etoiles) * 50):
             x = random.randrange(int(mod.largeur))
             y = random.randrange(int(mod.hauteur))
@@ -426,14 +429,14 @@ class Vue():
             t = i.taille * self.zoom
             self.canevas.create_oval(i.x - t, i.y - t, i.x + t, i.y + t,
                                      fill="grey80", outline=col,
-                                     tags=(i.proprietaire, str(i.id), "Etoile",))
+                                     tags=(i.proprietaire, str(i.id), "Etoile", i.x, i.y))
         # affichage des etoiles possedees par les joueurs
         for i in mod.joueurs.keys():
             for j in mod.joueurs[i].etoilescontrolees:
                 t = j.taille * self.zoom
                 self.canevas.create_oval(j.x - t, j.y - t, j.x + t, j.y + t,
                                          fill=mod.joueurs[i].couleur,
-                                         tags=(j.proprietaire, str(j.id), "Etoile"))
+                                         tags=(j.proprietaire, str(j.id), "Etoile", j.x, j.y))
                 # on affiche dans minimap
                 minix = j.x / self.modele.largeur * self.taille_minimap
                 miniy = j.y / self.modele.hauteur * self.taille_minimap
@@ -488,7 +491,7 @@ class Vue():
 
     def creer_vaisseau(self, evt):
         type_vaisseau = evt.widget.cget("text")
-        self.parent.creer_vaisseau(type_vaisseau)
+        self.parent.creer_vaisseau(type_vaisseau, self.selectedTags[3], self.selectedTags[4]) # Il faut que tu trouve comment changer les tags après une capture
         self.ma_selection = None
         self.canevas.delete("marqueur")
         self.cadreinfochoix.pack_forget()
@@ -570,24 +573,29 @@ class Vue():
                                  tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact"))
 
     def cliquer_cosmos(self, evt):  # DES QUE LON CLIQUE QUELQUE PART DANS LE JEU
-        t = self.canevas.gettags(CURRENT)  # self.canevas = Canvas(self.cadrejeu, width=800, height=600,
-        if t:  # il y a des tags
-            if t[0] == self.mon_nom:  # et
-                self.ma_selection = [self.mon_nom, t[1], t[2]]
-                if t[2] == "Etoile":
-                    self.montrer_etoile_selection()  # TAG LA SELECTION DE MON ETOILE
-                elif t[2] == "Flotte":
-                    self.montrer_flotte_selection()  # Ca tag mon vaisseau mais il faut enlever le tag quand je reclick dessus
-
-            elif ("Etoile" in t or "Porte_de_ver" in t) and t[0] != self.mon_nom:
-                if self.ma_selection:
-                    self.parent.cibler_flotte(self.ma_selection[1], t[1], t[2])
+        self.selectedTags = self.canevas.gettags(CURRENT)  # self.canevas = Canvas(self.cadrejeu, width=800, height=600,
+        tags = self.selectedTags
+        if tags:  # Il y a des tags => On a cliqué sur un objet de la carte (Vaisseau, Étoile, ...)
+            if tags[0] == self.mon_nom:
+                self.ma_selection = [self.mon_nom, tags[1], tags[2]]
+                if tags[2] == "Etoile":
+                    self.montrer_etoile_selection()
+                    if self.shipSelected:
+                        self.parent.cibler_flotte(self.shipSelected, tags[1], tags[2])
+                        self.shipSelected = ""
+                        self.ma_selection = None
+                    else:
+                        self.montrer_etoile_selection()
+                elif tags[2] == "Flotte":
+                    self.montrer_flotte_selection()
+                    self.shipSelected = self.ma_selection[1]
+            elif ("Etoile" == tags[2] or "Porte_de_ver" == tags[2]):  # Si c'est un objet qui nous appartient pas
+                if self.ma_selection:  # Si une sélection de nos vaisseaux a été faites, on les envoi sur l'étoile avec "cibler_flotte"
+                    self.parent.cibler_flotte(self.ma_selection[1], tags[1], tags[2])
                 self.ma_selection = None
-                self.canevas.delete("marqueur")
-        else:  # aucun tag => rien sous la souris - sinon au minimum il y aurait CURRENT
+        else:  # aucun tag => On a clické dans le vide donc aucun objet sur la carte
             print("Region inconnue")
             self.ma_selection = None
-            self.canevas.delete("marqueur")
 
     def montrer_etoile_selection(self):  # montrer le tag de letoile selectionne
         self.cadreinfochoix.pack(fill=BOTH)
