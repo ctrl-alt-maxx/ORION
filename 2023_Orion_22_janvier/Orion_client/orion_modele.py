@@ -42,7 +42,7 @@ class Ressources():
         self.tempsExtraction = rarete * rarete * 5;
 
 class Etoile():
-    def __init__(self, parent, x, y, nomEtoile, ressource, vie):
+    def __init__(self, parent, x, y, nomEtoile, ressources, vie):
 
         self.id = get_prochain_id()
         self.parent = parent
@@ -51,14 +51,23 @@ class Etoile():
         self.y = y
         self.taille = random.randrange(4, 8)
         self.nomEtoile = nomEtoile
-        self.ressources = ressource ## ressources = [] ressources
+        self.ressources = ressources ## ressources = [] ressources
         self.proprietaire = "neutre" #proprietaire = etoile owner
         self.installation = None #installation = [] des installations du joueur
         self.vaisseaux = None # [] de vaisseaux pose sur letoile
         self.estEclaire = False #etoile selectionne ou pas True ou False = False au debut du jeu
         self.niveauEtoile = 1 #niveau de l'étoile = 1/2/3 = toutes les étoiles seront de niveau 1 au debut du jeu
-        self.inventaire = None  # inventaire = [] d'inventaire de ce que possede le joueur
+        self.inventaire ={"Fer":0,
+                          "Cuivre":0,
+                          "Or":0,
+                          "Titane":0,
+                          "Hydrogene":0,
+                          "Plutonium":0,
+                          "Antimatiere":0}
+
+        # inventaire = [] d'inventaire de ce que possede le joueur
         self.vie = vie # nbr de vie de la planete
+
 
 class Position():
     def __init__(self, x, y):
@@ -267,6 +276,12 @@ class Modele():
         nb_trou = int((self.hauteur * self.largeur) / 5000000)
         self.creer_troudevers(nb_trou)
 
+    def recupererEtoile(self, id):
+        id_text = str(id)
+        for e in self.etoiles:
+            if e.id == id_text:
+                recup = e
+        return recup
 
     def creer_troudevers(self, n):
         bordure = 10
