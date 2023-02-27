@@ -196,9 +196,9 @@ class Vue():
 
         # IMAGE VAISSEAU + VIE
         self.cadreinfoimage = Frame(self.cadreinfo, width=200, height=228, background="black")
-        self.barrevie = Progressbar(self.cadreinfoimage, orient=HORIZONTAL, mode='determinate', length=100)
+        self.barrevie = Progressbar(self.cadreinfo, orient=HORIZONTAL, mode='determinate', length=100)
 
-        self.cadreinfoimage.pack(side=BOTTOM, fill=BOTH) # Debug, à cacher plus tard
+        self.cadreinfoimage.pack(fill=BOTH) # Debug, à cacher plus tard
         self.barrevie.pack(fill=BOTH)
 
         # MINI MAP
