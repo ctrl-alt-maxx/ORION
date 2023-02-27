@@ -10,7 +10,7 @@ import math
 import random
 import tkinter as tk
 
-#ffff
+#ffffgrgrgr
 class Vue():
     def __init__(self, parent, urlserveur, mon_nom, msg_initial):
         self.parent = parent
