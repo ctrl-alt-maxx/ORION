@@ -10,7 +10,7 @@ import math
 import random
 import tkinter as tk
 
-
+#ffff
 class Vue():
     def __init__(self, parent, urlserveur, mon_nom, msg_initial):
         self.parent = parent
@@ -38,10 +38,28 @@ class Vue():
         self.debut_selection = []
         self.selecteur_actif = None
 
+        #cree un bouton global que lon va pouvoir reutiliser
+        self.boutonAmeliorerEtoile = Button()
+        self.label_installation = Label()
+        self.label_ressource = Label()
+        self.label_hydrogene = Label()
+        self.label_fer = Label()
+        self.label_or = Label()
+        self.label_cuivre = Label()
+        self.label_antimatiere = Label()
+        self.label_pluto = Label()
+        self.label_titane = Label()
+        self.label_titre = Label()
+        self.canev = Canvas()
+
+        self.clickUneFoisSurInsta = 0 #pour que le frame ne reaparaisse pas si je clique 2 fois de suite sur le meme bouton
+        self.clickUneFoisSurRessource = 0
+
     def demander_abandon(self):
         rep = askokcancel("Vous voulez vraiment quitter?")
         if rep:
             self.root.after(500, self.root.destroy)
+
 
     ####### INTERFACES GRAPHIQUES
     def changer_cadre(self, nomcadre):
@@ -157,10 +175,8 @@ class Vue():
 
 
     def creer_cadre_outils(self):
-        self.cadreoutils = Frame(self.cadrepartie, width=200, height=200, bg="blue")  #petite fenetre sur la gauche (celle juste au dessus de la mini map)->ici que l<on affiche le menu
-
+        self.cadreoutils = Frame(self.cadrepartie, width=200, height=200, bg="red")  #petite fenetre sur la gauche (celle juste au dessus de la mini map)->ici que l<on affiche le menu
         self.cadreoutils.pack(side=LEFT, fill=Y)
-
         self.cadreinfo = Frame(self.cadreoutils, width=200, height=200, bg="darkgrey")#??????????
         self.cadreinfo.pack(fill=BOTH)
 
@@ -188,7 +204,7 @@ class Vue():
         # self.btncreervaisseau.pack()
         # self.btncreercargo.pack()
 
-        # creer boutonInstallation ici
+        # creer boutonInstallation ici--------------------------------------------------------------------------------------------
         self.btnInstallation = Button(self.cadreinfochoix, text="Installation")
         """pour ouvrir le menu d'installation"""
         self.btnInstallation.config(command=self.methode_installation)
@@ -216,7 +232,7 @@ class Vue():
 
         self.cadreinfoliste.pack(side=BOTTOM, expand=1, fill=BOTH)
 
-        # MINI MAP
+        # MINI MAP-----------------------------------------------------------------------
         self.cadreminimap = Frame(self.cadreoutils, height=200, width=200, bg="black")
         self.canevas_minimap = Canvas(self.cadreminimap, width=self.taille_minimap, height=self.taille_minimap,
                                       bg="pink")
@@ -237,58 +253,67 @@ class Vue():
         self.parent.connecter_serveur(url_serveur)
 
     def methode_installation(self):  # afficher
-        print("xxxxxxx")
-        # enlever les autre label
-        # lFer.pack_forget()
-        # lOr.pack_forget()
-        # lCuivre.pack_forget()
-        # lHydrogene.pack_forget()
-        # lAntimatiere.pack_forget()
-        # lPlutonium.pack_forget()
-        # lTitane.pack_forget()
+        self.clickUneFoisSurRessource = 0
+        self.clickUneFoisSurInsta += 1
+        print(self.clickUneFoisSurInsta)
 
-        print("xxxxxxx")
-        testHp = "3"  # il faudra recuperer la vrai valeur ici
+        #ENLEVER LABEL RESSOURCES
+        if self.clickUneFoisSurInsta == 1:
+            self.label_or.pack_forget()
+            self.label_cuivre.pack_forget()
+            self.label_antimatiere.pack_forget()
+            self.label_pluto.pack_forget()
+            self.label_titane.pack_forget()
+            self.label_fer.pack_forget()
+            self.label_hydrogene.pack_forget()
+            testHp = "3"  # il faudra recuperer la vrai valeur ici
+            self.label_titre = Label(self.cadreoutils, text="Usine Ressource")
+            self.label_titre.pack(side=TOP)
+            #self.boutonAmeliorerEtoile = Button(self.cadreoutils, text="Ameliorer Étoile")
+            #self.boutonAmeliorerEtoile.pack()
 
-        label = Label(self.cadreoutils, text="hp Etoile:" + testHp, bd=1, relief="solid", width=15, height=4, anchor=W,
-                      justify=LEFT)
-        label.pack(side=LEFT)
+            self.label_installation = Label(self.cadreoutils, text="Description: usine pour stocker ressource", bd=1, relief="solid", width=25, height=4, anchor=W,
+                                            justify=LEFT)
+            self.label_installation.pack(side=LEFT)
 
-        btnAmelioEtoile = Button(self.cadreoutils, text="Ameliorer Étoile")  # faire fonction pour unpack()
-        btnAmelioEtoile.pack()
+        #btnAmelioEtoile = Button(self.cadreoutils, text="Ameliorer Étoile")  # faire fonction pour unpack()
+        #btnAmelioEtoile.pack()
 
     def methode_resource(self):  # afficher
+        self.clickUneFoisSurInsta = 0
+        self.clickUneFoisSurRessource += 1
+       # global lFer ect...
+        if self.clickUneFoisSurRessource == 1:
+            self.label_titre.pack_forget()
+            self.label_installation.pack_forget()#efface le label
+            self.boutonAmeliorerEtoile.pack_forget()
+            self.label_fer = Label(self.cadreoutils, text="Fer", anchor=CENTER, width=25, height=2, border=2, borderwidth=1,
+                         relief="solid", bg="green")
+            self.label_hydrogene = Label(self.cadreoutils, text="Hydrogene", anchor=CENTER, width=25, height=2, border=2,
+                               borderwidth=1, relief="solid", bg="green")
+            self.label_or = Label(self.cadreoutils, text="Or", anchor=CENTER, width=25, height=2, border=2, borderwidth=1,
+                        relief="solid", bg="yellow")
 
-        global lFer
-        global lOr
-        global lCuivre
-        global lHydrogene
-        global lAntimatiere
-        global lPlutonium
-        global lTitane
+            self.label_cuivre = Label(self.cadreoutils, text="Cuivre", anchor=CENTER, width=25, height=2, border=2, borderwidth=1,
+                            relief="solid", bg="green")
+            self.label_antimatiere = Label(self.cadreoutils, text="????", anchor=CENTER, width=25, height=2, border=2, borderwidth=1,
+                                 relief="solid", bg="purple")
+            self.label_pluto = Label(self.cadreoutils, text="Plutonium", anchor=CENTER, width=25, height=2, border=2,
+                               borderwidth=1, relief="solid", bg="yellow")
+            self.label_titane = Label(self.cadreoutils, text="Titane", anchor=CENTER, width=25, height=2, border=2, borderwidth=1,
+                            relief="solid", bg="red")
+            #lOr = Label(self.cadreoutils, text="Or", anchor=CENTER, width=25, height=2, border=2, borderwidth=1,
+                       # relief="solid", bg="yellow")
 
-        lFer = Label(self.cadreoutils, text="Fer", anchor=CENTER, width=25, height=2, border=2, borderwidth=1,
-                     relief="solid", bg="green")
-        lHydrogene = Label(self.cadreoutils, text="Hydrogene", anchor=CENTER, width=25, height=2, border=2,
-                           borderwidth=1, relief="solid", bg="green")
-        lOr = Label(self.cadreoutils, text="Or", anchor=CENTER, width=25, height=2, border=2, borderwidth=1,
-                    relief="solid", bg="yellow")
-        lCuivre = Label(self.cadreoutils, text="Cuivre", anchor=CENTER, width=25, height=2, border=2, borderwidth=1,
-                        relief="solid", bg="green")
-        lTitane = Label(self.cadreoutils, text="Titane", anchor=CENTER, width=25, height=2, border=2, borderwidth=1,
-                        relief="solid", bg="red")
-        lPlutonium = Label(self.cadreoutils, text="Plutonium", anchor=CENTER, width=25, height=2, border=2,
-                           borderwidth=1, relief="solid", bg="yellow")
-        lAntimatiere = Label(self.cadreoutils, text="????", anchor=CENTER, width=25, height=2, border=2, borderwidth=1,
-                             relief="solid", bg="purple")
+            self.label_fer.pack()
+            self.label_or.pack()
+            self.label_cuivre.pack()
+            self.label_antimatiere.pack()
+            self.label_pluto.pack()
+            self.label_titane.pack()
+            self.label_hydrogene.pack()
+        #lPlutonium.pack()
 
-        lFer.pack()
-        lCuivre.pack()
-        lOr.pack()
-        lTitane.pack()
-        lHydrogene.pack()
-        lPlutonium.pack()
-        lAntimatiere.pack()
 
     def centrer_liste_objet(self, evt):
         info = self.info_liste.get(self.info_liste.curselection())
