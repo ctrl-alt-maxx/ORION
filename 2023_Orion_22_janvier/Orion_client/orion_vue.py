@@ -185,7 +185,8 @@ class Vue():
 
         self.scroll_liste_Y = Scrollbar(self.cadreinfoliste, orient=VERTICAL)
         self.info_liste = Listbox(self.cadreinfoliste, width=20, height=6, yscrollcommand=self.scroll_liste_Y.set)
-        self.info_liste.bind("<Button-3>", self.centrer_liste_objet)
+        self.info_liste.bind("<Button-1>", self.info_liste_objet)
+        self.info_liste.bind("<Button-3>", self.info_liste_objet)
         self.info_liste.grid(column=0, row=0, sticky=W + E + N + S)
         self.scroll_liste_Y.grid(column=1, row=0, sticky=N + S)
 
@@ -195,11 +196,12 @@ class Vue():
         self.cadreinfoliste.pack(fill=BOTH)
 
         # IMAGE VAISSEAU + VIE
-        self.cadreinfoimage = Frame(self.cadreinfo, width=200, height=228, background="black")
-        self.barrevie = Progressbar(self.cadreinfo, orient=HORIZONTAL, mode='determinate', length=100)
+        s = Style()
+        s.theme_use('clam')
+        s.configure("red.Horizontal.TProgressbar", foreground='red', background='red')
 
-        self.cadreinfoimage.pack(fill=BOTH) # Debug, à cacher plus tard
-        self.barrevie.pack(fill=BOTH)
+        self.cadreinfoimage = Frame(self.cadreoutils, width=200, height=228, background="black")
+        self.barrevie = Progressbar(self.cadreoutils, style="red.Horizontal.TProgressbar", orient=HORIZONTAL, mode="determinate", length=100)
 
         # MINI MAP
         self.cadreminimap = Frame(self.cadreoutils, height=200, width=200, bg="black")
@@ -221,14 +223,17 @@ class Vue():
         url_serveur = self.urlsplash.get()
         self.parent.connecter_serveur(url_serveur)
 
-    def centrer_liste_objet(self, evt):
+    def info_liste_objet(self, evt):
         info = self.info_liste.get(self.info_liste.curselection())
         print(info)
         liste_separee = info.split(";")
         type_vaisseau = liste_separee[0]
         id = liste_separee[1][1:]
         obj = self.modele.joueurs[self.mon_nom].flotte[type_vaisseau][id]
-        self.centrer_objet(obj)
+        if evt.num == 1:
+            self.afficher_info_vaisseau(obj)
+        else:
+            self.centrer_objet(obj)
 
     def calc_objets(self, evt):
         print("Univers = ", len(self.canevas.find_all()))
@@ -378,6 +383,12 @@ class Vue():
 
         self.canevas.xview_moveto(pctx)
         self.canevas.yview_moveto(pcty)
+
+    def afficher_info_vaisseau(self, objet):
+        self.barrevie.value = objet.Vie
+
+        self.cadreinfoimage.pack(fill=BOTH)  # Debug, à remplacer par une image plus tard
+        self.barrevie.pack(fill=BOTH)
 
     # change l'appartenance d'une etoile et donc les propriétés des dessins les représentants
     def afficher_etoile(self, joueur, cible):
