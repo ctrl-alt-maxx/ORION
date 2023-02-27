@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 ##  version 2022 14 mars - jmd
-
+import math
 import random
 import ast
 from id import *
@@ -42,7 +42,7 @@ class Ressources():
         self.tempsExtraction = rarete * rarete * 5;
 
 class Etoile():
-    def __init__(self, parent, x, y, nomEtoile, ressource, proprietaire,installation,vaisseaux,inventaire, vie):
+    def __init__(self, parent, x, y, nomEtoile, ressources, vie):
 
         self.id = get_prochain_id()
         self.parent = parent
@@ -51,14 +51,23 @@ class Etoile():
         self.y = y
         self.taille = random.randrange(4, 8)
         self.nomEtoile = nomEtoile
-        self.ressources = ressource ## ressources = [] ressources
-        self.proprietaire = proprietaire #proprietaire = etoile owner
-        self.installation = installation #installation = [] des installations du joueur
-        self.vaisseaux = vaisseaux # [] de vaisseaux pose sur letoile
+        self.ressources = ressources ## ressources = [] ressources
+        self.proprietaire = "neutre" #proprietaire = etoile owner
+        self.installation = None #installation = [] des installations du joueur
+        self.vaisseaux = None # [] de vaisseaux pose sur letoile
         self.estEclaire = False #etoile selectionne ou pas True ou False = False au debut du jeu
         self.niveauEtoile = 1 #niveau de l'étoile = 1/2/3 = toutes les étoiles seront de niveau 1 au debut du jeu
-        self.inventaire = None  # inventaire = [] d'inventaire de ce que possede le joueur
+        self.inventaire ={"Fer":0,
+                          "Cuivre":0,
+                          "Or":0,
+                          "Titane":0,
+                          "Hydrogene":0,
+                          "Plutonium":0,
+                          "Antimatiere":0}
+
+        # inventaire = [] d'inventaire de ce que possede le joueur
         self.vie = vie # nbr de vie de la planete
+
 
 class Position():
     def __init__(self, x, y):
@@ -256,9 +265,23 @@ class Modele():
         self.etoiles = []
         self.trou_de_vers = []
         self.cadre_courant = None
+        self.ressources = {"Fer": Ressources("Fer", 1),
+                           "Cuivre": Ressources("Cuivre", 1),
+                           "Or": Ressources("Or", 2),
+                           "Titane": Ressources("Titane", 3),
+                           "Hydrogene": Ressources("Hydrogene", 1),
+                           "Plutonium": Ressources("Plutonium", 2),
+                           "Antimatiere": Ressources("Antimatiere", 3)}
         self.creeretoiles(joueurs)
         nb_trou = int((self.hauteur * self.largeur) / 5000000)
         self.creer_troudevers(nb_trou)
+
+    def recupererEtoile(self, id):
+        id_text = str(id)
+        for e in self.etoiles:
+            if e.id == id_text:
+                recup = e
+        return recup
 
     def creer_troudevers(self, n):
         bordure = 10
@@ -274,9 +297,9 @@ class Modele():
         for i in range(self.nb_etoiles):
             x = random.randrange(self.largeur - (2 * bordure)) + bordure
             y = random.randrange(self.hauteur - (2 * bordure)) + bordure
-            nom = "Etoile" + str(i)
+            nom:str = "Etoile" + str(i)
             ressourcesExploitables = self.genererRessources()
-            self.etoiles.append(Etoile(self,x,y,nom,ressourcesExploitables,"neutre",None,None,None,100))
+            self.etoiles.append(Etoile(self,x,y,nom,ressourcesExploitables,100))
         np = len(joueurs) #np = number of players
         etoile_occupee = []
         while np:   #Choisi les étoiles mères
@@ -293,10 +316,63 @@ class Modele():
 
 
     def genererRessources(self):
-        #Ajouter algorithme de génération des ressources ici
-        ressourcesExploitables = {"Fer": 30,
-                                  "Hydrogène": 45}
+        #Ajouter algorithme de génération des ressources ici - ressources possibles : Fer, Cuivre, Or, Titane || Hydrogène, Plutonium, Antimatière
+        ressourcesExploitables = []
+        ressource = []
+        nbRessources:int = 1
+        isFer:bool = True #il y aua toujours du fer sur une étoile
+        isCuivre:bool = False
+        isOr:bool = False
+        isTitane:bool = False
+
+        isHydrogene:bool = False
+        isPlutonium:bool = False
+        isAntimatiere:bool = False
+
+        rareteMateriaux:int = random.randrange(0, 100) #représente un "dé"
+        rareteEnergie:int = random.randrange(0, 100)
+        distTitane:float = 0
+
+        #dé des matériaux
+        if rareteMateriaux >= 40:
+            isCuivre = True
+            nbRessources +=1
+            if rareteMateriaux >= 70:
+                isOr = True
+                nbRessources += 1
+                if rareteMateriaux >= 90:
+                    isTitane = True
+                    nbRessources += 1
+        #dé des énergies
+        if rareteEnergie >= 25:
+            isHydrogene = True
+            nbRessources += 1
+            if rareteMateriaux >= 75:
+                isPlutonium = True
+                nbRessources += 1
+                if rareteEnergie >= 97:
+                    isAntimatiere = True
+                    nbRessources += 1
+
+        distFer:float = self.distributionFer(nbRessources) #distribution du fer / étoile (un %)
+        distFer = round(distFer,2)
+        ressource.append("Fer")
+        ressource.append(distFer)
+        ressourcesExploitables.append(ressource)
+        print(ressourcesExploitables)
+        if isCuivre:
+            aCuivre:float = ((self.distributionFer(4) + 0.4) - 1) / 2 #Pour calculer le taux de variation de l'équation de distribution du cuivre
+            distCuivre:float = aCuivre * nbRessources + 0.9
+            distCuivre = round(distCuivre,2)
+            ressource.append("Cuivre")
+            ressource.append(distCuivre)
+            ressourcesExploitables.append(ressource)
+
+        print(ressourcesExploitables)
         return ressourcesExploitables
+
+    def distributionFer(self, nbRessources:int):
+        return -0.481 * math.log(nbRessources) + 1.0072
 
     ##############################################################################
     def jouer_prochain_coup(self, cadre):

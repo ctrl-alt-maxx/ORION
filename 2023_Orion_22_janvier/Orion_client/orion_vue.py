@@ -52,6 +52,12 @@ class Vue():
         self.label_titane = Label()
         self.label_titre = Label()
         self.canev = Canvas()
+        self.boutonConstruire = Button()
+        self.label_entrepotVaisseau = Label()
+        self.boutonConstruireEntrepot = Button()
+
+        self.label_qte_fer = Label()
+
 
         self.clickUneFoisSurInsta = 0 #pour que le frame ne reaparaisse pas si je clique 2 fois de suite sur le meme bouton
         self.clickUneFoisSurRessource = 0
@@ -208,16 +214,19 @@ class Vue():
         # self.btncreercargo.pack()
 
         # creer boutonInstallation ici--------------------------------------------------------------------------------------------
-        self.btnInstallation = Button(self.cadreinfochoix, text="Installation")
+        self.btnInstallation = Button(self.cadreinfochoix, text="Installations")
         """pour ouvrir le menu d'installation"""
         self.btnInstallation.config(command=self.methode_installation)
         self.btnInstallation.pack()
 
         # creer boutonResource ici
-        self.btnResource = Button(self.cadreinfochoix, text="Resource")
+        self.btnResource = Button(self.cadreinfochoix, text="Ressources")
         """pour ouvrir le menu de ressource"""
         self.btnResource.config(command=self.methode_resource)
         self.btnResource.pack()
+
+        self.boutonAmeliorerEtoile = Button(self.cadreinfochoix, text="Ameliorer Etoile")
+        self.boutonAmeliorerEtoile.pack()
         self.eteAfficher = False
 
         # ---------------------------------------------------------------------------------------------------------------------------------
@@ -270,51 +279,75 @@ class Vue():
             self.label_fer.pack_forget()
             self.label_hydrogene.pack_forget()
             testHp = "3"  # il faudra recuperer la vrai valeur ici
+
             self.label_titre = Label(self.cadreoutils, text="Usine Ressource")
             self.label_titre.pack(side=TOP)
-            #self.boutonAmeliorerEtoile = Button(self.cadreoutils, text="Ameliorer Étoile")
-            #self.boutonAmeliorerEtoile.pack()
 
-            self.label_installation = Label(self.cadreoutils, text="Description: usine pour stocker ressource", bd=1, relief="solid", width=25, height=4, anchor=W,
-                                            justify=LEFT)
-            self.label_installation.pack(side=LEFT)
 
-        #btnAmelioEtoile = Button(self.cadreoutils, text="Ameliorer Étoile")  # faire fonction pour unpack()
-        #btnAmelioEtoile.pack()
+            self.label_installation = Label(self.cadreoutils, text="Description: usine pour stocker ressource", bd=1,
+                                            relief="solid", width=25, height=4, anchor=W,
+                                            )
+            self.label_installation.pack()
+
+            self.boutonConstruire = Button(self.cadreoutils, text="Construire Usine")
+            self.boutonConstruire.pack()
+
+            self.label_entrepotVaisseau = Label(self.cadreoutils, text="Entrepot a Vaisseaux", bd=1, relief="solid", width=25, height=8, anchor=W)
+            self.label_entrepotVaisseau.pack()
+
+            self.boutonConstruireEntrepot = Button(self.cadreoutils, text="Construire Entrepot")
+            self.boutonConstruireEntrepot.pack()
+
 
     def methode_resource(self):  # afficher
+
         self.clickUneFoisSurInsta = 0
         self.clickUneFoisSurRessource += 1
-       # global lFer ect...
+        self.recup = self.parent.recupEtoile(self.ma_selection[1])
         if self.clickUneFoisSurRessource == 1:
+            self.boutonConstruire.pack_forget()
             self.label_titre.pack_forget()
-            self.label_installation.pack_forget()#efface le label
+            self.label_installation.pack_forget()
+            self.label_entrepotVaisseau.pack_forget()
             self.boutonAmeliorerEtoile.pack_forget()
-            self.label_fer = Label(self.cadreoutils, text="Fer", anchor=CENTER, width=25, height=2, border=2, borderwidth=1,
-                         relief="solid", bg="green")
-            self.label_hydrogene = Label(self.cadreoutils, text="Hydrogene", anchor=CENTER, width=25, height=2, border=2,
-                               borderwidth=1, relief="solid", bg="green")
-            self.label_or = Label(self.cadreoutils, text="Or", anchor=CENTER, width=25, height=2, border=2, borderwidth=1,
-                        relief="solid", bg="yellow")
+            self.boutonConstruireEntrepot.pack_forget()
+            self.boutonAmeliorerEtoile.pack_forget()
 
-            self.label_cuivre = Label(self.cadreoutils, text="Cuivre", anchor=CENTER, width=25, height=2, border=2, borderwidth=1,
-                            relief="solid", bg="green")
-            self.label_antimatiere = Label(self.cadreoutils, text="????", anchor=CENTER, width=25, height=2, border=2, borderwidth=1,
-                                 relief="solid", bg="purple")
-            self.label_pluto = Label(self.cadreoutils, text="Plutonium", anchor=CENTER, width=25, height=2, border=2,
+            self.label_fer = Label(self.cadreoutils, text="Fer : " + str(self.recup.inventaire.get("Fer")), anchor=CENTER, width=25, height=2, border=2, borderwidth=1,
+                         relief="solid", bg="green")
+
+            self.label_cuivre = Label(self.cadreoutils, text="Cuivre : " + str(self.recup.inventaire.get("Cuivre")), anchor=CENTER, width=25, height=2, border=2,
+                                      borderwidth=1,
+                                      relief="solid", bg="green")
+
+            self.label_or = Label(self.cadreoutils, text="Or : " + str(self.recup.inventaire.get("Or")), anchor=CENTER, width=25, height=2, border=2,
+                                  borderwidth=1,
+                                  relief="solid", bg="yellow")
+
+            self.label_titane = Label(self.cadreoutils, text="Titane : " + str(self.recup.inventaire.get("Titane")), anchor=CENTER, width=25, height=2, border=2,
+                                      borderwidth=1,
+                                      relief="solid", bg="red")
+
+            self.label_hydrogene = Label(self.cadreoutils, text="Hydrogene : " + str(self.recup.inventaire.get("Hydrogene")), anchor=CENTER, width=25, height=2, border=2,
+                               borderwidth=1, relief="solid", bg="green")
+
+            self.label_pluto = Label(self.cadreoutils, text="Plutonium : " + str(self.recup.inventaire.get("Plutonium")), anchor=CENTER, width=25, height=2, border=2,
                                borderwidth=1, relief="solid", bg="yellow")
-            self.label_titane = Label(self.cadreoutils, text="Titane", anchor=CENTER, width=25, height=2, border=2, borderwidth=1,
-                            relief="solid", bg="red")
+
+            self.label_antimatiere = Label(self.cadreoutils, text="???? : " + str(self.recup.inventaire.get("Antimatiere")), anchor=CENTER, width=25, height=2, border=2,
+                                           borderwidth=1,
+                                           relief="solid", bg="purple")
+
             #lOr = Label(self.cadreoutils, text="Or", anchor=CENTER, width=25, height=2, border=2, borderwidth=1,
                        # relief="solid", bg="yellow")
 
             self.label_fer.pack()
-            self.label_or.pack()
             self.label_cuivre.pack()
-            self.label_antimatiere.pack()
-            self.label_pluto.pack()
+            self.label_or.pack()
             self.label_titane.pack()
             self.label_hydrogene.pack()
+            self.label_pluto.pack()
+            self.label_antimatiere.pack()
         #lPlutonium.pack()
 
 
@@ -592,6 +625,7 @@ class Vue():
             elif ("Etoile" == tags[2] or "Porte_de_ver" == tags[2]):  # Si c'est un objet qui nous appartient pas
                 if self.ma_selection:  # Si une sélection de nos vaisseaux a été faites, on les envoi sur l'étoile avec "cibler_flotte"
                     self.parent.cibler_flotte(self.ma_selection[1], tags[1], tags[2])
+
                 self.ma_selection = None
         else:  # aucun tag => On a clické dans le vide donc aucun objet sur la carte
             print("Region inconnue")
