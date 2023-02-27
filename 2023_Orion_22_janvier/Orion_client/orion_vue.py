@@ -155,7 +155,8 @@ class Vue():
         return self.cadrepartie
 
     def creer_cadre_outils(self):
-        self.cadreoutils = Frame(self.cadrepartie, width=200, height=200, bg="darkgrey")  #petite fenetre sur la gauche (celle juste au dessus de la mini map)
+        self.cadreoutils = Frame(self.cadrepartie, width=200, height=200, bg="blue")  #petite fenetre sur la gauche (celle juste au dessus de la mini map)->ici que l<on affiche le menu
+
         self.cadreoutils.pack(side=LEFT, fill=Y)
 
         self.cadreinfo = Frame(self.cadreoutils, width=200, height=200, bg="darkgrey")#??????????
@@ -171,14 +172,33 @@ class Vue():
         self.btnmini.pack()
 
         # PETITE FENETRE POUR LES 2 BOUTONS VAISSEAU ET CARGO-----------------------------------------------------------------------------
-        self.cadreinfochoix = Frame(self.cadreinfo, height=200, width=200,
-                                    bg="blue")  # fenetre ou il y a bouton vaisseau et cargo
-        self.btncreervaisseau = Button(self.cadreinfochoix, text="Vaisseau")  # pour creer un vaisseau
+        self.cadreinfochoix = Frame(self.cadreinfo, height=200, width=200, bg="light grey")
+        """fenetre ou il y a bouton vaisseau et cargo"""
+
+        self.btncreervaisseau = Button(self.cadreinfochoix, text="Vaisseau")
+        """pour creer un vaisseau"""
         self.btncreervaisseau.bind("<Button>", self.creer_vaisseau)
+
         self.btncreercargo = Button(self.cadreinfochoix, text="Cargo")
+        """pour creer un cargo"""
         self.btncreercargo.bind("<Button>", self.creer_vaisseau)
-        self.btncreervaisseau.pack()
-        self.btncreercargo.pack()
+
+        # self.btncreervaisseau.pack()
+        # self.btncreercargo.pack()
+
+        # creer boutonInstallation ici
+        self.btnInstallation = Button(self.cadreinfochoix, text="Installation")
+        """pour ouvrir le menu d'installation"""
+        self.btnInstallation.config(command=self.methode_installation)
+        self.btnInstallation.pack()
+
+        # creer boutonResource ici
+        self.btnResource = Button(self.cadreinfochoix, text="Resource")
+        """pour ouvrir le menu de ressource"""
+        self.btnResource.config(command=self.methode_resource)
+        self.btnResource.pack()
+        self.eteAfficher = False
+
         # ---------------------------------------------------------------------------------------------------------------------------------
 
         self.cadreinfoliste = Frame(self.cadreinfo)
@@ -222,6 +242,60 @@ class Vue():
         self.btnreset.config(state=NORMAL)
         url_serveur = self.urlsplash.get()
         self.parent.connecter_serveur(url_serveur)
+
+    def methode_installation(self):  # afficher
+        print("xxxxxxx")
+        # enlever les autre label
+        # lFer.pack_forget()
+        # lOr.pack_forget()
+        # lCuivre.pack_forget()
+        # lHydrogene.pack_forget()
+        # lAntimatiere.pack_forget()
+        # lPlutonium.pack_forget()
+        # lTitane.pack_forget()
+
+        print("xxxxxxx")
+        testHp = "3"  # il faudra recuperer la vrai valeur ici
+
+        label = Label(self.cadreoutils, text="hp Etoile:" + testHp, bd=1, relief="solid", width=15, height=4, anchor=W,
+                      justify=LEFT)
+        label.pack(side=LEFT)
+
+        btnAmelioEtoile = Button(self.cadreoutils, text="Ameliorer Étoile")  # faire fonction pour unpack()
+        btnAmelioEtoile.pack()
+
+    def methode_resource(self):  # afficher
+
+        global lFer
+        global lOr
+        global lCuivre
+        global lHydrogene
+        global lAntimatiere
+        global lPlutonium
+        global lTitane
+
+        lFer = Label(self.cadreoutils, text="Fer", anchor=CENTER, width=25, height=2, border=2, borderwidth=1,
+                     relief="solid", bg="green")
+        lHydrogene = Label(self.cadreoutils, text="Hydrogene", anchor=CENTER, width=25, height=2, border=2,
+                           borderwidth=1, relief="solid", bg="green")
+        lOr = Label(self.cadreoutils, text="Or", anchor=CENTER, width=25, height=2, border=2, borderwidth=1,
+                    relief="solid", bg="yellow")
+        lCuivre = Label(self.cadreoutils, text="Cuivre", anchor=CENTER, width=25, height=2, border=2, borderwidth=1,
+                        relief="solid", bg="green")
+        lTitane = Label(self.cadreoutils, text="Titane", anchor=CENTER, width=25, height=2, border=2, borderwidth=1,
+                        relief="solid", bg="red")
+        lPlutonium = Label(self.cadreoutils, text="Plutonium", anchor=CENTER, width=25, height=2, border=2,
+                           borderwidth=1, relief="solid", bg="yellow")
+        lAntimatiere = Label(self.cadreoutils, text="????", anchor=CENTER, width=25, height=2, border=2, borderwidth=1,
+                             relief="solid", bg="purple")
+
+        lFer.pack()
+        lCuivre.pack()
+        lOr.pack()
+        lTitane.pack()
+        lHydrogene.pack()
+        lPlutonium.pack()
+        lAntimatiere.pack()
 
     def info_liste_objet(self, evt):
         info = self.info_liste.get(self.info_liste.curselection())
@@ -275,6 +349,7 @@ class Vue():
 
     def reset_partie(self):
         rep = self.parent.reset_partie()
+
 
     def creer_partie(self):
         nom = self.nomsplash.get()
@@ -399,8 +474,8 @@ class Vue():
         self.canevas.itemconfig(id, tags=(joueur, id, "Etoile",))
 
     # ajuster la liste des vaisseaux
-    def lister_objet(self, obj, id, niveau):
-        self.info_liste.insert(END, obj + "; " + id + "; Niv. " + str(niveau))
+    def lister_objet(self, obj, id):
+        self.info_liste.insert(END, obj + "; " + id)
 
     def creer_vaisseau(self, evt):
         type_vaisseau = evt.widget.cget("text")
@@ -408,6 +483,8 @@ class Vue():
         self.ma_selection = None
         self.canevas.delete("marqueur")
         self.cadreinfochoix.pack_forget()
+
+
 
     def afficher_jeu(self):#LA ON AFFICHE BEAUCOUP DE CHOSE!!!:)-------------------------------------------------------------
         mod = self.modele
