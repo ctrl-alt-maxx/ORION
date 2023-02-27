@@ -2,13 +2,14 @@
 ##  version 2022 14 mars - jmd
 
 from tkinter import *
+from tkinter.ttk import *
 from tkinter.simpledialog import *
 from tkinter.messagebox import *
 from helper import Helper as hlp
 import math
+from PIL import Image
 
 import random
-import tkinter as tk
 
 #ffff
 class Vue():
@@ -180,9 +181,6 @@ class Vue():
         self.cadrejeu.pack(side=LEFT, expand=1, fill=BOTH)
         return self.cadrepartie
 
-
-
-
     def creer_cadre_outils(self):
         self.cadreoutils = Frame(self.cadrepartie, width=200, height=200, bg="red")  #petite fenetre sur la gauche (celle juste au dessus de la mini map)->ici que l<on affiche le menu
         self.cadreoutils.pack(side=LEFT, fill=Y)
@@ -235,14 +233,24 @@ class Vue():
 
         self.scroll_liste_Y = Scrollbar(self.cadreinfoliste, orient=VERTICAL)
         self.info_liste = Listbox(self.cadreinfoliste, width=20, height=6, yscrollcommand=self.scroll_liste_Y.set)
-        self.info_liste.bind("<Button-3>", self.centrer_liste_objet)
+        self.info_liste.bind("<Button-1>", self.info_liste_objet)
+        self.info_liste.bind("<Button-3>", self.info_liste_objet)
         self.info_liste.grid(column=0, row=0, sticky=W + E + N + S)
         self.scroll_liste_Y.grid(column=1, row=0, sticky=N + S)
 
         self.cadreinfoliste.columnconfigure(0, weight=1)
         self.cadreinfoliste.rowconfigure(0, weight=1)
 
-        self.cadreinfoliste.pack(side=BOTTOM, expand=1, fill=BOTH)
+        self.cadreinfoliste.pack(fill=BOTH)
+
+        # IMAGE VAISSEAU + VIE
+        s = Style()
+        s.theme_use('clam')
+        s.configure("red.Horizontal.TProgressbar", foreground='red', background='red')
+
+        self.cadreinfoimage = Frame(self.cadreoutils, width=200, height=228, background="black")
+        self.barrevie = Progressbar(self.cadreoutils, style="red.Horizontal.TProgressbar", orient=HORIZONTAL,
+                                    mode="determinate", length=100)
 
         # MINI MAP-----------------------------------------------------------------------
         self.cadreminimap = Frame(self.cadreoutils, height=200, width=200, bg="black")
@@ -351,14 +359,17 @@ class Vue():
         #lPlutonium.pack()
 
 
-    def centrer_liste_objet(self, evt):
+    def info_liste_objet(self, evt):
         info = self.info_liste.get(self.info_liste.curselection())
         print(info)
         liste_separee = info.split(";")
         type_vaisseau = liste_separee[0]
         id = liste_separee[1][1:]
         obj = self.modele.joueurs[self.mon_nom].flotte[type_vaisseau][id]
-        self.centrer_objet(obj)
+        if evt.num == 1:
+            self.afficher_info_vaisseau(obj)
+        else:
+            self.centrer_objet(obj)
 
     def calc_objets(self, evt):
         print("Univers = ", len(self.canevas.find_all()))
@@ -510,6 +521,12 @@ class Vue():
         self.canevas.xview_moveto(pctx)
         self.canevas.yview_moveto(pcty)
 
+    def afficher_info_vaisseau(self, objet):
+        self.barrevie.value = objet.Vie
+
+        self.cadreinfoimage.pack(fill=BOTH)  # Debug, à remplacer par une image plus tard
+        self.barrevie.pack(fill=BOTH)
+
     # change l'appartenance d'une etoile et donc les propriétés des dessins les représentants
     def afficher_etoile(self, joueur, cible):
         joueur1 = self.modele.joueurs[joueur]
@@ -519,8 +536,8 @@ class Vue():
         self.canevas.itemconfig(id, tags=(joueur, id, "Etoile",))
 
     # ajuster la liste des vaisseaux
-    def lister_objet(self, obj, id):
-        self.info_liste.insert(END, obj + "; " + id)
+    def lister_objet(self, obj, id, niveau):
+        self.info_liste.insert(END, obj + "; " + id + "; Nv." + str(niveau))
 
     def creer_vaisseau(self, evt):
         type_vaisseau = evt.widget.cget("text")

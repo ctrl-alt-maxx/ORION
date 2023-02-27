@@ -234,8 +234,8 @@ class Controleur():
     def afficher_etoile(self, joueur, cible):
         self.vue.afficher_etoile(joueur, cible)
 
-    def lister_objet(self, objet, id):
-        self.vue.lister_objet(objet, id)
+    def lister_objet(self, objet, id, niveau):
+        self.vue.lister_objet(objet, id, niveau)
 
     def recupEtoile(self, id):
         recup = self.modele.recupererEtoile(id)
