@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 ##  version 2022 14 mars - jmd
-
+import math
 import random
 import ast
 from id import *
@@ -256,9 +256,6 @@ class Modele():
         self.etoiles = []
         self.trou_de_vers = []
         self.cadre_courant = None
-        self.creeretoiles(joueurs)
-        nb_trou = int((self.hauteur * self.largeur) / 5000000)
-        self.creer_troudevers(nb_trou)
         self.ressources = {"Fer": Ressources("Fer", 1),
                            "Cuivre": Ressources("Cuivre", 1),
                            "Or": Ressources("Or", 2),
@@ -266,6 +263,10 @@ class Modele():
                            "Hydrogene": Ressources("Hydrogene", 1),
                            "Plutonium": Ressources("Plutonium", 2),
                            "Antimatiere": Ressources("Antimatiere", 3)}
+        self.creeretoiles(joueurs)
+        nb_trou = int((self.hauteur * self.largeur) / 5000000)
+        self.creer_troudevers(nb_trou)
+
 
     def creer_troudevers(self, n):
         bordure = 10
@@ -282,8 +283,7 @@ class Modele():
             x = random.randrange(self.largeur - (2 * bordure)) + bordure
             y = random.randrange(self.hauteur - (2 * bordure)) + bordure
             nom:str = "Etoile" + str(i)
-            classe:int = random.randrange(0, 100) #attribue aléatoirement une rareté à l'étoile
-            ressourcesExploitables = self.genererRessources(classe)
+            ressourcesExploitables = self.genererRessources()
             self.etoiles.append(Etoile(self,x,y,nom,ressourcesExploitables,100))
         np = len(joueurs) #np = number of players
         etoile_occupee = []
@@ -300,7 +300,7 @@ class Modele():
             self.joueurs[i] = Joueur(self, i, etoile, couleurs.pop(0))
 
 
-    def genererRessources(self, classe:int):
+    def genererRessources(self):
         #Ajouter algorithme de génération des ressources ici - ressources possibles : Fer, Cuivre, Or, Titane || Hydrogène, Plutonium, Antimatière
         ressourcesExploitables = []
         ressource = []
@@ -316,7 +316,9 @@ class Modele():
 
         rareteMateriaux:int = random.randrange(0, 100) #représente un "dé"
         rareteEnergie:int = random.randrange(0, 100)
+        distTitane:float = 0
 
+        #dé des matériaux
         if rareteMateriaux >= 40:
             isCuivre = True
             nbRessources +=1
@@ -326,6 +328,7 @@ class Modele():
                 if rareteMateriaux >= 90:
                     isTitane = True
                     nbRessources += 1
+        #dé des énergies
         if rareteEnergie >= 25:
             isHydrogene = True
             nbRessources += 1
@@ -336,17 +339,25 @@ class Modele():
                     isAntimatiere = True
                     nbRessources += 1
 
-        distFer:float = -0.1375 * nbRessources +1 #distribution du fer / étoile (un %)
-        ressource.append(self.ressources.get("Fer"), distFer)
+        distFer:float = self.distributionFer(nbRessources) #distribution du fer / étoile (un %)
+        distFer = round(distFer,2)
+        ressource.append("Fer")
+        ressource.append(distFer)
         ressourcesExploitables.append(ressource)
+        print(ressourcesExploitables)
         if isCuivre:
-            distCuivre:float = 0.07 + (0.5 - 0.07) / (1 + pow((nbRessources/3), 2.5)) #TODO À CHANGER
-            ressource.append(self.ressources.get("Cuivre"), distCuivre)
+            aCuivre:float = ((self.distributionFer(4) + 0.4) - 1) / 2 #Pour calculer le taux de variation de l'équation de distribution du cuivre
+            distCuivre:float = aCuivre * nbRessources + 0.9
+            distCuivre = round(distCuivre,2)
+            ressource.append("Cuivre")
+            ressource.append(distCuivre)
             ressourcesExploitables.append(ressource)
-        if isOr:
 
-
+        print(ressourcesExploitables)
         return ressourcesExploitables
+
+    def distributionFer(self, nbRessources:int):
+        return -0.481 * math.log(nbRessources) + 1.0072
 
     ##############################################################################
     def jouer_prochain_coup(self, cadre):
