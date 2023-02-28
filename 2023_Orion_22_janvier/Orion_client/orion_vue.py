@@ -533,7 +533,7 @@ class Vue():
         id = cible.id
         couleur = joueur1.couleur
         self.canevas.itemconfig(id, fill=couleur)
-        self.canevas.itemconfig(id, tags=(joueur, id, "Etoile",))
+        self.canevas.itemconfig(id, tags=(joueur, id, "Etoile", cible.x, cible.y))
 
     # ajuster la liste des vaisseaux
     def lister_objet(self, obj, id, niveau):
@@ -630,7 +630,7 @@ class Vue():
                 self.ma_selection = [self.mon_nom, tags[1], tags[2]]
                 if tags[2] == "Etoile":
                     self.montrer_etoile_selection()
-                    if self.shipSelected:
+                    if self.shipSelected != "":
                         self.parent.cibler_flotte(self.shipSelected, tags[1], tags[2])
                         self.shipSelected = ""
                         self.ma_selection = None
@@ -639,9 +639,10 @@ class Vue():
                 elif tags[2] == "Flotte":
                     self.montrer_flotte_selection()
                     self.shipSelected = self.ma_selection[1]
-            elif ("Etoile" == tags[2] or "Porte_de_ver" == tags[2]):  # Si c'est un objet qui nous appartient pas
+            elif ("Etoile" == tags[2] or "Porte_de_ver" == tags[2]) and self.shipSelected != "":  # Si c'est un objet qui nous appartient pas
                 if self.ma_selection:  # Si une sélection de nos vaisseaux a été faites, on les envoi sur l'étoile avec "cibler_flotte"
                     self.parent.cibler_flotte(self.ma_selection[1], tags[1], tags[2])
+                    self.shipSelected = ""
 
                 self.ma_selection = None
         else:  # aucun tag => On a clické dans le vide donc aucun objet sur la carte
