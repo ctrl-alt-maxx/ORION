@@ -53,7 +53,7 @@ class Etoile():
         self.y = y
         self.taille = random.randrange(4, 8)
         self.nomEtoile = nomEtoile
-        self.ressources = ressources ## ressources = {} ressources
+        self.ressource = ressources ## ressources = {} ressources
         self.proprietaire = "neutre" #proprietaire = etoile owner
         self.installation = None #installation = [] des installations du joueur
         self.vaisseaux = None # [] de vaisseaux pose sur letoile

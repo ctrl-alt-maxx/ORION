@@ -92,14 +92,14 @@ class Vue():
     def creer_cadre_splash(self, urlserveur, mon_nom, msg_initial):
         self.cadre_splash = Frame(self.cadre_app)
         # un canvas est utilisé pour 'dessiner' les widgets de cette fenêtre voir 'create_window' plus bas
-        self.canevas_splash = Canvas(self.cadre_splash, width=600, height=480, bg="pink")
+        self.canevas_splash = Canvas(self.cadre_splash, width=600, height=480, bg="#04273d")
         self.canevas_splash.pack()
 
         # creation ds divers widgets (champ de texte 'Entry' et boutons cliquables (Button)
-        self.etatdujeu = Label(text=msg_initial, font=("Arial", 18), borderwidth=2, relief=RIDGE)
-        self.nomsplash = Entry(font=("Arial", 14))
-        self.urlsplash = Entry(font=("Arial", 14), width=42)
-        self.btnurlconnect = Button(text="Connecter", font=("Arial", 12), command=self.connecter_serveur)
+        self.etatdujeu = Label(text=msg_initial, font=("Arial", 18), borderwidth=2, relief=RIDGE, bg="#010a0f", fg="#c4c4c4")
+        self.nomsplash = Entry(font=("Arial", 14), bg="#010a0f", fg="#c4c4c4")
+        self.urlsplash = Entry(font=("Arial", 14), width=42, bg="#010a0f", fg="#c4c4c4")
+        self.btnurlconnect = Button(text="Connecter", font=("Arial", 12), command=self.connecter_serveur, bg="#010a0f", fg="#c4c4c4")
         # on insère les infos par défaut (nom url) et reçu au démarrage (dispo)
         self.nomsplash.insert(0, mon_nom)
         self.urlsplash.insert(0, urlserveur)
@@ -110,11 +110,11 @@ class Vue():
         self.canevas_splash.create_window(480, 250, window=self.btnurlconnect, width=100, height=30)
         # les boutons d'actions -> FENETRE CONNEXION
 
-        self.btncreerpartie = Button(text="Creer partie", font=("Arial", 12), state=DISABLED, command=self.creer_partie)
+        self.btncreerpartie = Button(text="Creer partie", font=("Arial", 12), state=DISABLED, command=self.creer_partie, bg="#010a0f", fg="#c4c4c4")
         self.btninscrirejoueur = Button(text="Inscrire joueur", font=("Arial", 12), state=DISABLED,
-                                        command=self.inscrire_joueur)
+                                        command=self.inscrire_joueur, bg="#010a0f", fg="#c4c4c4")
         self.btnreset = Button(text="Reinitialiser partie", font=("Arial", 9), state=DISABLED,
-                               command=self.reset_partie)
+                               command=self.reset_partie, bg="#010a0f", fg="#c4c4c4")
 
         # on place les autres boutons
         self.canevas_splash.create_window(420, 350, window=self.btncreerpartie, width=200, height=30)
@@ -128,14 +128,14 @@ class Vue():
     def creer_cadre_lobby(self):
         # le cadre lobby, pour isncription des autres joueurs, remplace le splash
         self.cadrelobby = Frame(self.cadre_app)
-        self.canevaslobby = Canvas(self.cadrelobby, width=640, height=480, bg="lightblue")
+        self.canevaslobby = Canvas(self.cadrelobby, width=640, height=480, bg="#04273d")
         self.canevaslobby.pack()
         # widgets du lobby
         # un listbox pour afficher les joueurs inscrit pour la partie à lancer
-        self.listelobby = Listbox(borderwidth=2, relief=GROOVE)
+        self.listelobby = Listbox(borderwidth=2, relief=GROOVE, fg="#c4c4c4", bg="#010a0f")
 
         # bouton pour lancer la partie, uniquement accessible à celui qui a creer la partie dans le splash
-        self.btnlancerpartie = Button(text="Lancer partie", state=DISABLED, command=self.lancer_partie)
+        self.btnlancerpartie = Button(text="Lancer partie", state=DISABLED, command=self.lancer_partie, fg="#c4c4c4", bg="#010a0f")
         # affichage des widgets dans le canevaslobby (similaire au splash)
         self.canevaslobby.create_window(440, 240, window=self.listelobby, width=200, height=400)
         self.canevaslobby.create_window(200, 400, window=self.btnlancerpartie, width=100, height=30)
@@ -213,6 +213,10 @@ class Vue():
         self.btncreervaisseau.pack()
         # self.btncreercargo.pack()
 
+        self.btnRessources = Button(self.cadreinfochoix, text="Ressources")
+        self.btnRessources.config(command=self.methode_ressource_exploitable)
+        self.btnRessources.pack()
+
         # creer boutonInstallation ici--------------------------------------------------------------------------------------------
         self.btnInstallation = Button(self.cadreinfochoix, text="Installations")
         """pour ouvrir le menu d'installation"""
@@ -220,10 +224,10 @@ class Vue():
         self.btnInstallation.pack()
 
         # creer boutonResource ici
-        self.btnResource = Button(self.cadreinfochoix, text="Ressources")
+        self.btnInventaire = Button(self.cadreinfochoix, text="Inventaire")
         """pour ouvrir le menu de ressource"""
-        self.btnResource.config(command=self.methode_resource)
-        self.btnResource.pack()
+        self.btnInventaire.config(command=self.methode_resource)
+        self.btnInventaire.pack()
 
         self.boutonAmeliorerEtoile = Button(self.cadreinfochoix, text="Ameliorer Etoile")
         self.boutonAmeliorerEtoile.pack()
@@ -257,7 +261,7 @@ class Vue():
         # MINI MAP-----------------------------------------------------------------------
         self.cadreminimap = Frame(self.cadreoutils, height=200, width=200, bg="black")
         self.canevas_minimap = Canvas(self.cadreminimap, width=self.taille_minimap, height=self.taille_minimap,
-                                      bg="pink")
+                                      bg="#1e1e21")
         self.canevas_minimap.bind("<Button>", self.positionner_minicanevas)
         self.canevas_minimap.pack()
         self.cadreminimap.pack(side=BOTTOM)
@@ -311,6 +315,53 @@ class Vue():
             self.boutonConstruireEntrepot = Button(self.cadreoutils, text="Construire Entrepot")
             self.boutonConstruireEntrepot.pack()
 
+    def methode_ressource_exploitable(self):
+        self.recup = self.parent.recupEtoile(self.ma_selection[1])
+
+        label_materiaux = Label(self.cadreoutils, text="Matériaux :", anchor=CENTER,width=34, height=1, border=1, borderwidth=1,relief="solid", bg="#e0e0e0")
+        label_ernegie = Label(self.cadreoutils, text="Énergie : ", anchor=CENTER,width=34, height=1, border=1, borderwidth=1,relief="solid", bg="#e0e0e0")
+
+        label_fer = Label(self.cadreoutils, text="Fer : " + str(round(self.recup.ressource.get("Fer") * 100, 2)) + "%", anchor=CENTER,
+                               width=34, height=2, border=2, borderwidth=1,
+                               relief="solid", bg="#949392")
+
+        label_cuivre = Label(self.cadreoutils, text="Cuivre : " + str(round(self.recup.ressource.get("Cuivre") * 100, 2)) + "%",
+                                  anchor=CENTER, width=34, height=2, border=2,
+                                  borderwidth=1,
+                                  relief="solid", bg="#703f0a")
+
+        label_or = Label(self.cadreoutils, text="Or : " + str(round(self.recup.ressource.get("Or") * 100, 2)) + "%", anchor=CENTER,
+                              width=34, height=2, border=2,
+                              borderwidth=1,
+                              relief="solid", bg="#9c7f00")
+
+        label_titane = Label(self.cadreoutils, text="Titane : " + str(round(self.recup.ressource.get("Titane") * 100, 2)) + "%",
+                                  anchor=CENTER, width=34, height=2, border=2,
+                                  borderwidth=1,
+                                  relief="solid", bg="#5668a3")
+
+        label_hydrogene = Label(self.cadreoutils,
+                                     text="Hydrogene : " + str(round(self.recup.ressource.get("Hydrogene") * 100, 2)) + "%", anchor=CENTER,
+                                     width=34, height=2, border=2,
+                                     borderwidth=1, relief="solid", bg="#b4e7ed")
+
+        label_pluto = Label(self.cadreoutils, text="Plutonium : " + str(round(self.recup.ressource.get("Plutonium") * 100, 2)) + "%",
+                                 anchor=CENTER, width=34, height=2, border=2,
+                                 borderwidth=1, relief="solid", bg="#558a0c")
+
+        label_antimatiere = Label(self.cadreoutils, text="Antimatière : " + str(round(self.recup.ressource.get("Antimatiere") * 100, 2)) + "%",
+                                       anchor=CENTER, width=34, height=2, border=2,
+                                       borderwidth=1,
+                                       relief="solid", bg="#3c0c8a")
+        label_materiaux.pack(fill=X)
+        label_fer.pack(fill=X)
+        label_cuivre.pack(fill=X)
+        label_or.pack(fill=X)
+        label_titane.pack(fill=X)
+        label_ernegie.pack(fill=X)
+        label_hydrogene.pack(fill=X)
+        label_pluto.pack(fill=X)
+        label_antimatiere.pack(fill=X)
 
     def methode_resource(self):  # afficher
 
@@ -550,7 +601,7 @@ class Vue():
             self.label_fer.pack_forget()
             self.label_hydrogene.pack_forget()
             self.btnInstallation.pack_forget()
-            self.btnResource.pack_forget()
+            self.btnInventaire.pack_forget()
 
         self.barrevie.value = objet.Vie
 
@@ -682,7 +733,7 @@ class Vue():
     def montrer_etoile_selection(self):  # montrer le tag de letoile selectionne
         self.cadreinfoimage.pack_forget()
         self.barrevie.pack_forget()
-        self.btnResource.pack()
+        self.btnInventaire.pack()
         self.btnInstallation.pack()
         self.cadreinfochoix.pack(fill=BOTH)
 
