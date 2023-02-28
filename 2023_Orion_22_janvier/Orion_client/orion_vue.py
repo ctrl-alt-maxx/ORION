@@ -208,7 +208,7 @@ class Vue():
         """pour creer un cargo"""
         self.btncreercargo.bind("<Button>", self.creer_vaisseau)
 
-        self.btncreervaisseau.pack()
+        #self.btncreervaisseau.pack()
         # self.btncreercargo.pack()
 
         # creer boutonInstallation ici--------------------------------------------------------------------------------------------
