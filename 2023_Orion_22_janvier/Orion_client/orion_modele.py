@@ -3,6 +3,8 @@
 import math
 import random
 import ast
+import string
+
 from id import *
 from helper import Helper as hlp
 
@@ -51,7 +53,7 @@ class Etoile():
         self.y = y
         self.taille = random.randrange(4, 8)
         self.nomEtoile = nomEtoile
-        self.ressources = ressources ## ressources = [] ressources
+        self.ressources = ressources ## ressources = {} ressources
         self.proprietaire = "neutre" #proprietaire = etoile owner
         self.installation = None #installation = [] des installations du joueur
         self.vaisseaux = None # [] de vaisseaux pose sur letoile
@@ -317,62 +319,113 @@ class Modele():
 
     def genererRessources(self):
         #Ajouter algorithme de génération des ressources ici - ressources possibles : Fer, Cuivre, Or, Titane || Hydrogène, Plutonium, Antimatière
-        ressourcesExploitables = []
-        ressource = []
-        nbRessources:int = 1
+        nbMateriaux:int = 1;
+        nbEnergie:int = 0;
+
+        distFer:float = 0
+        distCuivre:float = 0
+        distOr:float = 0
+        distTitane:float = 0
+        distHydrogene:float = 0
+        distPlutonium:float = 0
+        distAntimatiere:float = 0
+        distZoneGrise:float = 0
+
+        ressourcesExploitables = {"Fer":0.00,
+                                  "Cuivre":0.00,
+                                  "Or":0.00,
+                                  "Titane":0.00,
+                                  "Hydrogene":0.00,
+                                  "Plutonium":0.00,
+                                  "Antimatiere":0.00}
+
         isFer:bool = True #il y aua toujours du fer sur une étoile
         isCuivre:bool = False
         isOr:bool = False
         isTitane:bool = False
-
         isHydrogene:bool = False
         isPlutonium:bool = False
         isAntimatiere:bool = False
 
         rareteMateriaux:int = random.randrange(0, 100) #représente un "dé"
         rareteEnergie:int = random.randrange(0, 100)
-        distTitane:float = 0
 
         #dé des matériaux
         if rareteMateriaux >= 40:
             isCuivre = True
-            nbRessources +=1
+            nbMateriaux +=1
             if rareteMateriaux >= 70:
                 isOr = True
-                nbRessources += 1
+                nbMateriaux += 1
                 if rareteMateriaux >= 90:
                     isTitane = True
-                    nbRessources += 1
+                    nbMateriaux += 1
+
         #dé des énergies
         if rareteEnergie >= 25:
             isHydrogene = True
-            nbRessources += 1
+            nbEnergie += 1
             if rareteMateriaux >= 75:
                 isPlutonium = True
-                nbRessources += 1
+                nbEnergie += 1
                 if rareteEnergie >= 97:
                     isAntimatiere = True
-                    nbRessources += 1
+                    nbEnergie += 1
 
-        distFer:float = self.distributionFer(nbRessources) #distribution du fer / étoile (un %)
-        distFer = round(distFer,2)
-        ressource.append("Fer")
-        ressource.append(distFer)
-        ressourcesExploitables.append(ressource)
-        print(ressourcesExploitables)
-        if isCuivre:
-            aCuivre:float = ((self.distributionFer(4) + 0.4) - 1) / 2 #Pour calculer le taux de variation de l'équation de distribution du cuivre
-            distCuivre:float = aCuivre * nbRessources + 0.9
-            distCuivre = round(distCuivre,2)
-            ressource.append("Cuivre")
-            ressource.append(distCuivre)
-            ressourcesExploitables.append(ressource)
+        #Distribution matériaux / étoile
+        if nbMateriaux == 1:
+            distFer = 1.00
+        elif nbMateriaux == 2:
+            distZoneGrise = round(self.zoneGrise(), 2)
+            distFer = 0.65 + distZoneGrise
+            distCuivre = 0.25 + (0.10 - distZoneGrise)
+        elif nbMateriaux == 3:
+            distZoneGrise = round(self.zoneGrise(), 2) #pour déterminer la zone tampon entre le fer et le cuivre
+            distFer = 0.50 + distZoneGrise
+            distCuivre = 0.20 + (0.10 - distZoneGrise)
+            distZoneGrise = round(self.zoneGrise(), 2) #pour déterminer la zone tampon entre le cuivre et l'or
+            distCuivre += distZoneGrise
+            distOr = 0.10 + (0.10 - distZoneGrise)
+        elif nbMateriaux == 4:
+            distZoneGrise = round(self.zoneGrise(), 2)
+            distFer = 0.40 + distZoneGrise
+            distCuivre = 0.15 + (0.10 - distZoneGrise)
+            distZoneGrise = round(self.zoneGrise(), 2) #pour zone tampon entre cuivre et or
+            distCuivre += distZoneGrise
+            distOr = 0.10 + (0.10 - distZoneGrise)
+            distZoneGrise = round(self.zoneGrise(), 2) #pour zone tampon entre or et titane
+            distOr += distZoneGrise
+            distTitane = 0.05 + (0.10 - distZoneGrise)
 
-        print(ressourcesExploitables)
+        #Distribution énergie / étoile
+        if nbEnergie == 1:
+            distHydrogene = 1.00
+        elif nbEnergie == 2:
+            distZoneGrise = self.zoneGrise()
+            distHydrogene = 0.65 + distZoneGrise
+            distPlutonium = 0.25 + (0.10 - distZoneGrise)
+        elif nbEnergie == 3:
+            distZoneGrise = self.zoneGrise()
+            distHydrogene = 0.60 + distZoneGrise
+            distPlutonium = 0.17 + (0.10 - distZoneGrise)
+            distZoneGrise = self.zoneGrise()
+            distPlutonium += distZoneGrise
+            distAntimatiere = 0.03 + (0.10 - distZoneGrise)
+
+        #Attribution des distributions
+        ressourcesExploitables.update({"Fer": distFer})
+        ressourcesExploitables.update({"Cuivre":distCuivre})
+        ressourcesExploitables.update({"Or":distOr})
+        ressourcesExploitables.update({"Titane":distTitane})
+        ressourcesExploitables.update({"Hydrogene":distHydrogene})
+        ressourcesExploitables.update({"Plutonium":distPlutonium})
+        ressourcesExploitables.update({"Antimatiere":distAntimatiere})
+
         return ressourcesExploitables
 
-    def distributionFer(self, nbRessources:int):
-        return -0.481 * math.log(nbRessources) + 1.0072
+    def zoneGrise(self):
+        return random.uniform(0.00, 0.10)
+
 
     ##############################################################################
     def jouer_prochain_coup(self, cadre):
