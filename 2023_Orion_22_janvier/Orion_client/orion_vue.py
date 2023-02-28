@@ -53,6 +53,7 @@ class Vue():
         self.label_titane = Label()
         self.label_titre = Label()
         self.canev = Canvas()
+
         self.boutonConstruire = Button()
         self.label_entrepotVaisseau = Label()
         self.boutonConstruireEntrepot = Button()
@@ -62,6 +63,7 @@ class Vue():
 
         self.clickUneFoisSurInsta = 0 #pour que le frame ne reaparaisse pas si je clique 2 fois de suite sur le meme bouton
         self.clickUneFoisSurRessource = 0
+        self.clickUneFoisSurVaiss = 0
 
         self.selectedTags = None
 
@@ -243,7 +245,7 @@ class Vue():
 
         self.cadreinfoliste.pack(fill=BOTH)
 
-        # IMAGE VAISSEAU + VIE
+        # IMAGE VAISSEAU + VIE --------------------------------------------------------------------------------
         s = Style()
         s.theme_use('clam')
         s.configure("red.Horizontal.TProgressbar", foreground='red', background='red')
@@ -274,10 +276,11 @@ class Vue():
 
     def methode_installation(self):  # afficher
         self.clickUneFoisSurRessource = 0
+        self.clickUneFoisSurVaiss = 0
         self.clickUneFoisSurInsta += 1
         print(self.clickUneFoisSurInsta)
 
-        #ENLEVER LABEL RESSOURCES
+        #ENLEVER LABEL RESSOURCES + VAISSEAU
         if self.clickUneFoisSurInsta == 1:
             self.label_or.pack_forget()
             self.label_cuivre.pack_forget()
@@ -286,6 +289,8 @@ class Vue():
             self.label_titane.pack_forget()
             self.label_fer.pack_forget()
             self.label_hydrogene.pack_forget()
+            self.barrevie.pack_forget()
+            self.cadreinfoimage.pack_forget()
             testHp = "3"  # il faudra recuperer la vrai valeur ici
 
             self.label_titre = Label(self.cadreoutils, text="Usine Ressource")
@@ -310,8 +315,10 @@ class Vue():
     def methode_resource(self):  # afficher
 
         self.clickUneFoisSurInsta = 0
+        self.clickUneFoisSurVaiss = 0
         self.clickUneFoisSurRessource += 1
         self.recup = self.parent.recupEtoile(self.ma_selection[1])
+
         if self.clickUneFoisSurRessource == 1:
             self.boutonConstruire.pack_forget()
             self.label_titre.pack_forget()
@@ -320,6 +327,8 @@ class Vue():
             self.boutonAmeliorerEtoile.pack_forget()
             self.boutonConstruireEntrepot.pack_forget()
             self.boutonAmeliorerEtoile.pack_forget()
+            self.barrevie.pack_forget()
+            self.cadreinfoimage.pack_forget()
 
             self.label_fer = Label(self.cadreoutils, text="Fer : " + str(self.recup.inventaire.get("Fer")), anchor=CENTER, width=25, height=2, border=2, borderwidth=1,
                          relief="solid", bg="green")
@@ -522,6 +531,27 @@ class Vue():
         self.canevas.yview_moveto(pcty)
 
     def afficher_info_vaisseau(self, objet):
+        self.clickUneFoisSurRessource = 0
+        self.clickUneFoisSurVaiss += 1
+        self.clickUneFoisSurInsta = 0
+
+        if self.clickUneFoisSurVaiss == 1:
+            self.boutonConstruire.pack_forget()
+            self.label_titre.pack_forget()
+            self.label_installation.pack_forget()
+            self.label_entrepotVaisseau.pack_forget()
+            self.boutonAmeliorerEtoile.pack_forget()
+            self.boutonConstruireEntrepot.pack_forget()
+            self.label_or.pack_forget()
+            self.label_cuivre.pack_forget()
+            self.label_antimatiere.pack_forget()
+            self.label_pluto.pack_forget()
+            self.label_titane.pack_forget()
+            self.label_fer.pack_forget()
+            self.label_hydrogene.pack_forget()
+            self.btnInstallation.pack_forget()
+            self.btnResource.pack_forget()
+
         self.barrevie.value = objet.Vie
 
         self.cadreinfoimage.pack(fill=BOTH)  # Debug, à remplacer par une image plus tard
@@ -650,6 +680,10 @@ class Vue():
             self.ma_selection = None
 
     def montrer_etoile_selection(self):  # montrer le tag de letoile selectionne
+        self.cadreinfoimage.pack_forget()
+        self.barrevie.pack_forget()
+        self.btnResource.pack()
+        self.btnInstallation.pack()
         self.cadreinfochoix.pack(fill=BOTH)
 
     def montrer_flotte_selection(self):  # montrer le tag du vaisseau selectionne
