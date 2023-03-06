@@ -5,6 +5,7 @@ from tkinter import *
 from tkinter.simpledialog import *
 from tkinter.messagebox import *
 from helper import Helper as hlp
+from PIL import ImageTk, Image
 import math
 
 import random
@@ -38,7 +39,7 @@ class Vue():
         self.debut_selection = []
         self.selecteur_actif = None
 
-        #cree un bouton global que lon va pouvoir reutiliser
+        #cration label et Frame pour methode methode_installation et methode_ressource
         self.boutonAmeliorerEtoile = Button()
         self.label_installation = Label()
         self.label_ressource = Label()
@@ -54,13 +55,28 @@ class Vue():
         self.boutonConstruire = Button()
         self.label_entrepotVaisseau = Label()
         self.boutonConstruireEntrepot = Button()
-
         self.label_qte_fer = Label()
-
-
         self.clickUneFoisSurInsta = 0 #pour que le frame ne reaparaisse pas si je clique 2 fois de suite sur le meme bouton
         self.clickUneFoisSurRessource = 0
+        self.img_usine = tk.PhotoImage(file='../img/imgUsine.png').subsample(6, 6)
 
+        #var global methode installation()
+        self.cadre_label_ressource = Frame()
+        self.label_titre = Label()
+        self.cadre_img = Frame()
+        self.label_img = Label()
+        self.label_installation = Label()
+        self.cadre_bouton = Frame()
+        self.boutonConstruire = Button()
+        self.cadre_espacement = Frame()
+
+        self.cadre_label_entrepot_vaisseau = Frame()
+        self.label_entrepotVaisseau = Label()
+        self.cadre_img2 = Frame()
+        self.label_img2 = Label()
+        self.label_installation2 = Label()
+        self.cadre_bouton2 = Frame()
+        self.boutonConstruire2 = Button()
 
 
     def demander_abandon(self):
@@ -183,16 +199,18 @@ class Vue():
 
 
     def creer_cadre_outils(self):
-        self.cadreoutils = Frame(self.cadrepartie, width=200, height=200, bg="red")  #petite fenetre sur la gauche (celle juste au dessus de la mini map)->ici que l<on affiche le menu
+        self.cadreoutils = Frame(self.cadrepartie, width=200, height=200)  #petite fenetre sur la gauche (celle juste au dessus de la mini map)->ici que l<on affiche le menu
         self.cadreoutils.pack(side=LEFT, fill=Y)
         self.cadreinfo = Frame(self.cadreoutils, width=200, height=200, bg="darkgrey")#??????????
         self.cadreinfo.pack(fill=BOTH)
 
         self.cadreinfogen = Frame(self.cadreinfo, width=200, height=200, bg="grey50")#petite fenetre en haut a gauche (JAJA et bouton MINI)
         self.cadreinfogen.pack(fill=BOTH)
+
         self.labid = Label(self.cadreinfogen, text="Inconnu")
         self.labid.bind("<Button>", self.centrer_planetemere)#bouton qui est utilise lorsque je clique sur JAJA, ca nous place sur notre planete mere
         self.labid.pack()
+
         self.btnmini = Button(self.cadreinfogen, text="MINI")
         self.btnmini.bind("<Button>", self.afficher_mini)
         self.btnmini.pack()
@@ -209,7 +227,7 @@ class Vue():
         """pour creer un cargo"""
         self.btncreercargo.bind("<Button>", self.creer_vaisseau)
 
-        # self.btncreervaisseau.pack()
+        #self.btncreervaisseau.pack()
         # self.btncreercargo.pack()
 
         # creer boutonInstallation ici--------------------------------------------------------------------------------------------
@@ -244,7 +262,7 @@ class Vue():
         self.cadreinfoliste.pack(side=BOTTOM, expand=1, fill=BOTH)
 
         # MINI MAP-----------------------------------------------------------------------
-        self.cadreminimap = Frame(self.cadreoutils, height=200, width=200, bg="black")
+        self.cadreminimap = Frame(self.cadreoutils, height=200, width=200)
         self.canevas_minimap = Canvas(self.cadreminimap, width=self.taille_minimap, height=self.taille_minimap,
                                       bg="pink")
         self.canevas_minimap.bind("<Button>", self.positionner_minicanevas)
@@ -266,7 +284,6 @@ class Vue():
     def methode_installation(self):  # afficher
         self.clickUneFoisSurRessource = 0
         self.clickUneFoisSurInsta += 1
-        print(self.clickUneFoisSurInsta)
 
         #ENLEVER LABEL RESSOURCES
         if self.clickUneFoisSurInsta == 1:
@@ -277,25 +294,52 @@ class Vue():
             self.label_titane.pack_forget()
             self.label_fer.pack_forget()
             self.label_hydrogene.pack_forget()
-            testHp = "3"  # il faudra recuperer la vrai valeur ici
 
-            self.label_titre = Label(self.cadreoutils, text="Usine Ressource")
+            #Affichage Label et Frame
+            #partie haute
+            self.cadre_label_ressource = Frame(self.cadreoutils, height=200, width=200, bg="#848484")
+            self.cadre_label_ressource.pack(fill=X)
+            self.label_titre = Label(self.cadre_label_ressource, text="Usine Ressource", bg='#848484')
             self.label_titre.pack(side=TOP)
 
+            self.cadre_img = Frame(self.cadreoutils,height=200,width=200)
+            self.cadre_img.pack()
+            self.label_img = Label(self.cadre_img, image=self.img_usine)
+            self.label_img.pack(side=LEFT)
 
-            self.label_installation = Label(self.cadreoutils, text="Description: usine pour stocker ressource", bd=1,
-                                            relief="solid", width=25, height=4, anchor=W,
-                                            )
-            self.label_installation.pack()
+            self.label_installation = Label(self.cadre_img, text="Description: usine pour stocker ressources")
+            self.label_installation.pack(side=RIGHT)
 
-            self.boutonConstruire = Button(self.cadreoutils, text="Construire Usine")
+            self.cadre_bouton = Frame(self.cadreoutils, height=200, width=200, bg="yellow")
+            self.cadre_bouton.pack(fill=X)
+            self.boutonConstruire = Button(self.cadre_bouton, text="Construire Usine",bg="yellow")
             self.boutonConstruire.pack()
+            self.cadre_espacement = Frame(self.cadreoutils, height=10,width=200, bg="#FFFFFF")
+            self.cadre_espacement.pack(fill=X)
 
-            self.label_entrepotVaisseau = Label(self.cadreoutils, text="Entrepot a Vaisseaux", bd=1, relief="solid", width=25, height=8, anchor=W)
-            self.label_entrepotVaisseau.pack()
+            #partie basse
+            self.cadre_label_entrepot_vaisseau = Frame(self.cadreoutils, height=200, width=200, bg="#848484")
+            self.cadre_label_entrepot_vaisseau.pack(fill=X)
 
-            self.boutonConstruireEntrepot = Button(self.cadreoutils, text="Construire Entrepot")
-            self.boutonConstruireEntrepot.pack()
+            self.label_entrepotVaisseau = Label(self.cadre_label_entrepot_vaisseau, text="Entrepot a vaisseaux", bg="#848484")
+            self.label_entrepotVaisseau.pack(side=TOP)
+
+            self.cadre_img2 = Frame(self.cadreoutils, height=200, width=200)
+            self.cadre_img2.pack()
+            self.label_img2 = Label(self.cadre_img2, image=self.img_usine)
+            self.label_img2.pack(side=LEFT)
+
+            self.label_installation2 = Label(self.cadre_img2, text="Description: usine pour stocker ressources")
+            self.label_installation2.pack(side=RIGHT)
+
+            self.cadre_bouton2 = Frame(self.cadreoutils, height=200, width=200, bg="yellow")
+            self.cadre_bouton2.pack(fill=X)
+            self.boutonConstruire2 = Button(self.cadre_bouton2, text="Construire Entrepot", bg="yellow")
+            self.boutonConstruire2.pack()
+
+
+
+
 
 
     def methode_resource(self):  # afficher
@@ -303,14 +347,22 @@ class Vue():
         self.clickUneFoisSurInsta = 0
         self.clickUneFoisSurRessource += 1
         self.recup = self.parent.recupEtoile(self.ma_selection[1])
+
+        #pour enlever les label et frame
         if self.clickUneFoisSurRessource == 1:
-            self.boutonConstruire.pack_forget()
+            self.cadre_label_ressource.pack_forget()
             self.label_titre.pack_forget()
+            self.cadre_img.pack_forget()
+            self.label_img.pack_forget()
             self.label_installation.pack_forget()
-            self.label_entrepotVaisseau.pack_forget()
-            self.boutonAmeliorerEtoile.pack_forget()
-            self.boutonConstruireEntrepot.pack_forget()
-            self.boutonAmeliorerEtoile.pack_forget()
+            self.cadre_bouton.pack_forget()
+            self.boutonConstruire.pack_forget()
+            self.cadre_label_entrepot_vaisseau.pack_forget()
+            self.cadre_img2.pack_forget()
+            self.label_installation2.pack_forget()
+            self.cadre_bouton2.pack_forget()
+            self.boutonConstruire2.pack_forget()
+            self.cadre_espacement.pack_forget()
 
             self.label_fer = Label(self.cadreoutils, text="Fer : " + str(self.recup.inventaire.get("Fer")), anchor=CENTER, width=25, height=2, border=2, borderwidth=1,
                          relief="solid", bg="green")
