@@ -216,7 +216,7 @@ class Vue():
 
         # PETITE FENETRE POUR LES 2 BOUTONS VAISSEAU ET CARGO-----------------------------------------------------------------------------
         self.cadreinfochoix = Frame(self.cadreinfo, height=200, width=200, bg="light grey")
-        """fenetre ou il y a bouton vaisseau et cargo"""
+        """fenetre ou il y a bouton vaisseau, cargo et eclaireur"""
 
         self.btncreervaisseau = Button(self.cadreinfochoix, text="Vaisseau")
         """pour creer un vaisseau"""
@@ -226,8 +226,13 @@ class Vue():
         """pour creer un cargo"""
         self.btncreercargo.bind("<Button>", self.creer_vaisseau)
 
-        self.btncreervaisseau.pack()
-        # self.btncreercargo.pack()
+        self.btncreereclaireur = Button(self.cadreinfochoix, text="Eclaireur")
+        """pour creer un éclaireur"""
+        self.btncreereclaireur.bind("<Button>", self.creer_vaisseau)
+
+        #self.btncreervaisseau.pack() -------------------------------------- ICI QUE TU PACK LES VAISSEAUX
+        #self.btncreercargo.pack()
+        #self.btncreereclaireur.pack()
 
         self.btnRessources = Button(self.cadreinfochoix, text="Ressources")
         self.btnRessources.config(command=self.methode_ressource_exploitable)
@@ -645,7 +650,7 @@ class Vue():
 
     def creer_vaisseau(self, evt):
         type_vaisseau = evt.widget.cget("text")
-        self.parent.creer_vaisseau(type_vaisseau, self.selectedTags[3], self.selectedTags[4]) # Il faut que tu trouve comment changer les tags après une capture
+        self.parent.creer_vaisseau(type_vaisseau, self.selectedTags[3], self.selectedTags[4])
         self.ma_selection = None
         self.canevas.delete("marqueur")
         self.cadreinfochoix.pack_forget()
@@ -690,14 +695,17 @@ class Vue():
                     tailleF = j.taille * self.zoom
                     if k == "Vaisseau":  # CREATION DU CARRE ROUGE REPRESENTANT LE VAISSEAU
                         self.canevas.create_rectangle((j.x - tailleF), (j.y - tailleF),
-                                                      (j.x + tailleF), (j.y + tailleF), fill=i.couleur,
+                                                      (j.x + tailleF), (j.y + tailleF), fill='red', #i.couleur (couleur du joueur)
                                                       tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact"))
                     elif k == "Cargo":  # CREATION DU CARGO
-                        # self.dessiner_cargo(j,tailleF,i,k)
-                        self.dessiner_cargo(j, tailleF, i, k)
-                        # self.canevas.create_oval((j.x - tailleF), (j.y - tailleF),
-                        #                          (j.x + tailleF), (j.y + tailleF), fill=i.couleur,
-                        #                          tags=(j.proprietaire, str(j.id), "Flotte",k,"artefact"))
+                        self.canevas.create_rectangle((j.x - tailleF), (j.y - tailleF),
+                                                      (j.x + tailleF), (j.y + tailleF), fill='blue',
+                                                      tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact"))
+
+                    elif k == "Eclaireur": #CREATION DE L'ÉCLAIREUR
+                        self.canevas.create_rectangle((j.x - tailleF), (j.y - tailleF),
+                                                      (j.x + tailleF), (j.y + tailleF), fill='white',
+                                                      tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact"))
         for t in self.modele.trou_de_vers:
             i = t.porte_a
             for i in [t.porte_a, t.porte_b]:
