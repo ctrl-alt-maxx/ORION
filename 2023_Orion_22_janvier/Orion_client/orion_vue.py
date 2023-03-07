@@ -328,6 +328,18 @@ class Vue():
             self.label_entrepotVaisseau = Label(self.cadre_label_entrepot_vaisseau, text="Entrepot a vaisseaux",
                                                 bg="#848484")
             self.label_entrepotVaisseau.pack(side=TOP)
+            self.cadre_img2 = Frame(self.cadreoutils, height=200, width=200)
+            self.cadre_img2.pack()
+            self.label_img2 = Label(self.cadre_img2, image=self.img_usine)
+            self.label_img2.pack(side=LEFT)
+
+            self.label_installation2 = Label(self.cadre_img2, text="Description: usine pour stocker ressources")
+            self.label_installation2.pack(side=RIGHT)
+
+            self.cadre_bouton2 = Frame(self.cadreoutils, height=200, width=200, bg="yellow")
+            self.cadre_bouton2.pack(fill=X)
+            self.boutonConstruire2 = Button(self.cadre_bouton2, text="Construire Entrepot", bg="yellow")
+            self.boutonConstruire2.pack()
 
     def methode_ressource_exploitable(self):
         self.recup = self.parent.recupEtoile(self.ma_selection[1])
