@@ -260,6 +260,7 @@ class Vue():
 
         self.scroll_liste_Y = Scrollbar(self.cadreinfoliste, orient=VERTICAL)
         self.info_liste = Listbox(self.cadreinfoliste, width=20, height=6, yscrollcommand=self.scroll_liste_Y.set)
+        self.info_liste.bind("<Button-1>", self.centrer_liste_objet)
         self.info_liste.bind("<Button-3>", self.centrer_liste_objet)
         self.info_liste.grid(column=0, row=0, sticky=W + E + N + S)
         self.scroll_liste_Y.grid(column=1, row=0, sticky=N + S)
@@ -268,6 +269,14 @@ class Vue():
         self.cadreinfoliste.rowconfigure(0, weight=1)
 
         self.cadreinfoliste.pack(side=BOTTOM, expand=1, fill=BOTH)
+
+        # IMAGE VAISSEAU-------------------------------------------------------------------
+        s = Style()
+        s.theme_use('clam')
+        s.configure("red.Horizontal.TProgressbar", foreground="red", background="red")
+
+        self.cadreimage = Frame(self.cadreoutils, width=200, height=228, bg="black")
+        self.barrevie = Progressbar(self.cadreoutils, orient=HORIZONTAL, length=100, mode="determinate", style="red.Horizontal.TProgressbar")
 
         # MINI MAP-----------------------------------------------------------------------
         self.cadreminimap = Frame(self.cadreoutils, height=200, width=200, bg="black")
@@ -304,6 +313,17 @@ class Vue():
             self.label_titane.pack_forget()
             self.label_fer.pack_forget()
             self.label_hydrogene.pack_forget()
+
+            self.label_materiaux_e.pack_forget()
+            self.label_fer_e.pack_forget()
+            self.label_cuivre_e.pack_forget()
+            self.label_or_e.pack_forget()
+            self.label_titane_e.pack_forget()
+            self.label_ernegie_e.pack_forget()
+            self.label_hydrogene_e.pack_forget()
+            self.label_pluto_e.pack_forget()
+            self.label_antimatiere_e.pack_forget()
+
 
             # Affichage Label et Frame
             # partie haute
@@ -349,50 +369,50 @@ class Vue():
     def methode_ressource_exploitable(self):
         self.recup = self.parent.recupEtoile(self.ma_selection[1])
 
-        label_materiaux = Label(self.cadreoutils, text="Matériaux :", anchor=CENTER,width=34, height=1, border=1, borderwidth=1,relief="solid", bg="#e0e0e0")
-        label_ernegie = Label(self.cadreoutils, text="Énergie : ", anchor=CENTER,width=34, height=1, border=1, borderwidth=1,relief="solid", bg="#e0e0e0")
+        self.label_materiaux_e = Label(self.cadreoutils, text="Matériaux :", anchor=CENTER,width=34, height=1, border=1, borderwidth=1,relief="solid", bg="#e0e0e0")
+        self.label_ernegie_e = Label(self.cadreoutils, text="Énergie : ", anchor=CENTER,width=34, height=1, border=1, borderwidth=1,relief="solid", bg="#e0e0e0")
 
-        label_fer = Label(self.cadreoutils, text="Fer : " + str(round(self.recup.ressource.get("Fer") * 100, 2)) + "%", anchor=CENTER,
+        self.label_fer_e = Label(self.cadreoutils, text="Fer : " + str(round(self.recup.ressource.get("Fer") * 100, 2)) + "%", anchor=CENTER,
                                width=34, height=2, border=2, borderwidth=1,
                                relief="solid", bg="#949392")
 
-        label_cuivre = Label(self.cadreoutils, text="Cuivre : " + str(round(self.recup.ressource.get("Cuivre") * 100, 2)) + "%",
+        self.label_cuivre_e = Label(self.cadreoutils, text="Cuivre : " + str(round(self.recup.ressource.get("Cuivre") * 100, 2)) + "%",
                                   anchor=CENTER, width=34, height=2, border=2,
                                   borderwidth=1,
                                   relief="solid", bg="#703f0a")
 
-        label_or = Label(self.cadreoutils, text="Or : " + str(round(self.recup.ressource.get("Or") * 100, 2)) + "%", anchor=CENTER,
+        self.label_or_e = Label(self.cadreoutils, text="Or : " + str(round(self.recup.ressource.get("Or") * 100, 2)) + "%", anchor=CENTER,
                               width=34, height=2, border=2,
                               borderwidth=1,
                               relief="solid", bg="#9c7f00")
 
-        label_titane = Label(self.cadreoutils, text="Titane : " + str(round(self.recup.ressource.get("Titane") * 100, 2)) + "%",
+        self.label_titane_e = Label(self.cadreoutils, text="Titane : " + str(round(self.recup.ressource.get("Titane") * 100, 2)) + "%",
                                   anchor=CENTER, width=34, height=2, border=2,
                                   borderwidth=1,
                                   relief="solid", bg="#5668a3")
 
-        label_hydrogene = Label(self.cadreoutils,
+        self.label_hydrogene_e = Label(self.cadreoutils,
                                      text="Hydrogene : " + str(round(self.recup.ressource.get("Hydrogene") * 100, 2)) + "%", anchor=CENTER,
                                      width=34, height=2, border=2,
                                      borderwidth=1, relief="solid", bg="#b4e7ed")
 
-        label_pluto = Label(self.cadreoutils, text="Plutonium : " + str(round(self.recup.ressource.get("Plutonium") * 100, 2)) + "%",
+        self.label_pluto_e = Label(self.cadreoutils, text="Plutonium : " + str(round(self.recup.ressource.get("Plutonium") * 100, 2)) + "%",
                                  anchor=CENTER, width=34, height=2, border=2,
                                  borderwidth=1, relief="solid", bg="#558a0c")
 
-        label_antimatiere = Label(self.cadreoutils, text="Antimatière : " + str(round(self.recup.ressource.get("Antimatiere") * 100, 2)) + "%",
+        self.label_antimatiere_e = Label(self.cadreoutils, text="Antimatière : " + str(round(self.recup.ressource.get("Antimatiere") * 100, 2)) + "%",
                                        anchor=CENTER, width=34, height=2, border=2,
                                        borderwidth=1,
                                        relief="solid", bg="#3c0c8a")
-        label_materiaux.pack(fill=X)
-        label_fer.pack(fill=X)
-        label_cuivre.pack(fill=X)
-        label_or.pack(fill=X)
-        label_titane.pack(fill=X)
-        label_ernegie.pack(fill=X)
-        label_hydrogene.pack(fill=X)
-        label_pluto.pack(fill=X)
-        label_antimatiere.pack(fill=X)
+        self.label_materiaux_e.pack(fill=X)
+        self.label_fer_e.pack(fill=X)
+        self.label_cuivre_e.pack(fill=X)
+        self.label_or_e.pack(fill=X)
+        self.label_titane_e.pack(fill=X)
+        self.label_ernegie_e.pack(fill=X)
+        self.label_hydrogene_e.pack(fill=X)
+        self.label_pluto_e.pack(fill=X)
+        self.label_antimatiere_e.pack(fill=X)
 
     def methode_resource(self):  # afficher
 
@@ -409,8 +429,7 @@ class Vue():
             self.boutonAmeliorerEtoile.pack_forget()
             self.boutonConstruireEntrepot.pack_forget()
             self.boutonAmeliorerEtoile.pack_forget()
-            self.barrevie.pack_forget()
-            self.cadreinfoimage.pack_forget()
+            self.cadreinf
 
             self.label_fer = Label(self.cadreoutils, text="Fer : " + str(self.recup.inventaire.get("Fer")), anchor=CENTER, width=25, height=2, border=2, borderwidth=1,
                          relief="solid", bg="green")
@@ -437,8 +456,7 @@ class Vue():
                                            borderwidth=1,
                                            relief="solid", bg="purple")
 
-            #lOr = Label(self.cadreoutils, text="Or", anchor=CENTER, width=25, height=2, border=2, borderwidth=1,
-                       # relief="solid", bg="yellow")
+
 
             self.label_fer.pack()
             self.label_cuivre.pack()
@@ -447,7 +465,7 @@ class Vue():
             self.label_hydrogene.pack()
             self.label_pluto.pack()
             self.label_antimatiere.pack()
-        #lPlutonium.pack()
+
 
 
     def centrer_liste_objet(self, evt):
@@ -608,7 +626,7 @@ class Vue():
 
         self.canevas.xview_moveto(pctx)
         self.canevas.yview_moveto(pcty)
-        '''
+
     def afficher_info_vaisseau(self, objet):
         self.clickUneFoisSurRessource = 0
         self.clickUneFoisSurVaiss += 1
@@ -635,7 +653,7 @@ class Vue():
 
         self.cadreinfoimage.pack(fill=BOTH)  # Debug, à remplacer par une image plus tard
         self.barrevie.pack(fill=BOTH)
-        '''
+
         # change l'appartenance d'une etoile et donc les propriétés des dessins les représentants
     def afficher_etoile(self, joueur, cible):
         joueur1 = self.modele.joueurs[joueur]
