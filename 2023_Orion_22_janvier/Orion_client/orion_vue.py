@@ -2,15 +2,14 @@
 ##  version 2022 14 mars - jmd
 
 from tkinter import *
-from tkinter.ttk import *
 from tkinter.simpledialog import *
 from tkinter.messagebox import *
 from helper import Helper as hlp
+from PIL import ImageTk, Image
 import math
 from PIL import ImageTk, Image
-import tkinter as tk
-
 import random
+import tkinter as tk
 
 #ffff
 class Vue():
@@ -39,7 +38,7 @@ class Vue():
         # # variable pour suivre le trace du multiselect
         self.debut_selection = []
         self.selecteur_actif = None
-        self.shipSelected = ""
+
 
         #creation label Frame pour méthode methode_installation et methode_ressource
         self.boutonAmeliorerEtoile = Button()
@@ -81,7 +80,6 @@ class Vue():
         self.cadre_bouton2 = Frame()
         self.boutonConstruire2 = Button()
 
-        self.selectedTags = None
 
     def demander_abandon(self):
         rep = askokcancel("Vous voulez vraiment quitter?")
@@ -108,14 +106,14 @@ class Vue():
     def creer_cadre_splash(self, urlserveur, mon_nom, msg_initial):
         self.cadre_splash = Frame(self.cadre_app)
         # un canvas est utilisé pour 'dessiner' les widgets de cette fenêtre voir 'create_window' plus bas
-        self.canevas_splash = Canvas(self.cadre_splash, width=600, height=480, bg="#04273d")
+        self.canevas_splash = Canvas(self.cadre_splash, width=600, height=480, bg="pink")
         self.canevas_splash.pack()
 
         # creation ds divers widgets (champ de texte 'Entry' et boutons cliquables (Button)
-        self.etatdujeu = Label(text=msg_initial, font=("Arial", 18), borderwidth=2, relief=RIDGE, bg="#010a0f", fg="#c4c4c4")
-        self.nomsplash = Entry(font=("Arial", 14), bg="#010a0f", fg="#c4c4c4")
-        self.urlsplash = Entry(font=("Arial", 14), width=42, bg="#010a0f", fg="#c4c4c4")
-        self.btnurlconnect = Button(text="Connecter", font=("Arial", 12), command=self.connecter_serveur, bg="#010a0f", fg="#c4c4c4")
+        self.etatdujeu = Label(text=msg_initial, font=("Arial", 18), borderwidth=2, relief=RIDGE)
+        self.nomsplash = Entry(font=("Arial", 14))
+        self.urlsplash = Entry(font=("Arial", 14), width=42)
+        self.btnurlconnect = Button(text="Connecter", font=("Arial", 12), command=self.connecter_serveur)
         # on insère les infos par défaut (nom url) et reçu au démarrage (dispo)
         self.nomsplash.insert(0, mon_nom)
         self.urlsplash.insert(0, urlserveur)
@@ -126,11 +124,11 @@ class Vue():
         self.canevas_splash.create_window(480, 250, window=self.btnurlconnect, width=100, height=30)
         # les boutons d'actions -> FENETRE CONNEXION
 
-        self.btncreerpartie = Button(text="Creer partie", font=("Arial", 12), state=DISABLED, command=self.creer_partie, bg="#010a0f", fg="#c4c4c4")
+        self.btncreerpartie = Button(text="Creer partie", font=("Arial", 12), state=DISABLED, command=self.creer_partie)
         self.btninscrirejoueur = Button(text="Inscrire joueur", font=("Arial", 12), state=DISABLED,
-                                        command=self.inscrire_joueur, bg="#010a0f", fg="#c4c4c4")
+                                        command=self.inscrire_joueur)
         self.btnreset = Button(text="Reinitialiser partie", font=("Arial", 9), state=DISABLED,
-                               command=self.reset_partie, bg="#010a0f", fg="#c4c4c4")
+                               command=self.reset_partie)
 
         # on place les autres boutons
         self.canevas_splash.create_window(420, 350, window=self.btncreerpartie, width=200, height=30)
@@ -144,14 +142,14 @@ class Vue():
     def creer_cadre_lobby(self):
         # le cadre lobby, pour isncription des autres joueurs, remplace le splash
         self.cadrelobby = Frame(self.cadre_app)
-        self.canevaslobby = Canvas(self.cadrelobby, width=640, height=480, bg="#04273d")
+        self.canevaslobby = Canvas(self.cadrelobby, width=640, height=480, bg="lightblue")
         self.canevaslobby.pack()
         # widgets du lobby
         # un listbox pour afficher les joueurs inscrit pour la partie à lancer
-        self.listelobby = Listbox(borderwidth=2, relief=GROOVE, fg="#c4c4c4", bg="#010a0f")
+        self.listelobby = Listbox(borderwidth=2, relief=GROOVE)
 
         # bouton pour lancer la partie, uniquement accessible à celui qui a creer la partie dans le splash
-        self.btnlancerpartie = Button(text="Lancer partie", state=DISABLED, command=self.lancer_partie, fg="#c4c4c4", bg="#010a0f")
+        self.btnlancerpartie = Button(text="Lancer partie", state=DISABLED, command=self.lancer_partie)
         # affichage des widgets dans le canevaslobby (similaire au splash)
         self.canevaslobby.create_window(440, 240, window=self.listelobby, width=200, height=400)
         self.canevaslobby.create_window(200, 400, window=self.btnlancerpartie, width=100, height=30)
@@ -199,17 +197,22 @@ class Vue():
         self.cadrejeu.pack(side=LEFT, expand=1, fill=BOTH)
         return self.cadrepartie
 
+
+
+
     def creer_cadre_outils(self):
-        self.cadreoutils = Frame(self.cadrepartie, width=200, height=200, bg="red")  #petite fenetre sur la gauche (celle juste au dessus de la mini map)->ici que l<on affiche le menu
+        self.cadreoutils = Frame(self.cadrepartie, width=200, height=200)  #petite fenetre sur la gauche (celle juste au dessus de la mini map)->ici que l<on affiche le menu
         self.cadreoutils.pack(side=LEFT, fill=Y)
         self.cadreinfo = Frame(self.cadreoutils, width=200, height=200, bg="darkgrey")#??????????
         self.cadreinfo.pack(fill=BOTH)
 
         self.cadreinfogen = Frame(self.cadreinfo, width=200, height=200, bg="grey50")#petite fenetre en haut a gauche (JAJA et bouton MINI)
         self.cadreinfogen.pack(fill=BOTH)
+
         self.labid = Label(self.cadreinfogen, text="Inconnu")
         self.labid.bind("<Button>", self.centrer_planetemere)#bouton qui est utilise lorsque je clique sur JAJA, ca nous place sur notre planete mere
         self.labid.pack()
+
         self.btnmini = Button(self.cadreinfogen, text="MINI")
         self.btnmini.bind("<Button>", self.afficher_mini)
         self.btnmini.pack()
@@ -226,12 +229,8 @@ class Vue():
         """pour creer un cargo"""
         self.btncreercargo.bind("<Button>", self.creer_vaisseau)
 
-        self.btncreervaisseau.pack()
+        #self.btncreervaisseau.pack()
         # self.btncreercargo.pack()
-
-        self.btnRessources = Button(self.cadreinfochoix, text="Ressources")
-        self.btnRessources.config(command=self.methode_ressource_exploitable)
-        self.btnRessources.pack()
 
         # creer boutonInstallation ici--------------------------------------------------------------------------------------------
         self.btnInstallation = Button(self.cadreinfochoix, text="Installations")
@@ -240,10 +239,10 @@ class Vue():
         self.btnInstallation.pack()
 
         # creer boutonResource ici
-        self.btnInventaire = Button(self.cadreinfochoix, text="Inventaire")
+        self.btnResource = Button(self.cadreinfochoix, text="Ressources")
         """pour ouvrir le menu de ressource"""
-        self.btnInventaire.config(command=self.methode_resource)
-        self.btnInventaire.pack()
+        self.btnResource.config(command=self.methode_resource)
+        self.btnResource.pack()
 
         self.boutonAmeliorerEtoile = Button(self.cadreinfochoix, text="Ameliorer Etoile")
         self.boutonAmeliorerEtoile.pack()
@@ -265,9 +264,9 @@ class Vue():
         self.cadreinfoliste.pack(side=BOTTOM, expand=1, fill=BOTH)
 
         # MINI MAP-----------------------------------------------------------------------
-        self.cadreminimap = Frame(self.cadreoutils, height=200, width=200, bg="black")
+        self.cadreminimap = Frame(self.cadreoutils, height=200, width=200)
         self.canevas_minimap = Canvas(self.cadreminimap, width=self.taille_minimap, height=self.taille_minimap,
-                                      bg="#1e1e21")
+                                      bg="pink")
         self.canevas_minimap.bind("<Button>", self.positionner_minicanevas)
         self.canevas_minimap.pack()
         self.cadreminimap.pack(side=BOTTOM)
@@ -286,11 +285,9 @@ class Vue():
 
     def methode_installation(self):  # afficher
         self.clickUneFoisSurRessource = 0
-        self.clickUneFoisSurVaiss = 0
         self.clickUneFoisSurInsta += 1
-        print(self.clickUneFoisSurInsta)
 
-        #ENLEVER LABEL RESSOURCES + VAISSEAU
+        #ENLEVER LABEL RESSOURCES
         if self.clickUneFoisSurInsta == 1:
             self.label_or.pack_forget()
             self.label_cuivre.pack_forget()
@@ -299,6 +296,7 @@ class Vue():
             self.label_titane.pack_forget()
             self.label_fer.pack_forget()
             self.label_hydrogene.pack_forget()
+
 
             # Affichage Label et Frame
             # partie haute
@@ -310,6 +308,7 @@ class Vue():
             self.cadre_img.pack()
             self.label_img = Label(self.cadre_img, image=self.img_usine)
             self.label_img.pack(side=LEFT)
+
 
             self.label_installation = Label(self.cadre_img, text="Description: usine pour stocker ressources")
             self.label_installation.pack(side=RIGHT)
@@ -341,71 +340,45 @@ class Vue():
             self.boutonConstruire2 = Button(self.cadre_bouton2, text="Construire Entrepot", bg="yellow")
             self.boutonConstruire2.pack()
 
-    def methode_ressource_exploitable(self):
-        self.recup = self.parent.recupEtoile(self.ma_selection[1])
+            self.cadre_img2 = Frame(self.cadreoutils, height=200, width=200)
+            self.cadre_img2.pack()
+            self.label_img2 = Label(self.cadre_img2, image=self.img_usine)
+            self.label_img2.pack(side=LEFT)
 
-        label_materiaux = Label(self.cadreoutils, text="Matériaux :", anchor=CENTER,width=34, height=1, border=1, borderwidth=1,relief="solid", bg="#e0e0e0")
-        label_ernegie = Label(self.cadreoutils, text="Énergie : ", anchor=CENTER,width=34, height=1, border=1, borderwidth=1,relief="solid", bg="#e0e0e0")
+            self.label_installation2 = Label(self.cadre_img2, text="Description: usine pour stocker ressources")
+            self.label_installation2.pack(side=RIGHT)
 
-        label_fer = Label(self.cadreoutils, text="Fer : " + str(round(self.recup.ressource.get("Fer") * 100, 2)) + "%", anchor=CENTER,
-                               width=34, height=2, border=2, borderwidth=1,
-                               relief="solid", bg="#949392")
+            self.cadre_bouton2 = Frame(self.cadreoutils, height=200, width=200, bg="yellow")
+            self.cadre_bouton2.pack(fill=X)
+            self.boutonConstruire2 = Button(self.cadre_bouton2, text="Construire Entrepot", bg="yellow")
+            self.boutonConstruire2.pack()
 
-        label_cuivre = Label(self.cadreoutils, text="Cuivre : " + str(round(self.recup.ressource.get("Cuivre") * 100, 2)) + "%",
-                                  anchor=CENTER, width=34, height=2, border=2,
-                                  borderwidth=1,
-                                  relief="solid", bg="#703f0a")
 
-        label_or = Label(self.cadreoutils, text="Or : " + str(round(self.recup.ressource.get("Or") * 100, 2)) + "%", anchor=CENTER,
-                              width=34, height=2, border=2,
-                              borderwidth=1,
-                              relief="solid", bg="#9c7f00")
 
-        label_titane = Label(self.cadreoutils, text="Titane : " + str(round(self.recup.ressource.get("Titane") * 100, 2)) + "%",
-                                  anchor=CENTER, width=34, height=2, border=2,
-                                  borderwidth=1,
-                                  relief="solid", bg="#5668a3")
 
-        label_hydrogene = Label(self.cadreoutils,
-                                     text="Hydrogene : " + str(round(self.recup.ressource.get("Hydrogene") * 100, 2)) + "%", anchor=CENTER,
-                                     width=34, height=2, border=2,
-                                     borderwidth=1, relief="solid", bg="#b4e7ed")
 
-        label_pluto = Label(self.cadreoutils, text="Plutonium : " + str(round(self.recup.ressource.get("Plutonium") * 100, 2)) + "%",
-                                 anchor=CENTER, width=34, height=2, border=2,
-                                 borderwidth=1, relief="solid", bg="#558a0c")
-
-        label_antimatiere = Label(self.cadreoutils, text="Antimatière : " + str(round(self.recup.ressource.get("Antimatiere") * 100, 2)) + "%",
-                                       anchor=CENTER, width=34, height=2, border=2,
-                                       borderwidth=1,
-                                       relief="solid", bg="#3c0c8a")
-        label_materiaux.pack(fill=X)
-        label_fer.pack(fill=X)
-        label_cuivre.pack(fill=X)
-        label_or.pack(fill=X)
-        label_titane.pack(fill=X)
-        label_ernegie.pack(fill=X)
-        label_hydrogene.pack(fill=X)
-        label_pluto.pack(fill=X)
-        label_antimatiere.pack(fill=X)
 
     def methode_resource(self):  # afficher
 
         self.clickUneFoisSurInsta = 0
-        self.clickUneFoisSurVaiss = 0
         self.clickUneFoisSurRessource += 1
         self.recup = self.parent.recupEtoile(self.ma_selection[1])
 
+        #pour enlever les label et frame
         if self.clickUneFoisSurRessource == 1:
-            self.boutonConstruire.pack_forget()
+            self.cadre_label_ressource.pack_forget()
             self.label_titre.pack_forget()
+            self.cadre_img.pack_forget()
+            self.label_img.pack_forget()
             self.label_installation.pack_forget()
-            self.label_entrepotVaisseau.pack_forget()
-            self.boutonAmeliorerEtoile.pack_forget()
-            self.boutonConstruireEntrepot.pack_forget()
-            self.boutonAmeliorerEtoile.pack_forget()
-            self.barrevie.pack_forget()
-            self.cadreinfoimage.pack_forget()
+            self.cadre_bouton.pack_forget()
+            self.boutonConstruire.pack_forget()
+            self.cadre_label_entrepot_vaisseau.pack_forget()
+            self.cadre_img2.pack_forget()
+            self.label_installation2.pack_forget()
+            self.cadre_bouton2.pack_forget()
+            self.boutonConstruire2.pack_forget()
+            self.cadre_espacement.pack_forget()
 
             self.label_fer = Label(self.cadreoutils, text="Fer : " + str(self.recup.inventaire.get("Fer")), anchor=CENTER, width=25, height=2, border=2, borderwidth=1,
                          relief="solid", bg="green")
@@ -544,7 +517,7 @@ class Vue():
         yl = self.canevas.winfo_height()
 
     def afficher_decor(self, mod):
-        # on cree un arriere fond de petites etoiles NPC pour le look
+        # on cree un arriere fond de petites etoieles NPC pour le look
         for i in range(len(mod.etoiles) * 50):
             x = random.randrange(int(mod.largeur))
             y = random.randrange(int(mod.hauteur))
@@ -556,14 +529,14 @@ class Vue():
             t = i.taille * self.zoom
             self.canevas.create_oval(i.x - t, i.y - t, i.x + t, i.y + t,
                                      fill="grey80", outline=col,
-                                     tags=(i.proprietaire, str(i.id), "Etoile", i.x, i.y))
+                                     tags=(i.proprietaire, str(i.id), "Etoile",))
         # affichage des etoiles possedees par les joueurs
         for i in mod.joueurs.keys():
             for j in mod.joueurs[i].etoilescontrolees:
                 t = j.taille * self.zoom
                 self.canevas.create_oval(j.x - t, j.y - t, j.x + t, j.y + t,
                                          fill=mod.joueurs[i].couleur,
-                                         tags=(j.proprietaire, str(j.id), "Etoile", j.x, j.y))
+                                         tags=(j.proprietaire, str(j.id), "Etoile"))
                 # on affiche dans minimap
                 minix = j.x / self.modele.largeur * self.taille_minimap
                 miniy = j.y / self.modele.hauteur * self.taille_minimap
@@ -603,6 +576,7 @@ class Vue():
 
         self.canevas.xview_moveto(pctx)
         self.canevas.yview_moveto(pcty)
+
         '''
     def afficher_info_vaisseau(self, objet):
         self.clickUneFoisSurRessource = 0
@@ -637,15 +611,15 @@ class Vue():
         id = cible.id
         couleur = joueur1.couleur
         self.canevas.itemconfig(id, fill=couleur)
-        self.canevas.itemconfig(id, tags=(joueur, id, "Etoile", cible.x, cible.y))
+        self.canevas.itemconfig(id, tags=(joueur, id, "Etoile",))
 
     # ajuster la liste des vaisseaux
-    def lister_objet(self, obj, id, niveau):
-        self.info_liste.insert(END, obj + "; " + id + "; Nv." + str(niveau))
+    def lister_objet(self, obj, id):
+        self.info_liste.insert(END, obj + "; " + id)
 
     def creer_vaisseau(self, evt):
         type_vaisseau = evt.widget.cget("text")
-        self.parent.creer_vaisseau(type_vaisseau, self.selectedTags[3], self.selectedTags[4]) # Il faut que tu trouve comment changer les tags après une capture
+        self.parent.creer_vaisseau(type_vaisseau)
         self.ma_selection = None
         self.canevas.delete("marqueur")
         self.cadreinfochoix.pack_forget()
@@ -726,39 +700,32 @@ class Vue():
                                  (j.x + tailleF), (j.y + tailleF), fill=i.couleur,
                                  tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact"))
 
-    def cliquer_cosmos(self, evt):  # DES QUE LON CLIQUE QUELQUE PART DANS LE JEU
-        self.selectedTags = self.canevas.gettags(CURRENT)  # self.canevas = Canvas(self.cadrejeu, width=800, height=600,
-        tags = self.selectedTags
-        if tags:  # Il y a des tags => On a cliqué sur un objet de la carte (Vaisseau, Étoile, ...)
-            if tags[0] == self.mon_nom:
-                self.ma_selection = [self.mon_nom, tags[1], tags[2]]
-                if tags[2] == "Etoile":
-                    self.montrer_etoile_selection()
-                    if self.shipSelected != "":
-                        self.parent.cibler_flotte(self.shipSelected, tags[1], tags[2])
-                        self.shipSelected = ""
-                        self.ma_selection = None
-                    else:
-                        self.montrer_etoile_selection()
-                elif tags[2] == "Flotte":
-                    self.montrer_flotte_selection()
-                    self.shipSelected = self.ma_selection[1]
-            elif ("Etoile" == tags[2] or "Porte_de_ver" == tags[2]) and self.shipSelected != "":  # Si c'est un objet qui nous appartient pas
-                if self.ma_selection:  # Si une sélection de nos vaisseaux a été faites, on les envoi sur l'étoile avec "cibler_flotte"
-                    self.parent.cibler_flotte(self.ma_selection[1], tags[1], tags[2])
-                    self.shipSelected = ""
+    def cliquer_cosmos(self, evt):  # DES QUE L'ON CLIQUE QUELQUE PART DANS LE JEU
+        t = self.canevas.gettags(CURRENT)  # self.canevas = Canvas(self.cadrejeu, width=800, height=600,
+        if t:  # il y a des tags
+            if t[0] == self.mon_nom:  # et
+                self.ma_selection = [self.mon_nom, t[1], t[2]]
+                if t[2] == "Etoile":
+                    self.montrer_etoile_selection()  # TAG LA SELECTION DE MON ETOILE
+                elif t[2] == "Flotte":
+                    self.montrer_flotte_selection()  # Ca tag mon vaisseau mais il faut enlever le tag quand je reclick dessus
 
+            elif ("Etoile" in t or "Porte_de_ver" in t) and t[0] != self.mon_nom:
+                if self.ma_selection:
+                    self.parent.cibler_flotte(self.ma_selection[1], t[1], t[2])
                 self.ma_selection = None
-        else:  # aucun tag => On a clické dans le vide donc aucun objet sur la carte
+                self.canevas.delete("marqueur")
+        else:  # aucun tag => rien sous la souris - sinon au minimum il y aurait CURRENT
             print("Region inconnue")
             self.ma_selection = None
+            self.canevas.delete("marqueur")
 
     def montrer_etoile_selection(self):  # montrer le tag de letoile selectionne
         self.cadreinfoliste.pack_forget()
         #self.barrevie.pack_forget()
         self.btnInventaire.pack()
         self.btnInstallation.pack()
-        self.cadreinfochoix.pack(fill=BOTH)
+
 
     def montrer_flotte_selection(self):  # montrer le tag du vaisseau selectionne
         print("À IMPLANTER - FLOTTE de ", self.mon_nom)
