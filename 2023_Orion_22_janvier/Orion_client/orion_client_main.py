@@ -230,7 +230,7 @@ class Controleur():
 
     def cibler_flotte(self, idorigine, iddestination, type_cible):
         self.actionsrequises.append([self.mon_nom, "ciblerflotte", [idorigine, iddestination, type_cible]])
-
+            #ddd
     def afficher_etoile(self, joueur, cible):
         self.vue.afficher_etoile(joueur, cible)
 
