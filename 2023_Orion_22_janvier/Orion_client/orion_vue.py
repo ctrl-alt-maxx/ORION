@@ -255,6 +255,7 @@ class Vue():
 
         self.scroll_liste_Y = Scrollbar(self.cadreinfoliste, orient=VERTICAL)
         self.info_liste = Listbox(self.cadreinfoliste, width=20, height=6, yscrollcommand=self.scroll_liste_Y.set)
+        self.info_liste.bind("<Button-1>", self.centrer_liste_objet)
         self.info_liste.bind("<Button-3>", self.centrer_liste_objet)
         self.info_liste.grid(column=0, row=0, sticky=W + E + N + S)
         self.scroll_liste_Y.grid(column=1, row=0, sticky=N + S)
@@ -263,6 +264,7 @@ class Vue():
         self.cadreinfoliste.rowconfigure(0, weight=1)
 
         self.cadreinfoliste.pack(side=BOTTOM, expand=1, fill=BOTH)
+
         # IMAGE VAISSEAU-------------------------------------------------------------------
         s = Style()
         s.theme_use('clam')
