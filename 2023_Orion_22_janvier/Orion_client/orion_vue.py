@@ -7,7 +7,8 @@ from tkinter.simpledialog import *
 from tkinter.messagebox import *
 from helper import Helper as hlp
 import math
-from PIL import Image
+from PIL import ImageTk, Image
+import tkinter as tk
 
 import random
 
@@ -40,7 +41,7 @@ class Vue():
         self.selecteur_actif = None
         self.shipSelected = ""
 
-        #cree un bouton global que lon va pouvoir reutiliser
+        #creation label Frame pour méthode methode_installation et methode_ressource
         self.boutonAmeliorerEtoile = Button()
         self.label_installation = Label()
         self.label_ressource = Label()
@@ -53,19 +54,32 @@ class Vue():
         self.label_titane = Label()
         self.label_titre = Label()
         self.canev = Canvas()
-
         self.boutonConstruire = Button()
         self.label_entrepotVaisseau = Label()
         self.boutonConstruireEntrepot = Button()
-
         self.label_qte_fer = Label()
-
-
         self.clickUneFoisSurInsta = 0 #pour que le frame ne reaparaisse pas si je clique 2 fois de suite sur le meme bouton
         self.clickUneFoisSurRessource = 0
         self.clickUneFoisSurVaiss = 0
+        self.img_usine = tk.PhotoImage(file='../img/imgUsine.png').subsample(6, 6)
 
-        self.selectedTags = None
+        # var global methode installation()
+        self.cadre_label_ressource = Frame()
+        self.label_titre = Label()
+        self.cadre_img = Frame()
+        self.label_img = Label()
+        self.label_installation = Label()
+        self.cadre_bouton = Frame()
+        self.boutonConstruire = Button()
+        self.cadre_espacement = Frame()
+
+        self.cadre_label_entrepot_vaisseau = Frame()
+        self.label_entrepotVaisseau = Label()
+        self.cadre_img2 = Frame()
+        self.label_img2 = Label()
+        self.label_installation2 = Label()
+        self.cadre_bouton2 = Frame()
+        self.boutonConstruire2 = Button()
 
     def demander_abandon(self):
         rep = askokcancel("Vous voulez vraiment quitter?")
@@ -239,24 +253,14 @@ class Vue():
 
         self.scroll_liste_Y = Scrollbar(self.cadreinfoliste, orient=VERTICAL)
         self.info_liste = Listbox(self.cadreinfoliste, width=20, height=6, yscrollcommand=self.scroll_liste_Y.set)
-        self.info_liste.bind("<Button-1>", self.info_liste_objet)
-        self.info_liste.bind("<Button-3>", self.info_liste_objet)
+        self.info_liste.bind("<Button-3>", self.centrer_liste_objet)
         self.info_liste.grid(column=0, row=0, sticky=W + E + N + S)
         self.scroll_liste_Y.grid(column=1, row=0, sticky=N + S)
 
         self.cadreinfoliste.columnconfigure(0, weight=1)
         self.cadreinfoliste.rowconfigure(0, weight=1)
 
-        self.cadreinfoliste.pack(fill=BOTH)
-
-        # IMAGE VAISSEAU + VIE --------------------------------------------------------------------------------
-        s = Style()
-        s.theme_use('clam')
-        s.configure("red.Horizontal.TProgressbar", foreground='red', background='red')
-
-        self.cadreinfoimage = Frame(self.cadreoutils, width=200, height=228, background="black")
-        self.barrevie = Progressbar(self.cadreoutils, style="red.Horizontal.TProgressbar", orient=HORIZONTAL,
-                                    mode="determinate", length=100)
+        self.cadreinfoliste.pack(side=BOTTOM, expand=1, fill=BOTH)
 
         # MINI MAP-----------------------------------------------------------------------
         self.cadreminimap = Frame(self.cadreoutils, height=200, width=200, bg="black")
@@ -293,27 +297,35 @@ class Vue():
             self.label_titane.pack_forget()
             self.label_fer.pack_forget()
             self.label_hydrogene.pack_forget()
-            self.barrevie.pack_forget()
-            self.cadreinfoimage.pack_forget()
-            testHp = "3"  # il faudra recuperer la vrai valeur ici
 
-            self.label_titre = Label(self.cadreoutils, text="Usine Ressource")
+            # Affichage Label et Frame
+            # partie haute
+            self.cadre_label_ressource = Frame(self.cadreoutils, height=200, width=200, bg="#848484")
+            self.cadre_label_ressource.pack(fill=X)
+            self.label_titre = Label(self.cadre_label_ressource, text="Usine Ressource", bg='#848484')
             self.label_titre.pack(side=TOP)
+            self.cadre_img = Frame(self.cadreoutils, height=200, width=200)
+            self.cadre_img.pack()
+            self.label_img = Label(self.cadre_img, image=self.img_usine)
+            self.label_img.pack(side=LEFT)
 
+            self.label_installation = Label(self.cadre_img, text="Description: usine pour stocker ressources")
+            self.label_installation.pack(side=RIGHT)
 
-            self.label_installation = Label(self.cadreoutils, text="Description: usine pour stocker ressource", bd=1,
-                                            relief="solid", width=25, height=4, anchor=W,
-                                            )
-            self.label_installation.pack()
-
-            self.boutonConstruire = Button(self.cadreoutils, text="Construire Usine")
+            self.cadre_bouton = Frame(self.cadreoutils, height=200, width=200, bg="yellow")
+            self.cadre_bouton.pack(fill=X)
+            self.boutonConstruire = Button(self.cadre_bouton, text="Construire Usine", bg="yellow")
             self.boutonConstruire.pack()
+            self.cadre_espacement = Frame(self.cadreoutils, height=10, width=200, bg="#FFFFFF")
+            self.cadre_espacement.pack(fill=X)
 
-            self.label_entrepotVaisseau = Label(self.cadreoutils, text="Entrepot a Vaisseaux", bd=1, relief="solid", width=25, height=8, anchor=W)
-            self.label_entrepotVaisseau.pack()
+            # partie basse
+            self.cadre_label_entrepot_vaisseau = Frame(self.cadreoutils, height=200, width=200, bg="#848484")
+            self.cadre_label_entrepot_vaisseau.pack(fill=X)
 
-            self.boutonConstruireEntrepot = Button(self.cadreoutils, text="Construire Entrepot")
-            self.boutonConstruireEntrepot.pack()
+            self.label_entrepotVaisseau = Label(self.cadre_label_entrepot_vaisseau, text="Entrepot a vaisseaux",
+                                                bg="#848484")
+            self.label_entrepotVaisseau.pack(side=TOP)
 
     def methode_ressource_exploitable(self):
         self.recup = self.parent.recupEtoile(self.ma_selection[1])
@@ -419,17 +431,14 @@ class Vue():
         #lPlutonium.pack()
 
 
-    def info_liste_objet(self, evt):
+    def centrer_liste_objet(self, evt):
         info = self.info_liste.get(self.info_liste.curselection())
         print(info)
         liste_separee = info.split(";")
         type_vaisseau = liste_separee[0]
         id = liste_separee[1][1:]
         obj = self.modele.joueurs[self.mon_nom].flotte[type_vaisseau][id]
-        if evt.num == 1:
-            self.afficher_info_vaisseau(obj)
-        else:
-            self.centrer_objet(obj)
+        self.centrer_objet(obj)
 
     def calc_objets(self, evt):
         print("Univers = ", len(self.canevas.find_all()))
@@ -533,14 +542,14 @@ class Vue():
             t = i.taille * self.zoom
             self.canevas.create_oval(i.x - t, i.y - t, i.x + t, i.y + t,
                                      fill="grey80", outline=col,
-                                     tags=(i.proprietaire, str(i.id), "Etoile", i.x, i.y))
+                                     tags=(i.proprietaire, str(i.id), "Etoile"))
         # affichage des etoiles possedees par les joueurs
         for i in mod.joueurs.keys():
             for j in mod.joueurs[i].etoilescontrolees:
                 t = j.taille * self.zoom
                 self.canevas.create_oval(j.x - t, j.y - t, j.x + t, j.y + t,
                                          fill=mod.joueurs[i].couleur,
-                                         tags=(j.proprietaire, str(j.id), "Etoile", j.x, j.y))
+                                         tags=(j.proprietaire, str(j.id), "Etoile"))
                 # on affiche dans minimap
                 minix = j.x / self.modele.largeur * self.taille_minimap
                 miniy = j.y / self.modele.hauteur * self.taille_minimap
@@ -580,7 +589,7 @@ class Vue():
 
         self.canevas.xview_moveto(pctx)
         self.canevas.yview_moveto(pcty)
-
+        '''
     def afficher_info_vaisseau(self, objet):
         self.clickUneFoisSurRessource = 0
         self.clickUneFoisSurVaiss += 1
@@ -607,14 +616,14 @@ class Vue():
 
         self.cadreinfoimage.pack(fill=BOTH)  # Debug, à remplacer par une image plus tard
         self.barrevie.pack(fill=BOTH)
-
-    # change l'appartenance d'une etoile et donc les propriétés des dessins les représentants
+        '''
+        # change l'appartenance d'une etoile et donc les propriétés des dessins les représentants
     def afficher_etoile(self, joueur, cible):
         joueur1 = self.modele.joueurs[joueur]
         id = cible.id
         couleur = joueur1.couleur
         self.canevas.itemconfig(id, fill=couleur)
-        self.canevas.itemconfig(id, tags=(joueur, id, "Etoile", cible.x, cible.y))
+        self.canevas.itemconfig(id, tags=(joueur, id, "Etoile"))
 
     # ajuster la liste des vaisseaux
     def lister_objet(self, obj, id, niveau):
@@ -731,8 +740,8 @@ class Vue():
             self.ma_selection = None
 
     def montrer_etoile_selection(self):  # montrer le tag de letoile selectionne
-        self.cadreinfoimage.pack_forget()
-        self.barrevie.pack_forget()
+        self.cadreinfoliste.pack_forget()
+        #self.barrevie.pack_forget()
         self.btnInventaire.pack()
         self.btnInstallation.pack()
         self.cadreinfochoix.pack(fill=BOTH)
