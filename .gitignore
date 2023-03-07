@@ -129,5 +129,5 @@ dmypy.json
 .pyre/
 
 #ADDED
-.xml
-.db
+*.xml
+*.db
