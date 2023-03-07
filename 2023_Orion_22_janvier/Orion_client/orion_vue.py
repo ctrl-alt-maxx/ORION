@@ -7,7 +7,7 @@ from tkinter.messagebox import *
 from helper import Helper as hlp
 from PIL import ImageTk, Image
 import math
-from PIL import ImageTk, Image
+
 import random
 import tkinter as tk
 
@@ -39,8 +39,7 @@ class Vue():
         self.debut_selection = []
         self.selecteur_actif = None
 
-
-        #creation label Frame pour méthode methode_installation et methode_ressource
+        #cration label et Frame pour methode methode_installation et methode_ressource
         self.boutonAmeliorerEtoile = Button()
         self.label_installation = Label()
         self.label_ressource = Label()
@@ -59,10 +58,9 @@ class Vue():
         self.label_qte_fer = Label()
         self.clickUneFoisSurInsta = 0 #pour que le frame ne reaparaisse pas si je clique 2 fois de suite sur le meme bouton
         self.clickUneFoisSurRessource = 0
-        self.clickUneFoisSurVaiss = 0
         self.img_usine = tk.PhotoImage(file='../img/imgUsine.png').subsample(6, 6)
 
-        # var global methode installation()
+        #var global methode installation()
         self.cadre_label_ressource = Frame()
         self.label_titre = Label()
         self.cadre_img = Frame()
@@ -297,48 +295,34 @@ class Vue():
             self.label_fer.pack_forget()
             self.label_hydrogene.pack_forget()
 
-
-            # Affichage Label et Frame
-            # partie haute
+            #Affichage Label et Frame
+            #partie haute
             self.cadre_label_ressource = Frame(self.cadreoutils, height=200, width=200, bg="#848484")
             self.cadre_label_ressource.pack(fill=X)
             self.label_titre = Label(self.cadre_label_ressource, text="Usine Ressource", bg='#848484')
             self.label_titre.pack(side=TOP)
-            self.cadre_img = Frame(self.cadreoutils, height=200, width=200)
+
+            self.cadre_img = Frame(self.cadreoutils,height=200,width=200)
             self.cadre_img.pack()
             self.label_img = Label(self.cadre_img, image=self.img_usine)
             self.label_img.pack(side=LEFT)
-
 
             self.label_installation = Label(self.cadre_img, text="Description: usine pour stocker ressources")
             self.label_installation.pack(side=RIGHT)
 
             self.cadre_bouton = Frame(self.cadreoutils, height=200, width=200, bg="yellow")
             self.cadre_bouton.pack(fill=X)
-            self.boutonConstruire = Button(self.cadre_bouton, text="Construire Usine", bg="yellow")
+            self.boutonConstruire = Button(self.cadre_bouton, text="Construire Usine",bg="yellow")
             self.boutonConstruire.pack()
-            self.cadre_espacement = Frame(self.cadreoutils, height=10, width=200, bg="#FFFFFF")
+            self.cadre_espacement = Frame(self.cadreoutils, height=10,width=200, bg="#FFFFFF")
             self.cadre_espacement.pack(fill=X)
 
-            # partie basse
+            #partie basse
             self.cadre_label_entrepot_vaisseau = Frame(self.cadreoutils, height=200, width=200, bg="#848484")
             self.cadre_label_entrepot_vaisseau.pack(fill=X)
 
-            self.label_entrepotVaisseau = Label(self.cadre_label_entrepot_vaisseau, text="Entrepot a vaisseaux",
-                                                bg="#848484")
+            self.label_entrepotVaisseau = Label(self.cadre_label_entrepot_vaisseau, text="Entrepot a vaisseaux", bg="#848484")
             self.label_entrepotVaisseau.pack(side=TOP)
-            self.cadre_img2 = Frame(self.cadreoutils, height=200, width=200)
-            self.cadre_img2.pack()
-            self.label_img2 = Label(self.cadre_img2, image=self.img_usine)
-            self.label_img2.pack(side=LEFT)
-
-            self.label_installation2 = Label(self.cadre_img2, text="Description: usine pour stocker ressources")
-            self.label_installation2.pack(side=RIGHT)
-
-            self.cadre_bouton2 = Frame(self.cadreoutils, height=200, width=200, bg="yellow")
-            self.cadre_bouton2.pack(fill=X)
-            self.boutonConstruire2 = Button(self.cadre_bouton2, text="Construire Entrepot", bg="yellow")
-            self.boutonConstruire2.pack()
 
             self.cadre_img2 = Frame(self.cadreoutils, height=200, width=200)
             self.cadre_img2.pack()
@@ -577,35 +561,7 @@ class Vue():
         self.canevas.xview_moveto(pctx)
         self.canevas.yview_moveto(pcty)
 
-        '''
-    def afficher_info_vaisseau(self, objet):
-        self.clickUneFoisSurRessource = 0
-        self.clickUneFoisSurVaiss += 1
-        self.clickUneFoisSurInsta = 0
-
-        if self.clickUneFoisSurVaiss == 1:
-            self.boutonConstruire.pack_forget()
-            self.label_titre.pack_forget()
-            self.label_installation.pack_forget()
-            self.label_entrepotVaisseau.pack_forget()
-            self.boutonAmeliorerEtoile.pack_forget()
-            self.boutonConstruireEntrepot.pack_forget()
-            self.label_or.pack_forget()
-            self.label_cuivre.pack_forget()
-            self.label_antimatiere.pack_forget()
-            self.label_pluto.pack_forget()
-            self.label_titane.pack_forget()
-            self.label_fer.pack_forget()
-            self.label_hydrogene.pack_forget()
-            self.btnInstallation.pack_forget()
-            self.btnInventaire.pack_forget()
-
-        self.barrevie.value = objet.Vie
-
-        self.cadreinfoimage.pack(fill=BOTH)  # Debug, à remplacer par une image plus tard
-        self.barrevie.pack(fill=BOTH)
-        '''
-        # change l'appartenance d'une etoile et donc les propriétés des dessins les représentants
+    # change l'appartenance d'une etoile et donc les propriétés des dessins les représentants
     def afficher_etoile(self, joueur, cible):
         joueur1 = self.modele.joueurs[joueur]
         id = cible.id
@@ -721,11 +677,7 @@ class Vue():
             self.canevas.delete("marqueur")
 
     def montrer_etoile_selection(self):  # montrer le tag de letoile selectionne
-        self.cadreinfoliste.pack_forget()
-        #self.barrevie.pack_forget()
-        self.btnInventaire.pack()
-        self.btnInstallation.pack()
-
+        self.cadreinfochoix.pack(fill=BOTH)
 
     def montrer_flotte_selection(self):  # montrer le tag du vaisseau selectionne
         print("À IMPLANTER - FLOTTE de ", self.mon_nom)
