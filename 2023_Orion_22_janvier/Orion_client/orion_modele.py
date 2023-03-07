@@ -154,12 +154,21 @@ class Vaisseau():
 
 
 class Cargo(Vaisseau):  #TODO À CHANGER
-    def __init__(self, parent, nom, x, y):
-        Vaisseau.__init__(self, parent, nom, x, y)
+    def __init__(self, parent, nom, x, y, niveau_Vaisseau, type_Vaisseau, estAccoste, tempsConstruction, Vie, Icone):
+        Vaisseau.__init__(self, parent, nom, x, y, niveau_Vaisseau, type_Vaisseau, estAccoste, tempsConstruction, Vie, Icone)
         self.cargo = 1000
         self.energie = 500
         self.taille = 6
         self.vitesse = 1
+        self.cible = 0
+        self.ang = 0
+
+class Eclaireur(Vaisseau):  #TODO À CHANGER
+    def __init__(self, parent, nom, x, y, niveau_Vaisseau, type_Vaisseau, estAccoste, tempsConstruction, Vie, Icone):
+        Vaisseau.__init__(self, parent, nom, x, y, niveau_Vaisseau, type_Vaisseau, estAccoste, tempsConstruction, Vie, Icone)
+        self.energie = 500
+        self.taille = 6
+        self.vitesse = 2
         self.cible = 0
         self.ang = 0
 
@@ -175,16 +184,19 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
         #self.log = []      journal de débogage
         self.etoilescontrolees = [etoilemere]   #tableau de toutes les étoiles de l'empire contenant l'étoile mère par défaut
         self.flotte = {"Vaisseau": {},  #Dictionnaire contenant un dictionnaire de tous les vaisseaux par type de vaisseau
-                       "Cargo": {}}
+                       "Cargo": {},
+                       "Eclaireur": {}}
         self.actions = {"creervaisseau": self.creervaisseau,    #Appel la fonction de création de vaisseau : À DÉPLACER DANS LA CLASS ENTREPOT
                         "ciblerflotte": self.ciblerflotte}      #Appel la fonction
 
     def creervaisseau(self, params): #Fonction qui permet de créer un vaisseau \\\ À DÉPLACER DANS LA CLASSE ENTREPOT : IL FAUT CRÉER UN VAISSEAU DANS UN ENTREPOT, PAS PAR LE JOUEUR
         type_vaisseau = params[0]
         if type_vaisseau == "Cargo":
-            v = Cargo(self, self.nom, int(params[1]) + 10, int(params[2]))
-        else:
+            v = Cargo(self, self.nom, int(params[1]) + 10, int(params[2]), 1, "a", True, 15, 15, 0)
+        elif type_vaisseau == "Vaisseau":
             v = Vaisseau(self, self.nom, int(params[1]) + 10, int(params[2]), 1, "a", True, 15, 15, 0)
+        else:
+            v = Eclaireur(self, self.nom, int(params[1]) + 10, int(params[2]), 1, "a", True, 15, 15, 0)
         self.flotte[type_vaisseau][v.id] = v
 
         if self.nom == self.parent.parent.mon_nom:
