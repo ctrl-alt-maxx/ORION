@@ -55,7 +55,7 @@ class Etoile():
         self.nomEtoile = nomEtoile
         self.ressource = ressources ## ressources = {} ressources
         self.proprietaire = "neutre" #proprietaire = etoile owner
-        self.installation = None #installation = [] des installations du joueur
+        self.installations = {} #installation = [] des installations du joueur
         self.vaisseaux = None # [] de vaisseaux pose sur letoile
         self.estEclaire = False #etoile selectionne ou pas True ou False = False au debut du jeu
         self.niveauEtoile = 1 #niveau de l'étoile = 1/2/3 = toutes les étoiles seront de niveau 1 au debut du jeu
@@ -67,8 +67,25 @@ class Etoile():
                           "Plutonium":0,
                           "Antimatiere":0}
 
-        # inventaire = [] d'inventaire de ce que possede le joueur
         self.vie = vie # nbr de vie de la planete
+
+    def construire(self, installation):
+        if self.is_construisible(self,installation):
+            self.inventaire.update({"Fer":installation.cout.get("Fer")})
+            self.inventaire.update({"Cuivre": installation.cout.get("Cuivre")})
+            self.inventaire.update({"Or": installation.cout.get("Or")})
+            self.inventaire.update({"Titane": installation.cout.get("Titane")})
+            self.inventaire.update({"Hydrogene": installation.cout.get("Hydrogene")})
+            self.inventaire.update({"Plutonium": installation.cout.get("Plutonium")})
+            self.inventaire.update({"Antimatiere": installation.cout.get("Antimatiere")})
+            self.installations.update({installation.type:installation})
+
+
+    def is_construisible(self, installation):
+        if self.inventaire.get("Fer") >= installation.cout.get("Fer") and self.inventaire.get("Cuivre") >= installation.cout.get("Cuivre") and self.inventaire.get("Or") >= installation.cout.get("Or") and self.inventaire.get("Titane") >= installation.cout.get("Titane") and self.inventaire.get("Hydrogene") >= installation.cout.get("Hydrogene") and self.inventaire.get("Plutonium") >= installation.cout.get("Plutonium") and self.inventaire.get("Antimatiere") >= installation.cout.get("Antimatiere"):
+            if self.installations.get(installation.type) is None:
+                return True
+        return False
 
 
 class Position():
@@ -238,13 +255,85 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
                         pass
 
 class Installation():
-    def __init__(self, parent, proprietaire, type, niveau, cout, temps):
+    def __init__(self, parent, proprietaire, type, temps):
         self.parent = parent
         self.proprietaire = proprietaire
         self.type = type
-        self.niveau = niveau
-        self.cout = cout
+        self.niveau = 0
+        self.cout = self.cout_selon_niveau()
         self.temps = temps
+
+    def cout_selon_niveau(self):
+        if self.type == "entrepot":
+            if self.niveau == 0: #niveau 0 = entrepôt à construire
+                self.cout = {"Fer":50,
+                             "Cuivre":15,
+                             "Or":0,
+                             "Titane":0,
+                             "Hydrogene":25,
+                             "Plutonium":0,
+                             "Antimatiere":0}
+            elif self.niveau == 1:
+                self.cout = {"Fer":75,
+                             "Cuivre":25,
+                             "Or":5,
+                             "Titane": 0,
+                             "Hydrogene":40,
+                             "Plutonium":0,
+                             "Antimatiere":0}
+            elif self.niveau == 2:
+                self.cout = {"Fer":100,
+                             "Cuivre":35,
+                             "Or":15,
+                             "Titane": 0,
+                             "Hydrogene":55,
+                             "Plutonium": 5,
+                             "Antimatiere":0}
+            elif self.niveau == 3:
+                self.cout = {"Fer": 150,
+                             "Cuivre": 55,
+                             "Or": 25,
+                             "Titane": 15,
+                             "Hydrogene": 85,
+                             "Plutonium": 25,
+                             "Antimatiere":2}
+
+        elif self.type == "usine":
+            if self.niveau == 0: #niveau 0 = usine à construire
+                self.cout = {"Fer":35,
+                             "Cuivre":5,
+                             "Or": 0,
+                             "Titane": 0,
+                             "Hydrogene":15,
+                             "Plutonium":0,
+                             "Antimatiere":0}
+            elif self.niveau == 1:
+                self.cout = {"Fer":50,
+                             "Cuivre":15,
+                             "Or":5,
+                             "Titane": 0,
+                             "Hydrogene":30,
+                             "Plutonium":0,
+                             "Antimatiere":0}
+            elif self.niveau == 2:
+                self.cout = {"Fer":80,
+                             "Cuivre":30,
+                             "Or":15,
+                             "Titane": 0,
+                             "Hydrogene":55,
+                             "Plutonium": 5,
+                             "Antimatiere":0}
+            elif self.niveau == 3:
+                self.cout = {"Fer": 125,
+                             "Cuivre": 55,
+                             "Or": 20,
+                             "Titane": 25,
+                             "Hydrogene": 85,
+                             "Plutonium": 45,
+                             "Antimatiere":3}
+        return self.cout
+
+
 
 class Usine(Installation):
     def __init__(self, parent, proprietaire, type, niveau, cout, temps, production):
