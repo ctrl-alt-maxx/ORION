@@ -129,6 +129,6 @@ dmypy.json
 .pyre/
 
 #ADDED
-*.xml
+.idea
 *.iml
 *.db
