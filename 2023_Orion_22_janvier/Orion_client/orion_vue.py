@@ -81,6 +81,8 @@ class Vue():
         self.cadre_bouton2 = Frame()
         self.boutonConstruire2 = Button()
 
+        self.selectedTags = None
+
     def demander_abandon(self):
         rep = askokcancel("Vous voulez vraiment quitter?")
         if rep:
@@ -542,14 +544,14 @@ class Vue():
             t = i.taille * self.zoom
             self.canevas.create_oval(i.x - t, i.y - t, i.x + t, i.y + t,
                                      fill="grey80", outline=col,
-                                     tags=(i.proprietaire, str(i.id), "Etoile"))
+                                     tags=(i.proprietaire, str(i.id), "Etoile", i.x, i.y))
         # affichage des etoiles possedees par les joueurs
         for i in mod.joueurs.keys():
             for j in mod.joueurs[i].etoilescontrolees:
                 t = j.taille * self.zoom
                 self.canevas.create_oval(j.x - t, j.y - t, j.x + t, j.y + t,
                                          fill=mod.joueurs[i].couleur,
-                                         tags=(j.proprietaire, str(j.id), "Etoile"))
+                                         tags=(j.proprietaire, str(j.id), "Etoile", j.x, j.y))
                 # on affiche dans minimap
                 minix = j.x / self.modele.largeur * self.taille_minimap
                 miniy = j.y / self.modele.hauteur * self.taille_minimap
@@ -623,7 +625,7 @@ class Vue():
         id = cible.id
         couleur = joueur1.couleur
         self.canevas.itemconfig(id, fill=couleur)
-        self.canevas.itemconfig(id, tags=(joueur, id, "Etoile"))
+        self.canevas.itemconfig(id, tags=(joueur, id, "Etoile", cible.x, cible.y))
 
     # ajuster la liste des vaisseaux
     def lister_objet(self, obj, id, niveau):
