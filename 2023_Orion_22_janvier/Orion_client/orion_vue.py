@@ -81,11 +81,21 @@ class Vue():
         self.cadre_bouton2 = Frame()
         self.boutonConstruire2 = Button()
 
-        #pour enlever cadre
-        self.a_clique_sur_installation = 0
-        self.clique_sur_installation = False
-        self.a_clique_sur_ressource = 0
-        self.clique_sur_ressource = False
+        #creation des cadres
+        self.cadre_menu_installation = Frame()
+        self.cadre_menu_ressource = Frame()
+        self.cadre_construire_entrepot = Frame()
+
+        #partie Timer
+        self.update_time = ''
+        self.running = False
+        self.minutes = 0
+        self.seconds = 0
+        self.milliseconds = 0
+
+        self.minutes_string = ""
+        self.seconds_string = ""
+        self.milliseconds_string = ""
 
         self.selectedTags = None
 
@@ -306,13 +316,10 @@ class Vue():
         self.parent.connecter_serveur(url_serveur)
 
     def menu_installation(self):
-        self.a_clique_sur_installation += 1 #pour etre sur que si lutilisateur clique plusieurs fois sur le bouton cela ne recreer pas un autre Frame
-        self.clique_sur_installation = True
-        if (self.clique_sur_ressource):
             self.cadre_menu_ressource.pack_forget()
-        if(self.a_clique_sur_installation == 1):
-            self.clique_sur_ressource = False
-            self.cadre_menu_installation = Frame(self.cadreoutils,height=200, width=200, bg="black")#on creer un cadre
+            self.cadre_menu_installation.pack_forget()
+            self.cadre_construire_entrepot.pack_forget()
+            self.cadre_menu_installation = Frame(self.cadreoutils,height=200, width=200, bg="blue")#on creer un cadre
             self.cadre_menu_installation.pack(side=LEFT, fill=Y)
             self.a_clique_sur_ressource = 0
             #mettre tout dans cadre_menu_installation
@@ -348,17 +355,16 @@ class Vue():
             self.cadre_bouton2 = Frame(self.cadre_menu_installation, height=200, width=200, bg="yellow")
             self.cadre_bouton2.pack(fill=X)
             self.boutonConstruire2 = Button(self.cadre_bouton2, text="Construire Entrepot", bg="yellow")
+            self.boutonConstruire2.config(command=self.construire_entrepot)
+            self.boutonConstruire2.config(command=self.startTimer())
             self.boutonConstruire2.pack()
 
 
     def menu_ressource(self):
-        self.recup = self.parent.recupEtoile(self.ma_selection[1])
-        self.a_clique_sur_ressource += 1
-        self.clique_sur_ressource = True
-        if (self.clique_sur_installation):
+            self.recup = self.parent.recupEtoile(self.ma_selection[1])
             self.cadre_menu_installation.pack_forget()
-        if (self.a_clique_sur_ressource == 1):  # si on a clique sur menu installation avant
-            self.clique_sur_installation = False
+            self.cadre_menu_ressource.pack_forget()
+            self.cadre_construire_entrepot.pack_forget()
             self.cadre_menu_ressource = Frame(self.cadreoutils, height=200, width=200, bg="blue")
             #self.label_fer.pack()
             self.cadre_menu_ressource.pack(side=LEFT, fill=Y)
@@ -444,6 +450,38 @@ class Vue():
     #     self.label_hydrogene_e.pack(fill=X)
     #     self.label_pluto_e.pack(fill=X)
     #     self.label_antimatiere_e.pack(fill=X)
+
+    def construire_entrepot(self):
+        #vider le frame
+        self.cadre_menu_installation.pack_forget()
+        self.cadre_construire_entrepot =  Frame(self.cadreoutils,height=200, width=200, bg="pink")#on creer un cadre
+        self.cadre_construire_entrepot.pack(side=LEFT, fill=Y)
+        #mettre le timer ici
+        self.label_test = Label(self.cadre_construire_entrepot, text=self.seconds_string,font=('Arial, 20'), bg="yellow")
+        self.label_test.pack()
+
+    def startTimer(self):
+        if(not self.running):
+            self.running = True
+            self.update_timer()
+
+    def update_timer(self):
+
+        if(self.running):
+            self.milliseconds += 1
+            print(self.milliseconds)
+            if(self.milliseconds == 1000):
+                self.seconds += 1
+                self.milliseconds = 0
+            if self.seconds == 60:
+                self.minutes += 1
+                self.seconds = 0
+
+                # On transforme les ints en string
+            self.minutes_string = f'{self.minutes}' if self.minutes > 9 else f'0{self.minutes}'
+            self.seconds_string = f'{self.seconds}' if self.seconds > 9 else f'0{self.seconds}'
+            self.milliseconds_string = f'{self.milliseconds}' if self.milliseconds > 9 else f'0{self.milliseconds}'
+
 
 
     def centrer_liste_objet(self, evt):
@@ -758,7 +796,7 @@ class Vue():
             self.ma_selection = None
 
     def montrer_etoile_selection(self):  # montrer le tag de letoile selectionne
-        self.cadreinfoliste.pack_forget()
+        #self.cadreinfoliste.pack_forget()
         #self.barrevie.pack_forget()
         self.btnInventaire.pack()
         self.btnInstallation.pack()
