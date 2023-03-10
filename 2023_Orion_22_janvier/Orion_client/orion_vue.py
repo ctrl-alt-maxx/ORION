@@ -9,6 +9,8 @@ from helper import Helper as hlp
 import math
 from PIL import ImageTk, Image
 import tkinter as tk
+import time
+
 
 import random
 
@@ -89,15 +91,27 @@ class Vue():
         #partie Timer
         self.update_time = ''
         self.running = False
-        self.minutes = 0
-        self.seconds = 0
+        # self.minute
+        # self.seconds
         self.milliseconds = 0
 
         self.minutes_string = ""
         self.seconds_string = ""
         self.milliseconds_string = ""
+        self.timer_duration = 10
+        self.chiffre = 0
 
         self.selectedTags = None
+
+
+    def clock(self):#des que je clique sur le bouton construire entrepot, ca lance cette fonction...
+        self.chiffre += 1
+        self.label_timer.config(text=self.chiffre)
+        self.label_timer.after(1000, self.clock)#appel clock toute les seconde -> donc chiffre augmente de 1 a chaque seconde
+        if(self.chiffre == 10):
+            #appler fonction pour construire entrepot
+            print("construit!!!!")
+
 
     def demander_abandon(self):
         rep = askokcancel("Vous voulez vraiment quitter?")
@@ -356,7 +370,7 @@ class Vue():
             self.cadre_bouton2.pack(fill=X)
             self.boutonConstruire2 = Button(self.cadre_bouton2, text="Construire Entrepot", bg="yellow")
             self.boutonConstruire2.config(command=self.construire_entrepot)
-            self.boutonConstruire2.config(command=self.startTimer())
+            #self.boutonConstruire2.config(command=self.startTimer())
             self.boutonConstruire2.pack()
 
 
@@ -457,30 +471,31 @@ class Vue():
         self.cadre_construire_entrepot =  Frame(self.cadreoutils,height=200, width=200, bg="pink")#on creer un cadre
         self.cadre_construire_entrepot.pack(side=LEFT, fill=Y)
         #mettre le timer ici
-        self.label_test = Label(self.cadre_construire_entrepot, text=self.seconds_string,font=('Arial, 20'), bg="yellow")
-        self.label_test.pack()
+        self.label_timer = Label(self.cadre_construire_entrepot, font=('Arial, 20'), bg="yellow")#Affichage du timer ici
+        self.label_timer.pack()
+        self.clock()
 
-    def startTimer(self):
-        if(not self.running):
-            self.running = True
-            self.update_timer()
+    # def startTimer(self):
+    #     if(not self.running):
+    #         self.running = True
+    #         self.update_timer()
 
-    def update_timer(self):
-
-        if(self.running):
-            self.milliseconds += 1
-            print(self.milliseconds)
-            if(self.milliseconds == 1000):
-                self.seconds += 1
-                self.milliseconds = 0
-            if self.seconds == 60:
-                self.minutes += 1
-                self.seconds = 0
-
-                # On transforme les ints en string
-            self.minutes_string = f'{self.minutes}' if self.minutes > 9 else f'0{self.minutes}'
-            self.seconds_string = f'{self.seconds}' if self.seconds > 9 else f'0{self.seconds}'
-            self.milliseconds_string = f'{self.milliseconds}' if self.milliseconds > 9 else f'0{self.milliseconds}'
+    # def update_timer(self):
+    #
+    #     if(self.running):
+    #         self.milliseconds += 1
+    #         print(self.milliseconds)
+    #         if(self.milliseconds == 1000):
+    #             self.seconds += 1
+    #             self.milliseconds = 0
+    #         if self.seconds == 60:
+    #             self.minutes += 1
+    #             self.seconds = 0
+    #
+    #             # On transforme les ints en string
+    #         self.minutes_string = f'{self.minutes}' if self.minutes > 9 else f'0{self.minutes}'
+    #         self.seconds_string = f'{self.seconds}' if self.seconds > 9 else f'0{self.seconds}'
+    #         self.milliseconds_string = f'{self.milliseconds}' if self.milliseconds > 9 else f'0{self.milliseconds}'
 
 
 
