@@ -184,8 +184,8 @@ class Eclaireur(Vaisseau):  #TODO À CHANGER
     def __init__(self, parent, nom, x, y, niveau_Vaisseau, type_Vaisseau, estAccoste, tempsConstruction, Vie, Icone):
         Vaisseau.__init__(self, parent, nom, x, y, niveau_Vaisseau, type_Vaisseau, estAccoste, tempsConstruction, Vie, Icone)
         self.energie = 500
-        self.taille = 6
-        self.vitesse = 2
+        self.taille = 4
+        self.vitesse = 5
         self.cible = 0
         self.ang = 0
 
