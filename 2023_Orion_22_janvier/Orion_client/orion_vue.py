@@ -64,6 +64,7 @@ class Vue():
         self.clickUneFoisSurRessource = 0
         self.clickUneFoisSurVaiss = 0
         self.img_usine = tk.PhotoImage(file='../img/imgUsine.png').subsample(6, 6)
+        self.img_entrepot = tk.PhotoImage(file='../img/entrepot.png').subsample(6,6)
 
         # var global methode installation()
         self.cadre_label_ressource = Frame()
@@ -81,36 +82,35 @@ class Vue():
         self.label_img2 = Label()
         self.label_installation2 = Label()
         self.cadre_bouton2 = Frame()
-        self.boutonConstruire2 = Button()
+        self.boutonConstruireEntrepot = Button()
 
         #creation des cadres
         self.cadre_menu_installation = Frame()
         self.cadre_menu_ressource = Frame()
+        self.cadre_bouton_construction_vaisseau = Frame()
         self.cadre_construire_entrepot = Frame()
-
-        #partie Timer
-        self.update_time = ''
-        self.running = False
-        # self.minute
-        # self.seconds
-        self.milliseconds = 0
-
-        self.minutes_string = ""
-        self.seconds_string = ""
-        self.milliseconds_string = ""
-        self.timer_duration = 10
         self.chiffre = 0
-
+        self.nbr_entrepot = 0
         self.selectedTags = None
 
 
     def clock(self):#des que je clique sur le bouton construire entrepot, ca lance cette fonction...
         self.chiffre += 1
         self.label_timer.config(text=self.chiffre)
-        self.label_timer.after(1000, self.clock)#appel clock toute les seconde -> donc chiffre augmente de 1 a chaque seconde
-        if(self.chiffre == 10):
+        #self.label_timer.after(1000, self.clock)#appel clock toute les seconde -> donc chiffre augmente de 1 a chaque seconde
+        if(self.chiffre < 5):
             #appler fonction pour construire entrepot
-            print("construit!!!!")
+            #augmente de 1 entrepot
+            self.label_timer.after(1000,self.clock)  # appel clock toute les seconde -> donc chiffre augmente de 1 a chaque seconde
+
+        elif(self.chiffre >= 5):
+            #ferme la fenetre
+            self.nbr_entrepot += 1
+            #self.cadre_menu_installation.pack()
+            self.menu_installation()
+
+
+
 
 
     def demander_abandon(self):
@@ -330,48 +330,96 @@ class Vue():
         self.parent.connecter_serveur(url_serveur)
 
     def menu_installation(self):
+
             self.cadre_menu_ressource.pack_forget()
             self.cadre_menu_installation.pack_forget()
             self.cadre_construire_entrepot.pack_forget()
+            self.cadre_bouton_construction_vaisseau.pack_forget()
+
             self.cadre_menu_installation = Frame(self.cadreoutils,height=200, width=200, bg="blue")#on creer un cadre
             self.cadre_menu_installation.pack(side=LEFT, fill=Y)
-            self.a_clique_sur_ressource = 0
-            #mettre tout dans cadre_menu_installation
-            self.label_titre = Label(self.cadre_menu_installation, text="Usine Ressource", bg='#848484')
-            self.label_titre.pack(side=TOP)
-            self.cadre_img = Frame(self.cadre_menu_installation, height=200, width=200)
-            self.cadre_img.pack()
-            self.label_img = Label(self.cadre_img, image=self.img_usine)
+
+            self.cadre_label_titre = Frame(self.cadre_menu_installation, height=200, width=200)
+            self.cadre_label_titre.pack(fill=X)
+            self.label_titre = Label(self.cadre_label_titre, text="Usine Ressource", bg='#848484')
+            self.label_titre.pack(fill=X)
+            self.cadre_img = Frame(self.cadre_menu_installation, height=200, width=200)#cadre pour image
+
+            self.cadre_img.pack(fill=X)
+            self.label_img = Label(self.cadre_img, image=self.img_usine)#image de lusine
             self.label_img.pack(side=LEFT)
-            self.label_installation = Label(self.cadre_img, text="Description: usine pour stocker ressources")
+            self.label_installation = Label(self.cadre_img, text="Description: usine pour stocker ressources")#label pour afficher "Description..."
             self.label_installation.pack(side=RIGHT)
-            self.cadre_bouton = Frame(self.cadre_menu_installation, height=200, width=200, bg="yellow")
+
+            self.cadre_bouton = Frame(self.cadre_menu_installation, height=200, width=200, bg="yellow")#cadre bouton pour mettre bouton construire usine
             self.cadre_bouton.pack(fill=X)
+
             self.boutonConstruire = Button(self.cadre_bouton, text="Construire Usine", bg="yellow")
             self.boutonConstruire.pack()
-            self.cadre_espacement = Frame(self.cadre_menu_installation, height=10, width=200, bg="#FFFFFF")
+
+            self.cadre_espacement = Frame(self.cadre_menu_installation, height=10, width=200, bg="#FFFFFF")# cadre pour creer un espace entre Usine Ressource et Entrepot a vaisseau
             self.cadre_espacement.pack(fill=X)
-            #         # partie basse
-            self.cadre_label_entrepot_vaisseau = Frame(self.cadre_menu_installation, height=200, width=200, bg="#848484")
+                     # partie basse
+
+            self.cadre_label_entrepot_vaisseau = Frame(self.cadre_menu_installation, height=200, width=200, bg="#848484")#cadre pour partie entrepot
             self.cadre_label_entrepot_vaisseau.pack(fill=X)
-            #
+
             self.label_entrepotVaisseau = Label(self.cadre_label_entrepot_vaisseau, text="Entrepot a vaisseaux",
                                                        bg="#848484")
             self.label_entrepotVaisseau.pack(side=TOP)
-            self.cadre_img2 = Frame(self.cadre_menu_installation, height=200, width=200)
-            self.cadre_img2.pack()
-            self.label_img2 = Label(self.cadre_img2, image=self.img_usine)
-            self.label_img2.pack(side=LEFT)
 
-            self.label_installation2 = Label(self.cadre_img2, text="Description: usine pour stocker ressources")
+            self.cadre_img2 = Frame(self.cadre_menu_installation, height=200, width=200)#dans cadre img2 je met image + descritpion
+            self.cadre_img2.pack()
+            self.label_img2 = Label(self.cadre_img2, image=self.img_entrepot)
+            self.label_img2.pack(side=LEFT)
+            self.label_installation2 = Label(self.cadre_img2, text="Description: Entrepot pour construire vaisseaux")
             self.label_installation2.pack(side=RIGHT)
+
+            self.cadre_nbr_installation_entrepot_present = Frame(self.cadre_menu_installation, height=200, width=200)#cadre
+            self.cadre_nbr_installation_entrepot_present.pack(fill=X)
+
+            self.label_titre_nbr_installation_entrepot_present = Label(self.cadre_nbr_installation_entrepot_present, text=" Nbr Entrepot prensent sur Etoile: " + str(self.nbr_entrepot) + "/ 1")
+            self.label_titre_nbr_installation_entrepot_present.pack(side=TOP)
+
+            self.cadre_ressouce_demande = Frame(self.cadre_menu_installation, height= 200, width=200)
+            self.cadre_ressouce_demande.pack(fill=X)
+
+            self.label_ressource_demande = Label(self.cadre_ressouce_demande,text="Ressource demande: 10 or + 15 fer")
+            self.label_ressource_demande.pack()
+
+            self.cadre_ressource_que_possede_joueur = Frame(self.cadre_menu_installation, height=200,width=200)
+            self.cadre_ressource_que_possede_joueur.pack(fill=X)
+
+            self.label_ressource_possede_joueur = Label(self.cadre_ressource_que_possede_joueur, text="Ressource en possession: 20 or + 30 fer")
+            self.label_ressource_possede_joueur.pack()
+
+
 
             self.cadre_bouton2 = Frame(self.cadre_menu_installation, height=200, width=200, bg="yellow")
             self.cadre_bouton2.pack(fill=X)
-            self.boutonConstruire2 = Button(self.cadre_bouton2, text="Construire Entrepot", bg="yellow")
-            self.boutonConstruire2.config(command=self.construire_entrepot)
-            #self.boutonConstruire2.config(command=self.startTimer())
-            self.boutonConstruire2.pack()
+            self.boutonConstruireEntrepot = Button(self.cadre_bouton2, text="Construire Entrepot", bg="yellow")
+            self.boutonConstruireEntrepot.config(command=self.construire_entrepot)
+            self.boutonConstruireEntrepot.pack()
+            if(self.nbr_entrepot == 1):
+                self.boutonConstruireVaisseau = Button(self.cadre_bouton2, text="construire Vaisseau", bg="blue")
+                self.boutonConstruireVaisseau.config(command=self.construction_vaisseau)
+                self.boutonConstruireVaisseau.pack()
+
+
+
+    def construction_vaisseau(self):
+
+        self.cadre_menu_installation.pack_forget()
+
+        self.cadre_bouton_construction_vaisseau = Frame(self.cadreoutils,height=200,width=200,bg="yellow")
+        self.cadre_bouton_construction_vaisseau.pack_forget()
+        self.cadre_bouton_construction_vaisseau.pack()
+
+        self.bouton_construction_vaisseau_cargot = Button(self.cadre_bouton_construction_vaisseau, text="Constuire vaisseau cargot")
+        self.bouton_construction_vaisseau_cargot.pack()
+
+        self.bouton_construction_vaisseau_attaque = Button(self.cadre_bouton_construction_vaisseau, text="Construire vaisseau attaque")
+        self.bouton_construction_vaisseau_attaque.pack()
 
 
     def menu_ressource(self):
@@ -468,34 +516,14 @@ class Vue():
     def construire_entrepot(self):
         #vider le frame
         self.cadre_menu_installation.pack_forget()
-        self.cadre_construire_entrepot =  Frame(self.cadreoutils,height=200, width=200, bg="pink")#on creer un cadre
+        self.cadre_construire_entrepot =  Frame(self.cadreoutils,height=200, width=200, bg="pink")#on creer un cadre que lon met dans cadre_outil
         self.cadre_construire_entrepot.pack(side=LEFT, fill=Y)
         #mettre le timer ici
         self.label_timer = Label(self.cadre_construire_entrepot, font=('Arial, 20'), bg="yellow")#Affichage du timer ici
         self.label_timer.pack()
-        self.clock()
+        self.clock()#appel de la fonction clock pour demarrer le timer
 
-    # def startTimer(self):
-    #     if(not self.running):
-    #         self.running = True
-    #         self.update_timer()
 
-    # def update_timer(self):
-    #
-    #     if(self.running):
-    #         self.milliseconds += 1
-    #         print(self.milliseconds)
-    #         if(self.milliseconds == 1000):
-    #             self.seconds += 1
-    #             self.milliseconds = 0
-    #         if self.seconds == 60:
-    #             self.minutes += 1
-    #             self.seconds = 0
-    #
-    #             # On transforme les ints en string
-    #         self.minutes_string = f'{self.minutes}' if self.minutes > 9 else f'0{self.minutes}'
-    #         self.seconds_string = f'{self.seconds}' if self.seconds > 9 else f'0{self.seconds}'
-    #         self.milliseconds_string = f'{self.milliseconds}' if self.milliseconds > 9 else f'0{self.milliseconds}'
 
 
 
