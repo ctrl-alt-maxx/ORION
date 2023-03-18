@@ -92,10 +92,23 @@ class Etoile():
     Return true si la construction est possible, false si l'étoile ne possède pas les ressources suffisantes
     '''
     def is_construisible(self, installation):
-        if self.inventaire.get("Fer") >= installation.cout.get("Fer") and self.inventaire.get("Cuivre") >= installation.cout.get("Cuivre") and self.inventaire.get("Or") >= installation.cout.get("Or") and self.inventaire.get("Titane") >= installation.cout.get("Titane") and self.inventaire.get("Hydrogene") >= installation.cout.get("Hydrogene") and self.inventaire.get("Plutonium") >= installation.cout.get("Plutonium") and self.inventaire.get("Antimatiere") >= installation.cout.get("Antimatiere"):
+        if self.isRessourcesValides():
             if self.installations.get(installation.type) is None:
                 return True
         return False
+
+    '''
+    Permet de déterminer si l'étoile possède toute les ressources nécéssaire à la construction de l'installation
+    Args:
+        installation est un objet Installation représentant l'installation à construire
+    Returns true si l'étoile possède toutes les ressources nécéssaires, false si l'étoile ne possède pas toutes les ressources nécéssaires
+    '''
+    def isRessourcesValides(self, installation):
+        listeRessources = self.inventaire.keys()
+        for i in range (0, len(listeRessources)):
+            if self.inventaire.get(listeRessources[i]) < installation.cout.get(listeRessources[i]):
+                return False
+        return True
 
 class Position():
     def __init__(self, x, y):
