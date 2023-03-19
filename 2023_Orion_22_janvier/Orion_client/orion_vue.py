@@ -329,7 +329,7 @@ class Vue():
         url_serveur = self.urlsplash.get()
         self.parent.connecter_serveur(url_serveur)
 
-    def menu_installation(self):
+    def menu_installation(self):#est appele quand je clique sur le bouton "Installation"
 
             self.cadre_menu_ressource.pack_forget()
             self.cadre_menu_installation.pack_forget()
@@ -407,7 +407,7 @@ class Vue():
 
 
 
-    def construction_vaisseau(self):
+    def construction_vaisseau(self):#jarrive ici quand je clique sur le bouton "construire Vaisseau"
 
         self.cadre_menu_installation.pack_forget()
 
@@ -416,19 +416,18 @@ class Vue():
         self.cadre_bouton_construction_vaisseau.pack()
 
         self.bouton_construction_vaisseau_cargot = Button(self.cadre_bouton_construction_vaisseau, text="Constuire vaisseau cargot")
-        self.bouton_construction_vaisseau_cargot.pack()
+        self.bouton_construction_vaisseau_cargot.pack(fill=X)
 
         self.bouton_construction_vaisseau_attaque = Button(self.cadre_bouton_construction_vaisseau, text="Construire vaisseau attaque")
         self.bouton_construction_vaisseau_attaque.pack()
 
 
-    def menu_ressource(self):
+    def menu_ressource(self):#jarrive ici quand je clique sur le bouton "Ressources"
             self.recup = self.parent.recupEtoile(self.ma_selection[1])
             self.cadre_menu_installation.pack_forget()
             self.cadre_menu_ressource.pack_forget()
             self.cadre_construire_entrepot.pack_forget()
             self.cadre_menu_ressource = Frame(self.cadreoutils, height=200, width=200, bg="blue")
-            #self.label_fer.pack()
             self.cadre_menu_ressource.pack(side=LEFT, fill=Y)
             self.a_clique_sur_installation = 0
             #mettre tout ici
@@ -513,7 +512,7 @@ class Vue():
     #     self.label_pluto_e.pack(fill=X)
     #     self.label_antimatiere_e.pack(fill=X)
 
-    def construire_entrepot(self):
+    def construire_entrepot(self):#jarrive ici quand je clique sur le bouton "Construire Entrepot"
         #vider le frame
         self.cadre_menu_installation.pack_forget()
         self.cadre_construire_entrepot =  Frame(self.cadreoutils,height=200, width=200, bg="pink")#on creer un cadre que lon met dans cadre_outil
