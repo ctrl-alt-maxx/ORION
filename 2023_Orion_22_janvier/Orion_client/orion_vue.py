@@ -473,7 +473,7 @@ class Vue():
     def menu_ressource_ex(self):
         self.recup = self.parent.recupEtoile(self.ma_selection[1])
         self.forget_all()
-
+        #chose
         self.cadre_menu_ressource_ex = Frame(self.cadreoutils, height=200, width=100, bg="blue")
         self.cadre_menu_ressource_ex.pack(side=LEFT, fill=Y)
         self.a_clique_sur_installation = 0
