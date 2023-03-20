@@ -431,14 +431,14 @@ class Installation():
 
 
 class Usine(Installation):
-    def __init__(self, parent, proprietaire, type, niveau, cout, temps, production):
-        Installation.__init__(self, parent, proprietaire, type, niveau, cout, temps)
+    def __init__(self, parent, proprietaire, type, temps, production):
+        super().__init__(self, parent, proprietaire, type, temps)
         self.production = production
 
 class Entrepot(Installation):
-    def __init(self, parent, proprietaire, type, niveau, cout, temps, capacite):
-        Installation.__init__(self, parent, proprietaire, type, niveau, cout, temps)
+    def __init__(self, parent, proprietaire, type, temps, capacite):
         self.capacite = capacite
+        super().__init__( parent, proprietaire, type, temps)
 
 class Modele():
     def __init__(self, parent, joueurs):

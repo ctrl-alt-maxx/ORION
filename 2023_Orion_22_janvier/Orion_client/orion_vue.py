@@ -533,8 +533,7 @@ class Vue():
         #mettre le timer ici
         self.label_timer = Label(self.cadre_construire_entrepot, font=('Arial, 20'), bg="yellow")#Affichage du timer ici
         self.label_timer.pack()
-        entrepot =  Entrepot(self.mon_nom,"entrepot",25,3)
-        self.parent.construireInstallation(entrepot) #pour construire entrepot -> la fonction va veifier si on peut construire entrepot
+        self.parent.construireInstallation("entrepot") #pour construire entrepot -> la fonction va veifier si on peut construire entrepot
         self.clock()#appel de la fonction clock pour demarrer le timer
 
 
