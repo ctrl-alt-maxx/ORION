@@ -68,25 +68,47 @@ class Etoile():
                           "Antimatiere":0}
 
         self.vie = vie # nbr de vie de la planete
-
+    '''
+    Fonction permet de construire ou d'améliorer une installation, elle retire les ressources utilisées et update les installations de l'étoile
+    Args:
+        installation est un objet Installation représentant l'installation à construire
+    '''
     def construire(self, installation):
         if self.is_construisible(self,installation):
-            self.inventaire.update({"Fer":installation.cout.get("Fer")})
-            self.inventaire.update({"Cuivre": installation.cout.get("Cuivre")})
-            self.inventaire.update({"Or": installation.cout.get("Or")})
-            self.inventaire.update({"Titane": installation.cout.get("Titane")})
-            self.inventaire.update({"Hydrogene": installation.cout.get("Hydrogene")})
-            self.inventaire.update({"Plutonium": installation.cout.get("Plutonium")})
-            self.inventaire.update({"Antimatiere": installation.cout.get("Antimatiere")})
+            #TODO POSSIBILITÉ DE CHANGER LA FONCTION EN BOUCLE
+            self.inventaire.update({"Fer":          self.inventaire.get("Fer") - installation.cout.get("Fer")})
+            self.inventaire.update({"Cuivre":       self.inventaire.get("Cuivre") - installation.cout.get("Cuivre")})
+            self.inventaire.update({"Or":           self.inventaire.get("Or") - installation.cout.get("Or")})
+            self.inventaire.update({"Titane":       self.inventaire.get("Titane") - installation.cout.get("Titane")})
+            self.inventaire.update({"Hydrogene":    self.inventaire.get("Hydrogene") - installation.cout.get("Hydrogene")})
+            self.inventaire.update({"Plutonium":    self.inventaire.get("Plutonium") - installation.cout.get("Plutonium")})
+            self.inventaire.update({"Antimatiere":  self.inventaire.get("Antimatiere") - installation.cout.get("Antimatiere")})
             self.installations.update({installation.type:installation})
 
-
+    '''
+    Permet de déterminer si l'étoile possède les ressources suffisantes pour construire ou améliorer l'installation voulue.
+    Args:
+        installation est un objet Installation représentant l'installation à construire
+    Return true si la construction est possible, false si l'étoile ne possède pas les ressources suffisantes
+    '''
     def is_construisible(self, installation):
-        if self.inventaire.get("Fer") >= installation.cout.get("Fer") and self.inventaire.get("Cuivre") >= installation.cout.get("Cuivre") and self.inventaire.get("Or") >= installation.cout.get("Or") and self.inventaire.get("Titane") >= installation.cout.get("Titane") and self.inventaire.get("Hydrogene") >= installation.cout.get("Hydrogene") and self.inventaire.get("Plutonium") >= installation.cout.get("Plutonium") and self.inventaire.get("Antimatiere") >= installation.cout.get("Antimatiere"):
+        if self.isRessourcesValides():
             if self.installations.get(installation.type) is None:
                 return True
         return False
 
+    '''
+    Permet de déterminer si l'étoile possède toute les ressources nécéssaire à la construction de l'installation
+    Args:
+        installation est un objet Installation représentant l'installation à construire
+    Returns true si l'étoile possède toutes les ressources nécéssaires, false si l'étoile ne possède pas toutes les ressources nécéssaires
+    '''
+    def isRessourcesValides(self, installation):
+        listeRessources = self.inventaire.keys()
+        for i in range (0, len(listeRessources)):
+            if self.inventaire.get(listeRessources[i]) < installation.cout.get(listeRessources[i]):
+                return False
+        return True
 
 class Position():
     def __init__(self, x, y):
@@ -107,7 +129,7 @@ class Vaisseau():
         self.type_Vaisseau = type_Vaisseau
         self.niveau_Vaisseau = niveau_Vaisseau
         self.tempsConstruction = tempsConstruction
-        self.estAccoste = estAccoste
+        self.estAccoste = estAccoste #Étoile sur laquelle le vaisseau est accosté
         self.Deplacement = None
         #HP du vaiseau
         self.Vie = Vie
@@ -173,12 +195,73 @@ class Vaisseau():
 class Cargo(Vaisseau):  #TODO À CHANGER
     def __init__(self, parent, nom, x, y, niveau_Vaisseau, type_Vaisseau, estAccoste, tempsConstruction, Vie, Icone):
         Vaisseau.__init__(self, parent, nom, x, y, niveau_Vaisseau, type_Vaisseau, estAccoste, tempsConstruction, Vie, Icone)
-        self.cargo = 1000
+        self.capaciteMax = 1000
+        self.capaciteUtilise = 0
+        self.inventaire = {"Fer":0,
+                          "Cuivre":0,
+                          "Or":0,
+                          "Titane":0,
+                          "Hydrogene":0,
+                          "Plutonium":0,
+                          "Antimatiere":0}
         self.energie = 500
         self.taille = 6
         self.vitesse = 1
         self.cible = 0
         self.ang = 0
+
+    '''
+    Fonction effectue le transfert des ressources en ajoutant les quantités de ressources dans l'inventaire du cargo et en enlevant les quantités de ressources dans l'inventaire de l'étoile accostée
+    Args:
+        chargment est un dictionnaire des ressources à transferer de l'étoile -> cargo
+    '''
+    def transfererRessources(self, chargement):
+        if self.isTransferable(chargement):
+            listeRessources = chargement.keys()
+            #pour le cargo
+            for i in range (0, len(listeRessources)):
+                self.inventaire.update(listeRessources[i], self.inventaire.get(listeRessources[i]) + chargement.get(listeRessources[i]))
+            #pour l'étoile
+            for i in range (0, len(listeRessources)):
+                self.estAccoste.inventaire.update(listeRessources[i], self.estAccoste.inventaire.get(listeRessources) - chargement.get(listeRessources[i]))
+
+
+    '''
+    Fonction détermine si un transfert de ressources d'étoile -> cargo est possible.
+    Args : 
+        chargement est un dictionnaire des ressources à transferer de l'étoile -> cargo
+    Returns false si le transfert est impossible, true si le transfert est valide
+    '''
+    def isTransferable(self, chargement):
+        listeQuantites = chargement.values()
+        listeRessources = chargement.keys()
+        qtTotale:int = 0
+
+        #Pour déterminer si la capacité du cargo n'est pas dépassée
+        for i in range (0, len(listeQuantites)):
+            qtTotale += listeQuantites[i]
+        if qtTotale > self.capaciteMax:
+            return False
+
+        #Pour déterminer si les quantités choisies sont valides
+        for i in range (0, len(listeRessources)):
+            if chargement.get(listeRessources[i]) > self.estAccoste.inventaire.get(listeRessources[i]):
+                return False
+        return True
+
+    '''
+    Fonction permet de déterminer la quantité maximale qu'une ressource peut être transférée d'une étoile -> cargo
+    Args:
+        ressource : string représentant le nom de la ressource à prendre son maximum
+    Returns un int représentant la quantité maximale de la ressource à prendre
+    '''
+    def maximumRessource(self, ressource:str):
+        qtMax:int = 0
+        if self.estAccoste.inventaire.get(ressource) <= self.capaciteMax - self.capaciteUtilise:
+            qtMax = self.estAccoste.inventaire.get(ressource)
+        else:
+            qtMax = self.capaciteMax - self.capaciteUtilise
+        return qtMax
 
 class Eclaireur(Vaisseau):  #TODO À CHANGER
     def __init__(self, parent, nom, x, y, niveau_Vaisseau, type_Vaisseau, estAccoste, tempsConstruction, Vie, Icone):
