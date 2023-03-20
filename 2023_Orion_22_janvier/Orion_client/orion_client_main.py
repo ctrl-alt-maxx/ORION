@@ -241,6 +241,9 @@ class Controleur():
         recup = self.modele.recupererEtoile(id)
         return recup
 
+    def construireInstallation(self, installation):
+        self.actionsrequises.append([self.mon_nom, "construire", installation])
+
 
 if __name__ == "__main__":
     c = Controleur()
