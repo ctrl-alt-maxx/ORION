@@ -42,6 +42,7 @@ class Vue():
         self.debut_selection = []
         self.selecteur_actif = None
         self.shipSelected = ""
+        self.canExplore = False
 
         #creation label Frame pour méthode methode_installation et methode_ressource
         self.boutonAmeliorerEtoile = Button()
@@ -260,9 +261,9 @@ class Vue():
         """pour creer un éclaireur"""
         self.btncreereclaireur.bind("<Button>", self.creer_vaisseau)
 
-        #self.btncreervaisseau.pack() -------------------------------------- ICI QUE TU PACK LES VAISSEAUX
-        #self.btncreercargo.pack()
-        #self.btncreereclaireur.pack()
+        self.btncreervaisseau.pack() #-------------------------------------- ICI QUE TU PACK LES VAISSEAUX
+        self.btncreercargo.pack()
+        self.btncreereclaireur.pack()
 
         self.btnRessources = Button(self.cadreinfochoix, text="Ressources")
         #self.btnRessources.config(command=self.methode_ressource_exploitable)
@@ -810,8 +811,8 @@ class Vue():
                                  (j.x + tailleF), (j.y + tailleF), fill=i.couleur,
                                  tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact"))
 
-    def cliquer_cosmos(self, evt):  # DES QUE LON CLIQUE QUELQUE PART DANS LE JEU
-        self.selectedTags = self.canevas.gettags(CURRENT)  # self.canevas = Canvas(self.cadrejeu, width=800, height=600,
+    def cliquer_cosmos(self, evt):  # DES QU'ON CLIQUE QUELQUE PART DANS LE JEU
+        self.selectedTags = self.canevas.gettags(CURRENT)
         tags = self.selectedTags
         if tags:  # Il y a des tags => On a cliqué sur un objet de la carte (Vaisseau, Étoile, ...)
             if tags[0] == self.mon_nom:
@@ -821,17 +822,24 @@ class Vue():
                     if self.shipSelected != "":
                         self.parent.cibler_flotte(self.shipSelected, tags[1], tags[2])
                         self.shipSelected = ""
+                        self.canExplore = False
                         self.ma_selection = None
                     else:
                         self.montrer_etoile_selection()
                 elif tags[2] == "Flotte":
                     self.montrer_flotte_selection()
                     self.shipSelected = self.ma_selection[1]
-            elif ("Etoile" == tags[2] or "Porte_de_ver" == tags[2]) and self.shipSelected != "":  # Si c'est un objet qui nous appartient pas
-                if self.ma_selection:  # Si une sélection de nos vaisseaux a été faites, on les envoi sur l'étoile avec "cibler_flotte"
+                    if tags[3] == "Eclaireur":
+                        self.canExplore = True
+            elif ("Etoile" == tags[2] or "Porte_de_ver" == tags[2]) and self.shipSelected != "":
+                if self.ma_selection and "Etoile" == tags[2] and self.canExplore:
                     self.parent.cibler_flotte(self.ma_selection[1], tags[1], tags[2])
                     self.shipSelected = ""
-
+                    self.canExplore = False
+                elif self.ma_selection and "Porte_de_ver" == tags[2]:
+                    self.parent.cibler_flotte(self.ma_selection[1], tags[1], tags[2])
+                    self.shipSelected = ""
+                    self.canExplore = False
                 self.ma_selection = None
         else:  # aucun tag => On a clické dans le vide donc aucun objet sur la carte
             print("Region inconnue")
