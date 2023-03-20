@@ -9,6 +9,8 @@ from helper import Helper as hlp
 import math
 from PIL import ImageTk, Image
 import tkinter as tk
+import time
+
 
 import random
 
@@ -63,6 +65,7 @@ class Vue():
         self.clickUneFoisSurRessource = 0
         self.clickUneFoisSurVaiss = 0
         self.img_usine = tk.PhotoImage(file='../img/imgUsine.png').subsample(6, 6)
+        self.img_entrepot = tk.PhotoImage(file='../img/entrepot.png').subsample(6,6)
 
         # var global methode installation()
         self.cadre_label_ressource = Frame()
@@ -80,9 +83,36 @@ class Vue():
         self.label_img2 = Label()
         self.label_installation2 = Label()
         self.cadre_bouton2 = Frame()
-        self.boutonConstruire2 = Button()
+        self.boutonConstruireEntrepot = Button()
 
+        #creation des cadres
+        self.cadre_menu_installation = Frame()
+        self.cadre_menu_ressource = Frame()
+        self.cadre_bouton_construction_vaisseau = Frame()
+        self.cadre_construire_entrepot = Frame()
+        self.chiffre = 0
+        self.nbr_entrepot = 0
         self.selectedTags = None
+
+
+    def clock(self):#des que je clique sur le bouton construire entrepot, ca lance cette fonction...
+        self.chiffre += 1
+        self.label_timer.config(text=self.chiffre)
+        #self.label_timer.after(1000, self.clock)#appel clock toute les seconde -> donc chiffre augmente de 1 a chaque seconde
+        if(self.chiffre < 5):
+            #appler fonction pour construire entrepot
+            #augmente de 1 entrepot
+            self.label_timer.after(1000,self.clock)  # appel clock toute les seconde -> donc chiffre augmente de 1 a chaque seconde
+
+        elif(self.chiffre >= 5):
+            #ferme la fenetre
+            self.nbr_entrepot += 1
+            #self.cadre_menu_installation.pack()
+            self.menu_installation()
+
+
+
+
 
     def demander_abandon(self):
         rep = askokcancel("Vous voulez vraiment quitter?")
@@ -236,19 +266,20 @@ class Vue():
         self.btncreereclaireur.pack()
 
         self.btnRessources = Button(self.cadreinfochoix, text="Ressources")
-        self.btnRessources.config(command=self.methode_ressource_exploitable)
+        #self.btnRessources.config(command=self.methode_ressource_exploitable)
+        self.btnRessources.config(command=self.menu_ressource)
         self.btnRessources.pack()
 
         # creer boutonInstallation ici--------------------------------------------------------------------------------------------
         self.btnInstallation = Button(self.cadreinfochoix, text="Installations")
         """pour ouvrir le menu d'installation"""
-        self.btnInstallation.config(command=self.methode_installation)
+        self.btnInstallation.config(command=self.menu_installation)
         self.btnInstallation.pack()
 
         # creer boutonResource ici
         self.btnInventaire = Button(self.cadreinfochoix, text="Inventaire")
         """pour ouvrir le menu de ressource"""
-        self.btnInventaire.config(command=self.methode_resource)
+        #self.btnInventaire.config(command=self.methode_resource)
         self.btnInventaire.pack()
 
         self.boutonAmeliorerEtoile = Button(self.cadreinfochoix, text="Ameliorer Etoile")
@@ -299,165 +330,131 @@ class Vue():
         url_serveur = self.urlsplash.get()
         self.parent.connecter_serveur(url_serveur)
 
-    def methode_installation(self):  # afficher
-        self.clickUneFoisSurRessource = 0
-        self.clickUneFoisSurVaiss = 0
-        self.clickUneFoisSurInsta += 1
-        print(self.clickUneFoisSurInsta)
+    def menu_installation(self):#est appele quand je clique sur le bouton "Installation"
 
-        #ENLEVER LABEL RESSOURCES + VAISSEAU
-        if self.clickUneFoisSurInsta == 1:
-            self.label_or.pack_forget()
-            self.label_cuivre.pack_forget()
-            self.label_antimatiere.pack_forget()
-            self.label_pluto.pack_forget()
-            self.label_titane.pack_forget()
-            self.label_fer.pack_forget()
-            self.label_hydrogene.pack_forget()
+            self.cadre_menu_ressource.pack_forget()
+            self.cadre_menu_installation.pack_forget()
+            self.cadre_construire_entrepot.pack_forget()
+            self.cadre_bouton_construction_vaisseau.pack_forget()
 
-            self.label_materiaux_e.pack_forget()
-            self.label_fer_e.pack_forget()
-            self.label_cuivre_e.pack_forget()
-            self.label_or_e.pack_forget()
-            self.label_titane_e.pack_forget()
-            self.label_ernegie_e.pack_forget()
-            self.label_hydrogene_e.pack_forget()
-            self.label_pluto_e.pack_forget()
-            self.label_antimatiere_e.pack_forget()
+            self.cadre_menu_installation = Frame(self.cadreoutils,height=200, width=200, bg="blue")#on creer un cadre
+            self.cadre_menu_installation.pack(side=LEFT, fill=Y)
 
+            self.cadre_label_titre = Frame(self.cadre_menu_installation, height=200, width=200)
+            self.cadre_label_titre.pack(fill=X)
+            self.label_titre = Label(self.cadre_label_titre, text="Usine Ressource", bg='#848484')
+            self.label_titre.pack(fill=X)
+            self.cadre_img = Frame(self.cadre_menu_installation, height=200, width=200)#cadre pour image
 
-            # Affichage Label et Frame
-            # partie haute
-            self.cadre_label_ressource = Frame(self.cadreoutils, height=200, width=200, bg="#848484")
-            self.cadre_label_ressource.pack(fill=X)
-            self.label_titre = Label(self.cadre_label_ressource, text="Usine Ressource", bg='#848484')
-            self.label_titre.pack(side=TOP)
-            self.cadre_img = Frame(self.cadreoutils, height=200, width=200)
-            self.cadre_img.pack()
-            self.label_img = Label(self.cadre_img, image=self.img_usine)
+            self.cadre_img.pack(fill=X)
+            self.label_img = Label(self.cadre_img, image=self.img_usine)#image de lusine
             self.label_img.pack(side=LEFT)
-
-            self.label_installation = Label(self.cadre_img, text="Description: usine pour stocker ressources")
+            self.label_installation = Label(self.cadre_img, text="Description: usine pour stocker ressources")#label pour afficher "Description..."
             self.label_installation.pack(side=RIGHT)
 
-            self.cadre_bouton = Frame(self.cadreoutils, height=200, width=200, bg="yellow")
+            self.cadre_bouton = Frame(self.cadre_menu_installation, height=200, width=200, bg="yellow")#cadre bouton pour mettre bouton construire usine
             self.cadre_bouton.pack(fill=X)
+
             self.boutonConstruire = Button(self.cadre_bouton, text="Construire Usine", bg="yellow")
             self.boutonConstruire.pack()
-            self.cadre_espacement = Frame(self.cadreoutils, height=10, width=200, bg="#FFFFFF")
-            self.cadre_espacement.pack(fill=X)
 
-            # partie basse
-            self.cadre_label_entrepot_vaisseau = Frame(self.cadreoutils, height=200, width=200, bg="#848484")
+            self.cadre_espacement = Frame(self.cadre_menu_installation, height=10, width=200, bg="#FFFFFF")# cadre pour creer un espace entre Usine Ressource et Entrepot a vaisseau
+            self.cadre_espacement.pack(fill=X)
+                     # partie basse
+
+            self.cadre_label_entrepot_vaisseau = Frame(self.cadre_menu_installation, height=200, width=200, bg="#848484")#cadre pour partie entrepot
             self.cadre_label_entrepot_vaisseau.pack(fill=X)
 
             self.label_entrepotVaisseau = Label(self.cadre_label_entrepot_vaisseau, text="Entrepot a vaisseaux",
-                                                bg="#848484")
+                                                       bg="#848484")
             self.label_entrepotVaisseau.pack(side=TOP)
-            self.cadre_img2 = Frame(self.cadreoutils, height=200, width=200)
-            self.cadre_img2.pack()
-            self.label_img2 = Label(self.cadre_img2, image=self.img_usine)
-            self.label_img2.pack(side=LEFT)
 
-            self.label_installation2 = Label(self.cadre_img2, text="Description: usine pour stocker ressources")
+            self.cadre_img2 = Frame(self.cadre_menu_installation, height=200, width=200)#dans cadre img2 je met image + descritpion
+            self.cadre_img2.pack()
+            self.label_img2 = Label(self.cadre_img2, image=self.img_entrepot)
+            self.label_img2.pack(side=LEFT)
+            self.label_installation2 = Label(self.cadre_img2, text="Description: Entrepot pour construire vaisseaux")
             self.label_installation2.pack(side=RIGHT)
 
-            self.cadre_bouton2 = Frame(self.cadreoutils, height=200, width=200, bg="yellow")
+            self.cadre_nbr_installation_entrepot_present = Frame(self.cadre_menu_installation, height=200, width=200)#cadre
+            self.cadre_nbr_installation_entrepot_present.pack(fill=X)
+
+            self.label_titre_nbr_installation_entrepot_present = Label(self.cadre_nbr_installation_entrepot_present, text=" Nbr Entrepot prensent sur Etoile: " + str(self.nbr_entrepot) + "/ 1")
+            self.label_titre_nbr_installation_entrepot_present.pack(side=TOP)
+
+            self.cadre_ressouce_demande = Frame(self.cadre_menu_installation, height= 200, width=200)
+            self.cadre_ressouce_demande.pack(fill=X)
+
+            self.label_ressource_demande = Label(self.cadre_ressouce_demande,text="Ressource demande: 10 or + 15 fer")
+            self.label_ressource_demande.pack()
+
+            self.cadre_ressource_que_possede_joueur = Frame(self.cadre_menu_installation, height=200,width=200)
+            self.cadre_ressource_que_possede_joueur.pack(fill=X)
+
+            self.label_ressource_possede_joueur = Label(self.cadre_ressource_que_possede_joueur, text="Ressource en possession: 20 or + 30 fer")
+            self.label_ressource_possede_joueur.pack()
+
+
+
+            self.cadre_bouton2 = Frame(self.cadre_menu_installation, height=200, width=200, bg="yellow")
             self.cadre_bouton2.pack(fill=X)
-            self.boutonConstruire2 = Button(self.cadre_bouton2, text="Construire Entrepot", bg="yellow")
-            self.boutonConstruire2.pack()
+            self.boutonConstruireEntrepot = Button(self.cadre_bouton2, text="Construire Entrepot", bg="yellow")
+            self.boutonConstruireEntrepot.config(command=self.construire_entrepot)
+            self.boutonConstruireEntrepot.pack()
+            if(self.nbr_entrepot == 1):
+                self.boutonConstruireVaisseau = Button(self.cadre_bouton2, text="construire Vaisseau", bg="blue")
+                self.boutonConstruireVaisseau.config(command=self.construction_vaisseau)
+                self.boutonConstruireVaisseau.pack()
 
-    def methode_ressource_exploitable(self):
-        self.recup = self.parent.recupEtoile(self.ma_selection[1])
 
-        self.label_materiaux_e = Label(self.cadreoutils, text="Matériaux :", anchor=CENTER,width=34, height=1, border=1, borderwidth=1,relief="solid", bg="#e0e0e0")
-        self.label_ernegie_e = Label(self.cadreoutils, text="Énergie : ", anchor=CENTER,width=34, height=1, border=1, borderwidth=1,relief="solid", bg="#e0e0e0")
 
-        self.label_fer_e = Label(self.cadreoutils, text="Fer : " + str(round(self.recup.ressource.get("Fer") * 100, 2)) + "%", anchor=CENTER,
-                               width=34, height=2, border=2, borderwidth=1,
-                               relief="solid", bg="#949392")
+    def construction_vaisseau(self):#jarrive ici quand je clique sur le bouton "construire Vaisseau"
 
-        self.label_cuivre_e = Label(self.cadreoutils, text="Cuivre : " + str(round(self.recup.ressource.get("Cuivre") * 100, 2)) + "%",
-                                  anchor=CENTER, width=34, height=2, border=2,
-                                  borderwidth=1,
-                                  relief="solid", bg="#703f0a")
+        self.cadre_menu_installation.pack_forget()
 
-        self.label_or_e = Label(self.cadreoutils, text="Or : " + str(round(self.recup.ressource.get("Or") * 100, 2)) + "%", anchor=CENTER,
-                              width=34, height=2, border=2,
-                              borderwidth=1,
-                              relief="solid", bg="#9c7f00")
+        self.cadre_bouton_construction_vaisseau = Frame(self.cadreoutils,height=200,width=200,bg="yellow")
+        self.cadre_bouton_construction_vaisseau.pack_forget()
+        self.cadre_bouton_construction_vaisseau.pack()
 
-        self.label_titane_e = Label(self.cadreoutils, text="Titane : " + str(round(self.recup.ressource.get("Titane") * 100, 2)) + "%",
-                                  anchor=CENTER, width=34, height=2, border=2,
-                                  borderwidth=1,
-                                  relief="solid", bg="#5668a3")
+        self.bouton_construction_vaisseau_cargot = Button(self.cadre_bouton_construction_vaisseau, text="Constuire vaisseau cargot")
+        self.bouton_construction_vaisseau_cargot.pack(fill=X)
 
-        self.label_hydrogene_e = Label(self.cadreoutils,
-                                     text="Hydrogene : " + str(round(self.recup.ressource.get("Hydrogene") * 100, 2)) + "%", anchor=CENTER,
-                                     width=34, height=2, border=2,
-                                     borderwidth=1, relief="solid", bg="#b4e7ed")
+        self.bouton_construction_vaisseau_attaque = Button(self.cadre_bouton_construction_vaisseau, text="Construire vaisseau attaque")
+        self.bouton_construction_vaisseau_attaque.pack()
 
-        self.label_pluto_e = Label(self.cadreoutils, text="Plutonium : " + str(round(self.recup.ressource.get("Plutonium") * 100, 2)) + "%",
-                                 anchor=CENTER, width=34, height=2, border=2,
-                                 borderwidth=1, relief="solid", bg="#558a0c")
 
-        self.label_antimatiere_e = Label(self.cadreoutils, text="Antimatière : " + str(round(self.recup.ressource.get("Antimatiere") * 100, 2)) + "%",
-                                       anchor=CENTER, width=34, height=2, border=2,
-                                       borderwidth=1,
-                                       relief="solid", bg="#3c0c8a")
-        self.label_materiaux_e.pack(fill=X)
-        self.label_fer_e.pack(fill=X)
-        self.label_cuivre_e.pack(fill=X)
-        self.label_or_e.pack(fill=X)
-        self.label_titane_e.pack(fill=X)
-        self.label_ernegie_e.pack(fill=X)
-        self.label_hydrogene_e.pack(fill=X)
-        self.label_pluto_e.pack(fill=X)
-        self.label_antimatiere_e.pack(fill=X)
-
-    def methode_resource(self):  # afficher
-
-        self.clickUneFoisSurInsta = 0
-        self.clickUneFoisSurVaiss = 0
-        self.clickUneFoisSurRessource += 1
-        self.recup = self.parent.recupEtoile(self.ma_selection[1])
-
-        if self.clickUneFoisSurRessource == 1:
-            self.boutonConstruire.pack_forget()
-            self.label_titre.pack_forget()
-            self.label_installation.pack_forget()
-            self.label_entrepotVaisseau.pack_forget()
-            self.boutonAmeliorerEtoile.pack_forget()
-            self.boutonConstruireEntrepot.pack_forget()
-            self.boutonAmeliorerEtoile.pack_forget()
-            self.cadreinf
-
-            self.label_fer = Label(self.cadreoutils, text="Fer : " + str(self.recup.inventaire.get("Fer")), anchor=CENTER, width=25, height=2, border=2, borderwidth=1,
-                         relief="solid", bg="green")
-
-            self.label_cuivre = Label(self.cadreoutils, text="Cuivre : " + str(self.recup.inventaire.get("Cuivre")), anchor=CENTER, width=25, height=2, border=2,
-                                      borderwidth=1,
-                                      relief="solid", bg="green")
-
-            self.label_or = Label(self.cadreoutils, text="Or : " + str(self.recup.inventaire.get("Or")), anchor=CENTER, width=25, height=2, border=2,
-                                  borderwidth=1,
-                                  relief="solid", bg="yellow")
-
-            self.label_titane = Label(self.cadreoutils, text="Titane : " + str(self.recup.inventaire.get("Titane")), anchor=CENTER, width=25, height=2, border=2,
-                                      borderwidth=1,
-                                      relief="solid", bg="red")
-
-            self.label_hydrogene = Label(self.cadreoutils, text="Hydrogene : " + str(self.recup.inventaire.get("Hydrogene")), anchor=CENTER, width=25, height=2, border=2,
-                               borderwidth=1, relief="solid", bg="green")
-
-            self.label_pluto = Label(self.cadreoutils, text="Plutonium : " + str(self.recup.inventaire.get("Plutonium")), anchor=CENTER, width=25, height=2, border=2,
-                               borderwidth=1, relief="solid", bg="yellow")
-
-            self.label_antimatiere = Label(self.cadreoutils, text="???? : " + str(self.recup.inventaire.get("Antimatiere")), anchor=CENTER, width=25, height=2, border=2,
+    def menu_ressource(self):#jarrive ici quand je clique sur le bouton "Ressources"
+            self.recup = self.parent.recupEtoile(self.ma_selection[1])
+            self.cadre_menu_installation.pack_forget()
+            self.cadre_menu_ressource.pack_forget()
+            self.cadre_construire_entrepot.pack_forget()
+            self.cadre_menu_ressource = Frame(self.cadreoutils, height=200, width=200, bg="blue")
+            self.cadre_menu_ressource.pack(side=LEFT, fill=Y)
+            self.a_clique_sur_installation = 0
+            #mettre tout ici
+            self.label_fer = Label(self.cadre_menu_ressource, text="Fer : " + str(self.recup.inventaire.get("Fer")), anchor=CENTER, width=25, height=2, border=2, borderwidth=1,
+                                  relief="solid", bg="green")
+            #
+            self.label_cuivre = Label(self.cadre_menu_ressource, text="Cuivre : " + str(self.recup.inventaire.get("Cuivre")), anchor=CENTER, width=25, height=2, border=2,
+                                               borderwidth=1,
+                                              relief="solid", bg="green")
+            self.label_or = Label(self.cadre_menu_ressource, text="Or : " + str(self.recup.inventaire.get("Or")), anchor=CENTER, width=25, height=2, border=2,
                                            borderwidth=1,
-                                           relief="solid", bg="purple")
-
-
+                                           relief="solid", bg="yellow")
+            #
+            self.label_titane = Label(self.cadre_menu_ressource, text="Titane : " + str(self.recup.inventaire.get("Titane")), anchor=CENTER, width=25, height=2, border=2,
+                                               borderwidth=1,
+                                               relief="solid", bg="red")
+            #
+            self.label_hydrogene = Label(self.cadre_menu_ressource, text="Hydrogene : " + str(self.recup.inventaire.get("Hydrogene")), anchor=CENTER, width=25, height=2, border=2,
+                                        borderwidth=1, relief="solid", bg="green")
+            #
+            self.label_pluto = Label(self.cadre_menu_ressource, text="Plutonium : " + str(self.recup.inventaire.get("Plutonium")), anchor=CENTER, width=25, height=2, border=2,
+                                       borderwidth=1, relief="solid", bg="yellow")
+            #
+            self.label_antimatiere = Label(self.cadre_menu_ressource, text="???? : " + str(self.recup.inventaire.get("Antimatiere")), anchor=CENTER, width=25, height=2, border=2,
+                                                   borderwidth=1,
+                                                   relief="solid", bg="purple")
 
             self.label_fer.pack()
             self.label_cuivre.pack()
@@ -466,6 +463,67 @@ class Vue():
             self.label_hydrogene.pack()
             self.label_pluto.pack()
             self.label_antimatiere.pack()
+
+
+    # def methode_ressource_exploitable(self):
+    #     self.recup = self.parent.recupEtoile(self.ma_selection[1])
+    #
+    #     self.label_materiaux_e = Label(self.cadreoutils, text="Matériaux :", anchor=CENTER,width=34, height=1, border=1, borderwidth=1,relief="solid", bg="#e0e0e0")
+    #     self.label_ernegie_e = Label(self.cadreoutils, text="Énergie : ", anchor=CENTER,width=34, height=1, border=1, borderwidth=1,relief="solid", bg="#e0e0e0")
+    #
+    #     self.label_fer_e = Label(self.cadreoutils, text="Fer : " + str(round(self.recup.ressource.get("Fer") * 100, 2)) + "%", anchor=CENTER,
+    #                            width=34, height=2, border=2, borderwidth=1,
+    #                            relief="solid", bg="#949392")
+    #
+    #     self.label_cuivre_e = Label(self.cadreoutils, text="Cuivre : " + str(round(self.recup.ressource.get("Cuivre") * 100, 2)) + "%",
+    #                               anchor=CENTER, width=34, height=2, border=2,
+    #                               borderwidth=1,
+    #                               relief="solid", bg="#703f0a")
+    #
+    #     self.label_or_e = Label(self.cadreoutils, text="Or : " + str(round(self.recup.ressource.get("Or") * 100, 2)) + "%", anchor=CENTER,
+    #                           width=34, height=2, border=2,
+    #                           borderwidth=1,
+    #                           relief="solid", bg="#9c7f00")
+    #
+    #     self.label_titane_e = Label(self.cadreoutils, text="Titane : " + str(round(self.recup.ressource.get("Titane") * 100, 2)) + "%",
+    #                               anchor=CENTER, width=34, height=2, border=2,
+    #                               borderwidth=1,
+    #                               relief="solid", bg="#5668a3")
+    #
+    #     self.label_hydrogene_e = Label(self.cadreoutils,
+    #                                  text="Hydrogene : " + str(round(self.recup.ressource.get("Hydrogene") * 100, 2)) + "%", anchor=CENTER,
+    #                                  width=34, height=2, border=2,
+    #                                  borderwidth=1, relief="solid", bg="#b4e7ed")
+    #
+    #     self.label_pluto_e = Label(self.cadreoutils, text="Plutonium : " + str(round(self.recup.ressource.get("Plutonium") * 100, 2)) + "%",
+    #                              anchor=CENTER, width=34, height=2, border=2,
+    #                              borderwidth=1, relief="solid", bg="#558a0c")
+    #
+    #     self.label_antimatiere_e = Label(self.cadreoutils, text="Antimatière : " + str(round(self.recup.ressource.get("Antimatiere") * 100, 2)) + "%",
+    #                                    anchor=CENTER, width=34, height=2, border=2,
+    #                                    borderwidth=1,
+    #                                    relief="solid", bg="#3c0c8a")
+    #     self.label_materiaux_e.pack(fill=X)
+    #     self.label_fer_e.pack(fill=X)
+    #     self.label_cuivre_e.pack(fill=X)
+    #     self.label_or_e.pack(fill=X)
+    #     self.label_titane_e.pack(fill=X)
+    #     self.label_ernegie_e.pack(fill=X)
+    #     self.label_hydrogene_e.pack(fill=X)
+    #     self.label_pluto_e.pack(fill=X)
+    #     self.label_antimatiere_e.pack(fill=X)
+
+    def construire_entrepot(self):#jarrive ici quand je clique sur le bouton "Construire Entrepot"
+        #vider le frame
+        self.cadre_menu_installation.pack_forget()
+        self.cadre_construire_entrepot =  Frame(self.cadreoutils,height=200, width=200, bg="pink")#on creer un cadre que lon met dans cadre_outil
+        self.cadre_construire_entrepot.pack(side=LEFT, fill=Y)
+        #mettre le timer ici
+        self.label_timer = Label(self.cadre_construire_entrepot, font=('Arial, 20'), bg="yellow")#Affichage du timer ici
+        self.label_timer.pack()
+        self.clock()#appel de la fonction clock pour demarrer le timer
+
+
 
 
 
@@ -788,7 +846,7 @@ class Vue():
             self.ma_selection = None
 
     def montrer_etoile_selection(self):  # montrer le tag de letoile selectionne
-        self.cadreinfoliste.pack_forget()
+        #self.cadreinfoliste.pack_forget()
         #self.barrevie.pack_forget()
         self.btnInventaire.pack()
         self.btnInstallation.pack()
