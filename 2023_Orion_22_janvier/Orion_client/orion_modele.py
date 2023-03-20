@@ -59,11 +59,11 @@ class Etoile():
         self.vaisseaux = None # [] de vaisseaux pose sur letoile
         self.estEclaire = False #etoile selectionne ou pas True ou False = False au debut du jeu
         self.niveauEtoile = 1 #niveau de l'étoile = 1/2/3 = toutes les étoiles seront de niveau 1 au debut du jeu
-        self.inventaire ={"Fer":0,
-                          "Cuivre":0,
-                          "Or":0,
+        self.inventaire ={"Fer":50,
+                          "Cuivre":15,
+                          "Or":5,
                           "Titane":0,
-                          "Hydrogene":0,
+                          "Hydrogene":30,
                           "Plutonium":0,
                           "Antimatiere":0}
 
