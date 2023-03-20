@@ -41,8 +41,7 @@ class Vue():
         # # variable pour suivre le trace du multiselect
         self.debut_selection = []
         self.selecteur_actif = None
-        self.shipSelected = ""
-        self.canExplore = False
+        self.shipSelected = []
 
         #creation label Frame pour méthode methode_installation et methode_ressource
         self.boutonAmeliorerEtoile = Button()
@@ -784,16 +783,16 @@ class Vue():
                     if k == "Vaisseau":  # CREATION DU CARRE ROUGE REPRESENTANT LE VAISSEAU
                         self.canevas.create_rectangle((j.x - tailleF), (j.y - tailleF),
                                                       (j.x + tailleF), (j.y + tailleF), fill='red', #i.couleur (couleur du joueur)
-                                                      tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact"))
+                                                      tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact", "False"))
                     elif k == "Cargo":  # CREATION DU CARGO
                         self.canevas.create_rectangle((j.x - tailleF), (j.y - tailleF),
                                                       (j.x + tailleF), (j.y + tailleF), fill='blue',
-                                                      tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact"))
+                                                      tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact", "False"))
 
                     elif k == "Eclaireur": #CREATION DE L'ÉCLAIREUR
                         self.canevas.create_rectangle((j.x - tailleF), (j.y - tailleF),
                                                       (j.x + tailleF), (j.y + tailleF), fill='white',
-                                                      tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact"))
+                                                      tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact", "True"))
         for t in self.modele.trou_de_vers:
             i = t.porte_a
             for i in [t.porte_a, t.porte_b]:
@@ -830,28 +829,25 @@ class Vue():
                 self.ma_selection = [self.mon_nom, tags[1], tags[2]]
                 if tags[2] == "Etoile":
                     self.montrer_etoile_selection()
-                    if self.shipSelected != "":
-                        self.parent.cibler_flotte(self.shipSelected, tags[1], tags[2])
-                        self.shipSelected = ""
-                        self.canExplore = False
-                        self.ma_selection = None
+                    if self.shipSelected != []:
+                        for ship in self.shipSelected:
+                            self.parent.cibler_flotte(ship[1], tags[1], tags[2])
+                        self.shipSelected = []
+                        self.ma_selection = []
                     else:
                         self.montrer_etoile_selection()
                 elif tags[2] == "Flotte":
                     self.montrer_flotte_selection()
-                    self.shipSelected = self.ma_selection[1]
-                    if tags[3] == "Eclaireur":
-                        self.canExplore = True
-            elif ("Etoile" == tags[2] or "Porte_de_ver" == tags[2]) and self.shipSelected != "":
-                if self.ma_selection and "Etoile" == tags[2] and self.canExplore:
-                    self.parent.cibler_flotte(self.ma_selection[1], tags[1], tags[2])
-                    self.shipSelected = ""
-                    self.canExplore = False
-                elif self.ma_selection and "Porte_de_ver" == tags[2]:
-                    self.parent.cibler_flotte(self.ma_selection[1], tags[1], tags[2])
-                    self.shipSelected = ""
-                    self.canExplore = False
-                self.ma_selection = None
+                    self.shipSelected.append(tags)
+            elif ("Etoile" == tags[2] or "Porte_de_ver" == tags[2]) and self.shipSelected != []:
+                for ship in self.shipSelected:
+                    if "Etoile" == tags[2] and ship[5] == "True":
+                        self.parent.cibler_flotte(ship[1], tags[1], tags[2])
+                        self.shipSelected = []
+                    elif "Porte_de_ver" == tags[2]:
+                        self.parent.cibler_flotte(ship[1], tags[1], tags[2])
+                        self.shipSelected = []
+                    self.ma_selection = None
         else:  # aucun tag => On a clické dans le vide donc aucun objet sur la carte
             print("Region inconnue")
             self.ma_selection = None
@@ -886,10 +882,8 @@ class Vue():
             self.debutselect = []
             objchoisi = (list(self.canevas.find_enclosed(x1, y1, x2, y2)))
             for i in objchoisi:
-                if self.parent.mon_nom not in self.canevas.gettags(i):
-                    objchoisi.remove(i)
-                else:
-                    self.objets_selectionnes.append(self.canevas.gettags(i)[2])
+                if self.canevas.gettags(i)[0] == self.mon_nom and self.canevas.gettags(i)[2] == "Flotte":
+                    self.shipSelected.append(self.canevas.gettags(i))
 
             self.canevas.delete("selecteur")
 
