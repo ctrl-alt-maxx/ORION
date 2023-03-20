@@ -56,7 +56,7 @@ class Vue():
         self.label_titane = Label()
         self.label_titre = Label()
         self.canev = Canvas()
-        self.boutonConstruire = Button()
+        self.boutonConstruireUsine = Button()
         self.label_entrepotVaisseau = Label()
         self.boutonConstruireEntrepot = Button()
         self.label_qte_fer = Label()
@@ -73,7 +73,7 @@ class Vue():
         self.label_img = Label()
         self.label_installation = Label()
         self.cadre_bouton = Frame()
-        self.boutonConstruire = Button()
+        self.boutonConstruireUsine = Button()
         self.cadre_espacement = Frame()
 
         self.cadre_label_entrepot_vaisseau = Frame()
@@ -107,8 +107,10 @@ class Vue():
         elif(self.chiffre >= 5):
             #ferme la fenetre
             self.nbr_entrepot += 1
+
             #self.cadre_menu_installation.pack()
             self.menu_installation()
+
 
 
 
@@ -340,38 +342,40 @@ class Vue():
     def menu_installation(self):#est appele quand je clique sur le bouton "Installation"
 
 
-            self.forget_all()
+            self.forget_all() #on oublie tout les cadres
 
+            #on creer un cadre
             self.cadre_menu_installation = Frame(self.cadreoutils,height=200, width=200, bg="blue")#on creer un cadre
             self.cadre_menu_installation.pack(side=LEFT, fill=Y)
 
+            #on creer un label pour le titre
             self.cadre_label_titre = Frame(self.cadre_menu_installation, height=200, width=200)
             self.cadre_label_titre.pack(fill=X)
             self.label_titre = Label(self.cadre_label_titre, text="Usine Ressource", bg='#848484')
             self.label_titre.pack(fill=X)
             self.cadre_img = Frame(self.cadre_menu_installation, height=200, width=200)#cadre pour image
-
             self.cadre_img.pack(fill=X)
             self.label_img = Label(self.cadre_img, image=self.img_usine)#image de lusine
             self.label_img.pack(side=LEFT)
             self.label_installation = Label(self.cadre_img, text="Description: usine pour stocker ressources")#label pour afficher "Description..."
             self.label_installation.pack(side=RIGHT)
 
+            #Bouton pour construire usine
             self.cadre_bouton = Frame(self.cadre_menu_installation, height=200, width=200, bg="yellow")#cadre bouton pour mettre bouton construire usine
             self.cadre_bouton.pack(fill=X)
+            self.boutonConstruireUsine = Button(self.cadre_bouton, text="Construire Usine", bg="yellow")
+            self.boutonConstruireUsine.config(command=self.construire_usine)
+            self.boutonConstruireUsine.pack()
 
-            self.boutonConstruire = Button(self.cadre_bouton, text="Construire Usine", bg="yellow")
-            self.boutonConstruire.pack()
-
+            #cadre pour creer un espace entre Usine Ressource et Entrepot a vaisseau
             self.cadre_espacement = Frame(self.cadre_menu_installation, height=10, width=200, bg="#FFFFFF")# cadre pour creer un espace entre Usine Ressource et Entrepot a vaisseau
             self.cadre_espacement.pack(fill=X)
                      # partie basse
 
+            #Cadre et Label Entrepot a vaisseaux
             self.cadre_label_entrepot_vaisseau = Frame(self.cadre_menu_installation, height=200, width=200, bg="#848484")#cadre pour partie entrepot
             self.cadre_label_entrepot_vaisseau.pack(fill=X)
-
-            self.label_entrepotVaisseau = Label(self.cadre_label_entrepot_vaisseau, text="Entrepot a vaisseaux",
-                                                       bg="#848484")
+            self.label_entrepotVaisseau = Label(self.cadre_label_entrepot_vaisseau, text="Entrepot a vaisseaux",bg="#848484")
             self.label_entrepotVaisseau.pack(side=TOP)
 
             self.cadre_img2 = Frame(self.cadre_menu_installation, height=200, width=200)#dans cadre img2 je met image + descritpion
@@ -401,15 +405,25 @@ class Vue():
 
 
 
+            #Bouton pour construire entrepot
             self.cadre_bouton2 = Frame(self.cadre_menu_installation, height=200, width=200, bg="yellow")
             self.cadre_bouton2.pack(fill=X)
             self.boutonConstruireEntrepot = Button(self.cadre_bouton2, text="Construire Entrepot", bg="yellow")
             self.boutonConstruireEntrepot.config(command=self.construire_entrepot)
-            self.boutonConstruireEntrepot.pack()
+            self.boutonAmeliorerEntrepot = Button(self.cadre_bouton2, text="Ameliorer Entrepot", bg="yellow")
+
+            #self.boutonAmeliorerEntrepot.config(command=self.ameliorer_entrepot)  ## a faire
+
+            if(self.nbr_entrepot == 0):
+                self.boutonConstruireEntrepot.pack()
+
+            #Bouton pour construire vaisseau
             if(self.nbr_entrepot == 1):
+                self.boutonConstruireEntrepot.pack_forget()
+                self.boutonAmeliorerEntrepot.pack(side="left")
                 self.boutonConstruireVaisseau = Button(self.cadre_bouton2, text="construire Vaisseau", bg="blue")
                 self.boutonConstruireVaisseau.config(command=self.construction_vaisseau)
-                self.boutonConstruireVaisseau.pack()
+                self.boutonConstruireVaisseau.pack(side="left")
 
 
 
@@ -421,12 +435,14 @@ class Vue():
         self.cadre_bouton_construction_vaisseau.pack_forget()
         self.cadre_bouton_construction_vaisseau.pack()
 
-        self.bouton_construction_vaisseau_cargot = Button(self.cadre_bouton_construction_vaisseau, text="Constuire vaisseau cargot")
-        self.bouton_construction_vaisseau_cargot.pack(fill=X)
+        self.bouton_construction_vaisseau_cargo = Button(self.cadre_bouton_construction_vaisseau, text="Constuire vaisseau cargo")
+        self.bouton_construction_vaisseau_cargo.pack(fill=X)
 
         self.bouton_construction_vaisseau_attaque = Button(self.cadre_bouton_construction_vaisseau, text="Construire vaisseau attaque")
         self.bouton_construction_vaisseau_attaque.pack()
 
+        self.bouton_construction_vaisseau_éclaireur = Button(self.cadre_bouton_construction_vaisseau, text="Construire vaisseau éclaireur")
+        self.bouton_construction_vaisseau_éclaireur.pack()
 
     def menu_ressource(self):#jarrive ici quand je clique sur le bouton "Ressources"
             self.recup = self.parent.recupEtoile(self.ma_selection[1])
@@ -532,7 +548,13 @@ class Vue():
         self.label_timer = Label(self.cadre_construire_entrepot, font=('Arial, 20'), bg="yellow")#Affichage du timer ici
         self.label_timer.pack()
         self.clock()#appel de la fonction clock pour demarrer le timer
-
+    def construire_usine(self):
+        self.cadre_menu_installation.pack_forget()
+        self.cadre_construire_usine = Frame(self.cadreoutils, height=200, width=200, bg="pink")
+        self.cadre_construire_usine.pack(side=LEFT, fill=Y)
+        self.label_timer2 = Label(self.cadre_construire_usine, font=('Arial, 20'), bg="yellow")
+        self.label_timer2.pack()
+        self.clock()
 
 
 
@@ -702,7 +724,7 @@ class Vue():
         self.clickUneFoisSurInsta = 0
 
         if self.clickUneFoisSurVaiss == 1:
-            self.boutonConstruire.pack_forget()
+            self.boutonConstruireUsine.pack_forget()
             self.label_titre.pack_forget()
             self.label_installation.pack_forget()
             self.label_entrepotVaisseau.pack_forget()
