@@ -10,6 +10,7 @@ import math
 from PIL import ImageTk, Image
 import tkinter as tk
 import time
+from orion_modele import *
 
 
 import random
@@ -340,6 +341,7 @@ class Vue():
         self.cadre_bouton_construction_vaisseau.pack_forget()
 
     def menu_installation(self):#est appele quand je clique sur le bouton "Installation"
+            self.recup = self.parent.recupEtoile(self.ma_selection[1])
 
 
             self.forget_all() #on oublie tout les cadres
@@ -406,9 +408,27 @@ class Vue():
 
 
             #Bouton pour construire entrepot
+
+            self.afficher_cout
+            if self.recup.installations.get("entrepot") is not None:
+                key = self.recup.installations.get("entrepot").cout.keys()
+                for ke in key:
+                    if self.recup.installations.get("entrepot").cout.get(ke) > 0:
+                        self.afficher_cout += str(self.recup.installations.get("entrepot").cout.get(ke)) + " " + ke + "  "
+                #recuprer données de l'instlalation
+            else:
+                #faire cette merde la
+                i = Installation(None,None,"entrepot",30)
+                keys = i.cout.keys()
+                for k in keys:
+                    if i.cout.get(k) > 0:
+                        self.afficher_cout += str(i.cout.get(k)) + " " + k + "  "
+
+
+
             self.cadre_bouton2 = Frame(self.cadre_menu_installation, height=200, width=200, bg="yellow")
             self.cadre_bouton2.pack(fill=X)
-            self.boutonConstruireEntrepot = Button(self.cadre_bouton2, text="Construire Entrepot", bg="yellow")
+            self.boutonConstruireEntrepot = Button(self.cadre_bouton2, text="Construire Entrepot " , bg="yellow")
             self.boutonConstruireEntrepot.config(command=self.construire_entrepot)
             self.boutonAmeliorerEntrepot = Button(self.cadre_bouton2, text="Ameliorer Entrepot", bg="yellow")
 
