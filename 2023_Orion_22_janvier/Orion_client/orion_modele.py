@@ -89,6 +89,7 @@ class Etoile():
             self.inventaire.update({"Plutonium":    self.inventaire.get("Plutonium") - installation.cout.get("Plutonium")})
             self.inventaire.update({"Antimatiere":  self.inventaire.get("Antimatiere") - installation.cout.get("Antimatiere")})
             self.installations.update({installation.type:installation})
+            print(self.installations)
 
     '''
     Permet de déterminer si l'étoile possède les ressources suffisantes pour construire ou améliorer l'installation voulue.
@@ -114,6 +115,37 @@ class Etoile():
             if self.inventaire.get(i) < installation.cout.get(i):
                 return False
         return True
+
+    '''
+    Permet de produire dans chaque usine les ressources de l'étoile. La fonction est appelée à chaque tick.
+    Args:
+        tick est le cadre de jeu, permet de moduler la vitese de production
+    '''
+    def production(self, tick):
+        if self.installations.get("usine") is not None:
+            usine = self.installations.get("usine")
+            #représente le tableau du nombre de chaque ressource qui serait produite à chaque tick de production
+            valeursRessources = {"Fer": 5,
+                                 "Cuivre": 4,
+                                 "Or": 3,
+                                 "Titane": 2,
+                                 "Hydrogene": 6,
+                                 "Plutonium": 3,
+                                 "Antimatiere": 1}
+
+            #Récupère la liste des ressources disponibles sur l'étoile
+            keys = self.ressource.keys()
+            generation = []
+            for k in keys:
+                if self.ressource.get(k) != 0:
+                    generation.append(k)
+
+            #Effectue la production des ressources
+            for k in generation:
+                if tick % 75 == 0:
+                    qt = valeursRessources.get(k) * (usine.niveau + 1)
+                    newValeur = self.inventaire.get(k) + qt;
+                    self.inventaire.update({k:newValeur})
 
 class Position():
     def __init__(self, x, y):
@@ -648,6 +680,10 @@ class Modele():
         #      fait des actions - on les activera ici...
         for i in self.trou_de_vers:
             i.jouer_prochain_coup()
+
+        coefProduction = 0
+        for i in self.etoiles:
+           i.production(cadre)
 
        # for i in self.etoiles:
          #   self.etoiles[i].jouer_prochain_coup()
