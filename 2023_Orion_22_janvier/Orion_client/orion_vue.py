@@ -200,16 +200,19 @@ class Vue():
     #FENETRE DU JEU -----------------------------------------------------------------------------
     def creer_cadre_partie(self):
         self.cadrepartie = Frame(self.cadre_app, width=600, height=200, bg="yellow")
-        self.cadrejeu = Frame(self.cadrepartie, width=600, height=200, bg="teal")
+        self.cadrejeu = Frame(self.cadrepartie, width=600, height=200, bg="grey11")
 
         self.scrollX = Scrollbar(self.cadrejeu, orient=HORIZONTAL)
         self.scrollY = Scrollbar(self.cadrejeu, orient=VERTICAL)
         self.canevas = Canvas(self.cadrejeu, width=800, height=600,
                               xscrollcommand=self.scrollX.set,
-                              yscrollcommand=self.scrollY.set, bg="grey11")
+                              yscrollcommand=self.scrollY.set, bg="black")
 
         self.scrollX.config(command=self.canevas.xview)
         self.scrollY.config(command=self.canevas.yview)
+
+        self.scrollX.lower()
+        self.scrollY.lower()
 
         self.canevas.grid(column=0, row=0, sticky=W + E + N + S)
         self.scrollX.grid(column=0, row=1, sticky=W + E)
@@ -238,7 +241,7 @@ class Vue():
 
     def creer_cadre_outils(self):
 
-        self.cadreoutils = Frame(self.cadrepartie, width=200, height=200, bg="grey50")  #petite fenetre sur la gauche (celle juste au dessus de la mini map)->ici que l<on affiche le menu
+        self.cadreoutils = Frame(self.cadrepartie, width=200, height=200, bg="#3E363D")  #petite fenetre sur la gauche (celle juste au dessus de la mini map)->ici que l<on affiche le menu
         self.cadreoutils.pack(side=LEFT, fill=Y)
         self.cadreinfo = Frame(self.cadreoutils, width=200, height=200, bg="darkgrey")#??????????
         self.cadreinfo.pack(fill=BOTH)
@@ -587,9 +590,7 @@ class Vue():
         self.cadre_construire_usine = Frame(self.cadreoutils, height=200, width=200, bg="pink")
         self.cadre_construire_usine.pack(side=LEFT, fill=Y)
         self.parent.construireInstallation("usine", self.ma_selection[1])
-       # self.label_timer2 = Label(self.cadre_construire_usine, font=('Arial, 20'), bg="yellow")
-        #self.label_timer2.pack()
-       # self.clock()
+
 
 
 
