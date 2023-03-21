@@ -586,9 +586,10 @@ class Vue():
         self.cadre_menu_installation.pack_forget()
         self.cadre_construire_usine = Frame(self.cadreoutils, height=200, width=200, bg="pink")
         self.cadre_construire_usine.pack(side=LEFT, fill=Y)
-        self.label_timer2 = Label(self.cadre_construire_usine, font=('Arial, 20'), bg="yellow")
-        self.label_timer2.pack()
-        self.clock()
+        self.parent.construireInstallation("usine", self.ma_selection[1])
+       # self.label_timer2 = Label(self.cadre_construire_usine, font=('Arial, 20'), bg="yellow")
+        #self.label_timer2.pack()
+       # self.clock()
 
 
 
