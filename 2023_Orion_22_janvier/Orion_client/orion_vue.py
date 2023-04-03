@@ -459,14 +459,14 @@ class Vue():
 
 
     def construction_vaisseau(self):# on arrive ici quand on clique sur le bouton "construire Vaisseau"
-
+        #on affiche les boutons
         self.cadre_menu_installation.pack_forget()
 
         self.cadre_bouton_construction_vaisseau = Frame(self.cadreoutils,height=200,width=200,bg="yellow")
-        self.cadre_bouton_construction_vaisseau.pack_forget()
         self.cadre_bouton_construction_vaisseau.pack()
 
         self.bouton_construction_vaisseau_cargo = Button(self.cadre_bouton_construction_vaisseau, text="Constuire vaisseau cargo")
+        self.bouton_construction_vaisseau_cargo.config(command=self.construire_vaisseau_cargot)
         self.bouton_construction_vaisseau_cargo.pack(fill=X)
 
         self.bouton_construction_vaisseau_attaque = Button(self.cadre_bouton_construction_vaisseau, text="Construire vaisseau attaque")
@@ -474,6 +474,15 @@ class Vue():
 
         self.bouton_construction_vaisseau_éclaireur = Button(self.cadre_bouton_construction_vaisseau, text="Construire vaisseau éclaireur")
         self.bouton_construction_vaisseau_éclaireur.pack()
+
+    def construire_vaisseau_cargot(self):
+        self.cadre_bouton_construction_vaisseau.pack_forget()
+        self.cadre_construire_vaiss_cargot = Frame(self.cadreoutils, height=200, width=200, bg="blue")
+        self.label_titre_construire_vaiss_cargot = Label(self.cadre_construire_vaiss_cargot, text="Description: Entrepot pour construire vaisseaux")
+        self.cadre_construire_vaiss_cargot.pack()
+        self.label_titre_construire_vaiss_cargot.pack()
+
+
 
     def menu_ressource(self):# on arrive ici quand on clique sur le bouton "Ressources"
             self.recup = self.parent.recupEtoile(self.ma_selection[1])
