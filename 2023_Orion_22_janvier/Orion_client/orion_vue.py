@@ -7,7 +7,7 @@ from tkinter.simpledialog import *
 from tkinter.messagebox import *
 from helper import Helper as hlp
 import math
-from PIL import ImageTk, Image
+# from PIL import ImageTk, Image
 import tkinter as tk
 import time
 
@@ -97,6 +97,9 @@ class Vue():
         self.chiffre = 0
         self.nbr_entrepot = 0
         self.selectedTags = None
+
+        #creation des labels autres
+        self.timer_partie = Label()
 
 
     def clock(self):#des que je clique sur le bouton construire entrepot, ca lance cette fonction...
@@ -199,6 +202,7 @@ class Vue():
 
     #FENETRE DU JEU -----------------------------------------------------------------------------
     def creer_cadre_partie(self):
+        self.ticks = IntVar()
         self.cadrepartie = Frame(self.cadre_app, width=600, height=200, bg="yellow")
         self.cadrejeu = Frame(self.cadrepartie, width=600, height=200, bg="teal")
 
@@ -207,6 +211,7 @@ class Vue():
         self.canevas = Canvas(self.cadrejeu, width=800, height=600,
                               xscrollcommand=self.scrollX.set,
                               yscrollcommand=self.scrollY.set, bg="grey11")
+        self.timer_partie = Label(self.cadrejeu, textvariable=self.ticks, width=10, height=1, bg="red")
 
         self.scrollX.config(command=self.canevas.xview)
         self.scrollY.config(command=self.canevas.yview)
@@ -214,6 +219,7 @@ class Vue():
         self.canevas.grid(column=0, row=0, sticky=W + E + N + S)
         self.scrollX.grid(column=0, row=1, sticky=W + E)
         self.scrollY.grid(column=1, row=0, sticky=N + S)
+        self.timer_partie.grid(column=0, row=0)
 
         self.cadrejeu.columnconfigure(0, weight=1)
         self.cadrejeu.rowconfigure(0, weight=1)
@@ -861,6 +867,8 @@ class Vue():
                                          i.x + i.pulse, i.y + i.pulse, outline=i.couleur, width=2, fill="grey15",
                                          tags=("", i.id, "Porte_de_ver", "objet_spatial"))
 
+        self.ticks.set(value=self.parent.to_secondes(self.parent.cadrejeu))
+
     def dessiner_cargo(self, obj, tailleF, joueur, type_obj):
         t = obj.taille * self.zoom
         a = obj.ang
@@ -918,6 +926,7 @@ class Vue():
 
     def montrer_flotte_selection(self):  # montrer le tag du vaisseau selectionne
         print("À IMPLANTER - FLOTTE de ", self.mon_nom)
+
 
     # Methodes pour multiselect#########################################################
     def debuter_multiselection(self, evt):
