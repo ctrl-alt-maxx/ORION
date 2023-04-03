@@ -387,9 +387,10 @@ class Vue():
             #Bouton pour construire usine
             self.cadre_bouton = Frame(self.cadre_menu_installation, height=200, width=200, bg="yellow")#cadre bouton pour mettre bouton construire usine
             self.cadre_bouton.pack(fill=X)
-            self.boutonConstruireUsine = Button(self.cadre_bouton, text="Construire Usine", bg="yellow")
+
+            self.boutonConstruireUsine = Button(self.cadre_bouton, text="Construire Usine",foreground='#F5E15D', background='#242423', font=('Arial', 12))
             self.boutonConstruireUsine.config(command=self.construire_usine)
-            self.boutonConstruireUsine.pack()
+            self.boutonConstruireUsine.pack(fill=X)
 
             #cadre pour creer un espace entre Usine Ressource et Entrepot a vaisseau
             self.cadre_espacement = Frame(self.cadre_menu_installation, height=10, width=200, bg="#FFFFFF")# cadre pour creer un espace entre Usine Ressource et Entrepot a vaisseau
@@ -456,22 +457,22 @@ class Vue():
 
             self.cadre_bouton2 = Frame(self.cadre_menu_installation, height=200, width=200, bg="yellow")
             self.cadre_bouton2.pack(fill=X)
-            self.boutonConstruireEntrepot = Button(self.cadre_bouton2, text="Construire Entrepot " , bg="yellow")
+            self.boutonConstruireEntrepot = Button(self.cadre_bouton2, text="Construire Entrepot" ,foreground='#F5E15D', background='#242423', font=('Arial', 12))
             self.boutonConstruireEntrepot.config(command=self.construire_entrepot)
-            self.boutonAmeliorerEntrepot = Button(self.cadre_bouton2, text="Ameliorer Entrepot", bg="yellow")
+            self.boutonAmeliorerEntrepot = Button(self.cadre_bouton2, text="Ameliorer Entrepot",foreground='#CB92CE', background='#242423', font=('Arial', 12))
 
             #self.boutonAmeliorerEntrepot.config(command=self.ameliorer_entrepot)  ## a faire
 
             if(self.nbr_entrepot == 0):
-                self.boutonConstruireEntrepot.pack()
+                self.boutonConstruireEntrepot.pack(fill=X)
 
             #Bouton pour construire vaisseau
             if(self.nbr_entrepot == 1):
                 self.boutonConstruireEntrepot.pack_forget()
-                self.boutonAmeliorerEntrepot.pack(side="left")
-                self.boutonConstruireVaisseau = Button(self.cadre_bouton2, text="construire Vaisseau", bg="blue")
+                self.boutonAmeliorerEntrepot.pack(side=LEFT)
+                self.boutonConstruireVaisseau = Button(self.cadre_bouton2, text="Construire Vaisseau",foreground='#A7FCC2', background='#242423', font=('Arial', 12))
                 self.boutonConstruireVaisseau.config(command=self.construction_vaisseau)
-                self.boutonConstruireVaisseau.pack(side="left")
+                self.boutonConstruireVaisseau.pack(side=RIGHT)
 
 
 
