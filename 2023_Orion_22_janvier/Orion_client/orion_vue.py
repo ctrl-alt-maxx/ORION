@@ -278,17 +278,7 @@ class Vue():
         """fenetre ou il y a bouton vaisseau, cargo et eclaireur"""
 
         #Bouton vaisseaux----------------------------------------------------------------------------------------------------------------
-        self.btncreervaisseau = Button(self.cadreinfochoix, text="Vaisseau")
-        """pour creer un vaisseau"""
-        self.btncreervaisseau.bind("<Button>", self.creer_vaisseau)
 
-        self.btncreercargo = Button(self.cadreinfochoix, text="Cargo")
-        """pour creer un cargo"""
-        self.btncreercargo.bind("<Button>", self.creer_vaisseau)
-
-        self.btncreereclaireur = Button(self.cadreinfochoix, text="Eclaireur")
-        """pour creer un éclaireur"""
-        self.btncreereclaireur.bind("<Button>", self.creer_vaisseau)
 
         # self.btncreervaisseau.pack() #-------------------------------------- ICI QUE TU PACK LES VAISSEAUX à enlever plus tard
         # self.btncreercargo.pack()
@@ -490,14 +480,28 @@ class Vue():
         self.cadre_bouton_construction_vaisseau.pack_forget()
         self.cadre_bouton_construction_vaisseau.pack()
 
-        self.bouton_construction_vaisseau_cargo = Button(self.cadre_bouton_construction_vaisseau, text="Constuire vaisseau cargo")
-        self.bouton_construction_vaisseau_cargo.pack(fill=X)
+        self.btncreervaisseau = Button(self.cadre_bouton_construction_vaisseau, text="Vaisseau")
+        """pour creer un vaisseau"""
+        self.btncreervaisseau.bind("<Button>", self.creer_vaisseau)
 
-        self.bouton_construction_vaisseau_attaque = Button(self.cadre_bouton_construction_vaisseau, text="Construire vaisseau attaque")
-        self.bouton_construction_vaisseau_attaque.pack()
+        self.btncreercargo = Button(self.cadre_bouton_construction_vaisseau, text="Cargo")
+        """pour creer un cargo"""
+        self.btncreercargo.bind("<Button>", self.creer_vaisseau)
 
-        self.bouton_construction_vaisseau_éclaireur = Button(self.cadre_bouton_construction_vaisseau, text="Construire vaisseau éclaireur")
-        self.bouton_construction_vaisseau_éclaireur.pack()
+        self.btncreereclaireur = Button(self.cadre_bouton_construction_vaisseau, text="Eclaireur")
+        """pour creer un éclaireur"""
+        self.btncreereclaireur.bind("<Button>", self.creer_vaisseau)
+
+        #self.bouton_construction_vaisseau_cargo = Button(self.cadre_bouton_construction_vaisseau, text="Constuire vaisseau cargo")
+        self.btncreervaisseau.pack(fill=X)
+
+        #self.bouton_construction_vaisseau_attaque = Button(self.cadre_bouton_construction_vaisseau, text="Construire vaisseau attaque")
+        self.btncreercargo.pack()
+
+        #self.bouton_construction_vaisseau_éclaireur = Button(self.cadre_bouton_construction_vaisseau, text="Construire vaisseau éclaireur")
+        self.btncreereclaireur.pack()
+
+
 
     def menu_ressource(self):#jarrive ici quand je clique sur le bouton "Ressources"
             self.recup = self.parent.recupEtoile(self.ma_selection[1])
