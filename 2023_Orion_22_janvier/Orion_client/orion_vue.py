@@ -21,6 +21,7 @@ import random
 #ffff
 class Vue():
     def __init__(self, parent, urlserveur, mon_nom, msg_initial):
+        self.estAccos = None
         self.parent = parent
         self.root = Tk()
         self.root.title("Player: " + mon_nom)
@@ -111,6 +112,10 @@ class Vue():
         self.selectedTags = None
 
 
+
+
+    def savoirSiAccoste(self, params):
+        self.estAccos = params[0]
     def clock(self):#des que je clique sur le bouton construire entrepot, ca lance cette fonction...
         self.chiffre += 1
         self.label_timer.config(text=self.chiffre)
@@ -309,6 +314,11 @@ class Vue():
         self.boutonAmeliorerEtoile.pack(fill=X)
         self.eteAfficher = False
 
+        #si le vaisseau cargot est accoste faire afficher ce bouton
+
+        if(self.estAccos):
+            self.boutonTransfererRessource = Button(self.cadreinfochoix, text="transferer ressources", foreground='#FCFCFC', background='#B462C2', font=('Arial', 12))
+            self.boutonTransfererRessource.pack(fill=X)
         # ---------------------------------------------------------------------------------------------------------------------------------
 
         self.cadreinfoliste = Frame(self.cadreinfo)
@@ -359,6 +369,7 @@ class Vue():
         self.cadre_menu_installation.pack_forget()
         self.cadre_construire_entrepot.pack_forget()
         self.cadre_bouton_construction_vaisseau.pack_forget()
+
         #essai
         self.cadre_construire_usine.pack_forget()
 
@@ -489,25 +500,19 @@ class Vue():
         self.btncreereclaireur = Button(self.cadre_bouton_construction_vaisseau, text="Eclaireur")
         """pour creer un éclaireur"""
         self.btncreereclaireur.bind("<Button>", self.creer_vaisseau)
-
-        #self.bouton_construction_vaisseau_cargo = Button(self.cadre_bouton_construction_vaisseau, text="Constuire vaisseau cargo")
         self.btncreervaisseau.pack(fill=X)
-
-        #self.bouton_construction_vaisseau_attaque = Button(self.cadre_bouton_construction_vaisseau, text="Construire vaisseau attaque")
         self.btncreercargo.pack()
-
-        #self.bouton_construction_vaisseau_éclaireur = Button(self.cadre_bouton_construction_vaisseau, text="Construire vaisseau éclaireur")
         self.btncreereclaireur.pack()
 
 
 
 
-    def construire_vaisseau_cargot(self):
-        self.cadre_bouton_construction_vaisseau.pack_forget()
-        self.cadre_construire_vaiss_cargot = Frame(self.cadreoutils, height=200, width=200, bg="blue")
-        self.label_titre_construire_vaiss_cargot = Label(self.cadre_construire_vaiss_cargot, text="Description: Entrepot pour construire vaisseaux")
-        self.cadre_construire_vaiss_cargot.pack()
-        self.label_titre_construire_vaiss_cargot.pack()
+    # def construire_vaisseau_cargot(self):
+    #     self.cadre_bouton_construction_vaisseau.pack_forget()
+    #     self.cadre_construire_vaiss_cargot = Frame(self.cadreoutils, height=200, width=200, bg="blue")
+    #     self.label_titre_construire_vaiss_cargot = Label(self.cadre_construire_vaiss_cargot, text="Description: Entrepot pour construire vaisseaux")
+    #     self.cadre_construire_vaiss_cargot.pack()
+    #     self.label_titre_construire_vaiss_cargot.pack()
 
 
 
@@ -827,6 +832,7 @@ class Vue():
         self.info_liste.insert(END, obj + "; " + id + "; Nv." + str(niveau))
 
     def creer_vaisseau(self, evt):
+        self.forget_all()
         type_vaisseau = evt.widget.cget("text")
         self.parent.creer_vaisseau(type_vaisseau, self.selectedTags[3], self.selectedTags[4])
         self.ma_selection = None
@@ -911,9 +917,9 @@ class Vue():
                                  (j.x + tailleF), (j.y + tailleF), fill=i.couleur,
                                  tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact"))
 
-    def cliquer_cosmos(self, evt):  # DES QU'ON CLIQUE QUELQUE PART DANS LE JEU
+    def cliquer_cosmos(self, evt):  # DES QU'ON CLIQUE QUELQUE PART DANS LE JEU -> travailler avec ca
         self.selectedTags = self.canevas.gettags(CURRENT)
-        tags = self.selectedTags
+        tags = self.selectedTags #contient
         if tags:  # Il y a des tags => On a cliqué sur un objet de la carte (Vaisseau, Étoile, ...)
             if tags[0] == self.mon_nom:
                 self.ma_selection = [self.mon_nom, tags[1], tags[2]]
@@ -921,7 +927,7 @@ class Vue():
                     self.montrer_etoile_selection()
                     if self.shipSelected != []:
                         for ship in self.shipSelected:
-                            self.parent.cibler_flotte(ship[1], tags[1], tags[2])
+                            self.parent.cibler_flotte(ship[1], tags[1], tags[2])#cest ca qui envoi le vaisseau a letoile selectionne
                         self.shipSelected = []
                         self.ma_selection = []
                     else:
