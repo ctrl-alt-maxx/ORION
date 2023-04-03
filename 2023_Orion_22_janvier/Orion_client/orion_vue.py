@@ -794,7 +794,7 @@ class Vue():
 
     def creer_vaisseau(self, evt):
         type_vaisseau = evt.widget.cget("text")
-        self.parent.creer_vaisseau(type_vaisseau, self.selectedTags[3], self.selectedTags[4])
+        self.parent.creer_vaisseau(type_vaisseau, self.selectedTags[3], self.selectedTags[4], self.selectedTags[1])
         self.ma_selection = None
         self.canevas.delete("marqueur")
         self.cadreinfochoix.pack_forget()

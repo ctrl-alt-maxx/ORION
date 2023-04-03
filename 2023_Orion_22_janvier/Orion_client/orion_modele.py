@@ -334,19 +334,28 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
             if e.id == idEtoile:
                 e.construire(typeInstallation)
 
-    def creervaisseau(self, params): #Fonction qui permet de créer un vaisseau \\\ À DÉPLACER DANS LA CLASSE ENTREPOT : IL FAUT CRÉER UN VAISSEAU DANS UN ENTREPOT, PAS PAR LE JOUEUR
-        type_vaisseau = params[0]
-        if type_vaisseau == "Cargo":
-            v = Cargo(self, self.nom, int(params[1]) + 10, int(params[2]), 1, "a", True, 15, 15, 0)
-        elif type_vaisseau == "Vaisseau":
-            v = Vaisseau(self, self.nom, int(params[1]) + 10, int(params[2]), 1, "a", True, 15, 15, 0)
-        else:
-            v = Eclaireur(self, self.nom, int(params[1]) + 10, int(params[2]), 1, "a", True, 15, 15, 0)
-        self.flotte[type_vaisseau][v.id] = v
+    def creervaisseau(self, params, cadre): #Fonction qui permet de créer un vaisseau \\\ À DÉPLACER DANS LA CLASSE ENTREPOT : IL FAUT CRÉER UN VAISSEAU DANS UN ENTREPOT, PAS PAR LE JOUEUR
+        for e in self.etoilescontrolees:
+            if e.id == params[3]:
+                if e.installations.get("entrepot").isLibre() is not None:
+                    type_vaisseau = params[0]
+                    if type_vaisseau == "Cargo":
+                        v = Cargo(self, self.nom, int(params[1]) + 10, int(params[2]), 1, "a", e.id, 15, 15, 0)
+                    elif type_vaisseau == "Vaisseau":
+                        v = Vaisseau(self, self.nom, int(params[1]) + 10, int(params[2]), 1, "a", e.id, 15, 15, 0)
+                    else:
+                        v = Eclaireur(self, self.nom, int(params[1]) + 10, int(params[2]), 1, "a", e.id, 15, 15, 0)
 
-        if self.nom == self.parent.parent.mon_nom:
-            self.parent.parent.lister_objet(type_vaisseau, v.id, v.niveau_Vaisseau)
-        return v
+                    slot = e.installations.get("entrepot").isLibre()
+                    e.installations.update({slot:v}) #Attribue le vaisseau en construction dans le premier slot de l'entrepot
+                    cadreDebutConstruction = cadre;
+
+                    if cadre == cadreDebutConstruction + 100:
+                        e.installations.update({slot:None}) #Libère le slot occupé après un certain nombre de tick
+                        self.flotte[type_vaisseau][v.id] = v
+                        if self.nom == self.parent.parent.mon_nom:
+                            self.parent.parent.lister_objet(type_vaisseau, v.id, v.niveau_Vaisseau)
+                        return v
 
     def ciblerflotte(self, ids): #Cette fonction sera complètement refaite.
         idori, iddesti, type_cible = ids        #idor = origine, iddesti = destination
@@ -482,9 +491,21 @@ class Usine(Installation):
 
 class Entrepot(Installation):
     def __init__(self, parent, proprietaire, type, temps, capacite):
-        self.capacite = capacite
+        self.capacite = {"slot1": None,
+                         "slot2": None,
+                         "slot3": None}
         super().__init__( parent, proprietaire, type, temps)
 
+    '''
+        La fonction détermine si un emplacement dans l'entrepot est libre pour y construire un vaisseau. 
+        Returns le slot libre ou false si aucun slot n'est disponible.
+    '''
+    def isLibre(self):
+        keysSlots = self.capacite.keys()
+        for k in keysSlots:
+            if self.capacite.get(k) is None:
+                return k
+        return False
 class Modele():
     def __init__(self, parent, joueurs):
         self.parent = parent
