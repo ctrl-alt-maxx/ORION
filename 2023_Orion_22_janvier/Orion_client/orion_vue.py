@@ -10,6 +10,7 @@ import math
 from PIL import ImageTk, Image
 import tkinter as tk
 import time
+import os, os.path
 
 from orion_modele import *
 
@@ -47,6 +48,16 @@ class Vue():
         self.selecteur_actif = None
         self.shipSelected = []
 
+        #Chercher les images
+
+        #self.img = None
+        #self.pathImgEclaireur = Image.open('C:/Users/2077407/Documents/GitHub/C41/2023_Orion_22_janvier/img/eclaireur.png')
+
+        self.images= {}
+
+        self.chargerimages()
+
+
         #creation label Frame pour méthode methode_installation et methode_ressource
         self.boutonAmeliorerEtoile = Button()
         self.label_installation = Label()
@@ -67,8 +78,8 @@ class Vue():
         self.clickUneFoisSurInsta = 0 #pour que le frame ne reaparaisse pas si je clique 2 fois de suite sur le meme bouton
         self.clickUneFoisSurRessource = 0
         self.clickUneFoisSurVaiss = 0
-        self.img_usine = tk.PhotoImage(file='../img/imgUsine.png').subsample(6, 6)
-        self.img_entrepot = tk.PhotoImage(file='../img/entrepot.png').subsample(6,6)
+        self.img_usine = tk.PhotoImage(file='img/imgUsine.png').subsample(6, 6)
+        self.img_entrepot = tk.PhotoImage(file='img/entrepot.png').subsample(6, 6)
 
         # var global methode installation()
         self.cadre_label_ressource = Frame()
@@ -116,8 +127,19 @@ class Vue():
             self.menu_installation()
 
 
-
-
+    def chargerimages(self, chemin=None):
+        if chemin == None:
+            chemin = os.getcwd()
+        chemin = chemin + "\\img"
+        for i in os.listdir(chemin):
+            che = chemin + "\\" + i
+            if os.path.isdir(che):
+                self.chargerimages(che)
+            else:
+                nom, ext = os.path.splitext(os.path.basename(i))
+                if ".png" == ext:
+                    self.images[nom] = PhotoImage(file=che)  # .replace("\\","/")
+        return self.images
 
 
     def demander_abandon(self):
@@ -259,17 +281,7 @@ class Vue():
         """fenetre ou il y a bouton vaisseau, cargo et eclaireur"""
 
         #Bouton vaisseaux----------------------------------------------------------------------------------------------------------------
-        self.btncreervaisseau = Button(self.cadreinfochoix, text="Vaisseau")
-        """pour creer un vaisseau"""
-        self.btncreervaisseau.bind("<Button>", self.creer_vaisseau)
 
-        self.btncreercargo = Button(self.cadreinfochoix, text="Cargo")
-        """pour creer un cargo"""
-        self.btncreercargo.bind("<Button>", self.creer_vaisseau)
-
-        self.btncreereclaireur = Button(self.cadreinfochoix, text="Eclaireur")
-        """pour creer un éclaireur"""
-        self.btncreereclaireur.bind("<Button>", self.creer_vaisseau)
 
         # self.btncreervaisseau.pack() #-------------------------------------- ICI QUE TU PACK LES VAISSEAUX à enlever plus tard
         # self.btncreercargo.pack()
@@ -471,14 +483,28 @@ class Vue():
         self.cadre_bouton_construction_vaisseau.pack_forget()
         self.cadre_bouton_construction_vaisseau.pack()
 
-        self.bouton_construction_vaisseau_cargo = Button(self.cadre_bouton_construction_vaisseau, text="Constuire vaisseau cargo")
-        self.bouton_construction_vaisseau_cargo.pack(fill=X)
+        self.btncreervaisseau = Button(self.cadre_bouton_construction_vaisseau, text="Vaisseau")
+        """pour creer un vaisseau"""
+        self.btncreervaisseau.bind("<Button>", self.creer_vaisseau)
 
-        self.bouton_construction_vaisseau_attaque = Button(self.cadre_bouton_construction_vaisseau, text="Construire vaisseau attaque")
-        self.bouton_construction_vaisseau_attaque.pack()
+        self.btncreercargo = Button(self.cadre_bouton_construction_vaisseau, text="Cargo")
+        """pour creer un cargo"""
+        self.btncreercargo.bind("<Button>", self.creer_vaisseau)
 
-        self.bouton_construction_vaisseau_éclaireur = Button(self.cadre_bouton_construction_vaisseau, text="Construire vaisseau éclaireur")
-        self.bouton_construction_vaisseau_éclaireur.pack()
+        self.btncreereclaireur = Button(self.cadre_bouton_construction_vaisseau, text="Eclaireur")
+        """pour creer un éclaireur"""
+        self.btncreereclaireur.bind("<Button>", self.creer_vaisseau)
+
+        #self.bouton_construction_vaisseau_cargo = Button(self.cadre_bouton_construction_vaisseau, text="Constuire vaisseau cargo")
+        self.btncreervaisseau.pack(fill=X)
+
+        #self.bouton_construction_vaisseau_attaque = Button(self.cadre_bouton_construction_vaisseau, text="Construire vaisseau attaque")
+        self.btncreercargo.pack()
+
+        #self.bouton_construction_vaisseau_éclaireur = Button(self.cadre_bouton_construction_vaisseau, text="Construire vaisseau éclaireur")
+        self.btncreereclaireur.pack()
+
+
 
     def menu_ressource(self):#jarrive ici quand je clique sur le bouton "Ressources"
             self.recup = self.parent.recupEtoile(self.ma_selection[1])
@@ -848,9 +874,8 @@ class Vue():
                                                       tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact", "False"))
 
                     elif k == "Eclaireur": #CREATION DE L'ÉCLAIREUR
-                        self.canevas.create_rectangle((j.x - tailleF), (j.y - tailleF),
-                                                      (j.x + tailleF), (j.y + tailleF), fill='white',
-                                                      tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact", "True"))
+                        self.canevas.create_image(j.x, j.y, image= self.images["eclaireur"],
+                                                  tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact", "True"))
         for t in self.modele.trou_de_vers:
             i = t.porte_a
             for i in [t.porte_a, t.porte_b]:
