@@ -12,6 +12,9 @@ import tkinter as tk
 import time
 import os, os.path
 
+from orion_modele import *
+
+
 
 import random
 
@@ -20,7 +23,8 @@ class Vue():
     def __init__(self, parent, urlserveur, mon_nom, msg_initial):
         self.parent = parent
         self.root = Tk()
-        self.root.title("Je suis " + mon_nom)
+        self.root.title("Player: " + mon_nom)
+
         self.mon_nom = mon_nom
         # attributs
         self.taille_minimap = 240
@@ -255,24 +259,25 @@ class Vue():
         return self.cadrepartie
 
     def creer_cadre_outils(self):
-        self.cadreoutils = Frame(self.cadrepartie, width=200, height=200, bg="red")  #petite fenetre sur la gauche (celle juste au dessus de la mini map)->ici que l<on affiche le menu
+
+        self.cadreoutils = Frame(self.cadrepartie, width=200, height=200, bg="grey50")  #petite fenetre sur la gauche (celle juste au dessus de la mini map)->ici que l<on affiche le menu
         self.cadreoutils.pack(side=LEFT, fill=Y)
         self.cadreinfo = Frame(self.cadreoutils, width=200, height=200, bg="darkgrey")#??????????
         self.cadreinfo.pack(fill=BOTH)
-
-        self.cadreinfogen = Frame(self.cadreinfo, width=200, height=200, bg="grey50")#petite fenetre en haut a gauche (JAJA et bouton MINI)
+        self.cadreinfogen = Frame(self.cadreinfo, width=200, height=200, bg="#3E363D")#petite fenetre en haut a gauche (JAJA et bouton MINI)
         self.cadreinfogen.pack(fill=BOTH)
-        self.labid = Label(self.cadreinfogen, text="Inconnu")
+        self.labid = Label(self.cadreinfogen, text="Inconnu", font=('Arial', 10))
         self.labid.bind("<Button>", self.centrer_planetemere)#bouton qui est utilise lorsque je clique sur JAJA, ca nous place sur notre planete mere
-        self.labid.pack()
-        self.btnmini = Button(self.cadreinfogen, text="MINI")
+        self.labid.pack(side="left")
+        self.btnmini = Button(self.cadreinfogen, text="MINI-MAP", foreground='#FCFCFC', background='#30292F', font=('Arial', 10))
         self.btnmini.bind("<Button>", self.afficher_mini)
-        self.btnmini.pack()
+        self.btnmini.pack(side="left")
 
         # PETITE FENETRE POUR LES 2 BOUTONS VAISSEAU ET CARGO-----------------------------------------------------------------------------
         self.cadreinfochoix = Frame(self.cadreinfo, height=200, width=200, bg="light grey")
         """fenetre ou il y a bouton vaisseau, cargo et eclaireur"""
 
+        #Bouton vaisseaux----------------------------------------------------------------------------------------------------------------
         self.btncreervaisseau = Button(self.cadreinfochoix, text="Vaisseau")
         """pour creer un vaisseau"""
         self.btncreervaisseau.bind("<Button>", self.creer_vaisseau)
@@ -285,29 +290,32 @@ class Vue():
         """pour creer un éclaireur"""
         self.btncreereclaireur.bind("<Button>", self.creer_vaisseau)
 
-        self.btncreervaisseau.pack() #-------------------------------------- ICI QUE TU PACK LES VAISSEAUX
-        self.btncreercargo.pack()
-        self.btncreereclaireur.pack()
+        # self.btncreervaisseau.pack() #-------------------------------------- ICI QUE TU PACK LES VAISSEAUX à enlever plus tard
+        # self.btncreercargo.pack()
+        # self.btncreereclaireur.pack()
+        #--------------------------------------------------------------------------------------------------------------------------
+        #BOUTONS DU MENU
 
-        self.btnRessources = Button(self.cadreinfochoix, text="Ressources")
-        #self.btnRessources.config(command=self.methode_ressource_exploitable)
+        #creer bouton resource
+
+        self.btnRessources = Button(self.cadreinfochoix, text="Ressources",foreground='#FCFCFC', background='#30292F', font=('Arial', 12))
         self.btnRessources.config(command=self.menu_ressource_ex)
-        self.btnRessources.pack()
+        self.btnRessources.pack(fill=X)
 
         # creer boutonInstallation ici--------------------------------------------------------------------------------------------
-        self.btnInstallation = Button(self.cadreinfochoix, text="Installations")
+        self.btnInstallation = Button(self.cadreinfochoix, text="Installations",foreground='#FCFCFC', background='#30292F', font=('Arial', 12))
         """pour ouvrir le menu d'installation"""
         self.btnInstallation.config(command=self.menu_installation)
-        self.btnInstallation.pack()
+        self.btnInstallation.pack(fill=X)
 
-        # creer boutonResource ici
-        self.btnInventaire = Button(self.cadreinfochoix, text="Inventaire")
-        """pour ouvrir le menu de ressource"""
+        # creer bouton Inventaire ici
+        self.btnInventaire = Button(self.cadreinfochoix, text="Inventaire",foreground='#FCFCFC', background='#30292F', font=('Arial', 12))
+        """pour ouvrir le menu d'inventaire"""
         self.btnInventaire.config(command=self.menu_ressource)
-        self.btnInventaire.pack()
+        self.btnInventaire.pack(fill=X)
 
-        self.boutonAmeliorerEtoile = Button(self.cadreinfochoix, text="Ameliorer Etoile")
-        self.boutonAmeliorerEtoile.pack()
+        self.boutonAmeliorerEtoile = Button(self.cadreinfochoix, text="Ameliorer Etoile",foreground='#FCFCFC', background='#B462C2', font=('Arial', 12))
+        self.boutonAmeliorerEtoile.pack(fill=X)
         self.eteAfficher = False
 
         # ---------------------------------------------------------------------------------------------------------------------------------
@@ -362,6 +370,7 @@ class Vue():
         self.cadre_bouton_construction_vaisseau.pack_forget()
 
     def menu_installation(self):#est appele quand je clique sur le bouton "Installation"
+            self.recup = self.parent.recupEtoile(self.ma_selection[1])
 
 
             self.forget_all() #on oublie tout les cadres
@@ -394,6 +403,26 @@ class Vue():
             self.cadre_espacement.pack(fill=X)
                      # partie basse
 
+            # Afficher le cout de l'entrepot
+            self.afficher_cout = ""
+            self.afficher_possession = ""
+            if self.recup.installations.get("entrepot") is not None:
+                # recuprer données de l'instlalation
+                key = self.recup.installations.get("entrepot").cout.keys()
+                for ke in key:
+                    if self.recup.installations.get("entrepot").cout.get(ke) > 0:
+                        self.afficher_cout += ke + " : " + str(self.recup.installations.get("entrepot").cout.get(ke)) + "  "
+                        self.afficher_possession += ke + " : " + str(self.recup.inventaire.get(ke)) + "  "
+            else:
+                # faire cette merde la ;)
+                i = Installation(None, None, "entrepot", 30)
+                keys = i.cout.keys()
+                for k in keys:
+                    if i.cout.get(k) > 0:
+                        self.afficher_cout += k + " : " + str(i.cout.get(k)) + "  "
+                        self.afficher_possession += k + " : " + str(self.recup.inventaire.get(k)) + "  "
+
+
             #Cadre et Label Entrepot a vaisseaux
             self.cadre_label_entrepot_vaisseau = Frame(self.cadre_menu_installation, height=200, width=200, bg="#848484")#cadre pour partie entrepot
             self.cadre_label_entrepot_vaisseau.pack(fill=X)
@@ -416,21 +445,25 @@ class Vue():
             self.cadre_ressouce_demande = Frame(self.cadre_menu_installation, height= 200, width=200)
             self.cadre_ressouce_demande.pack(fill=X)
 
-            self.label_ressource_demande = Label(self.cadre_ressouce_demande,text="Ressource demande: 10 or + 15 fer")
+            self.label_ressource_demande = Label(self.cadre_ressouce_demande,text="Ressource demande: " + self.afficher_cout)
             self.label_ressource_demande.pack()
 
             self.cadre_ressource_que_possede_joueur = Frame(self.cadre_menu_installation, height=200,width=200)
             self.cadre_ressource_que_possede_joueur.pack(fill=X)
 
-            self.label_ressource_possede_joueur = Label(self.cadre_ressource_que_possede_joueur, text="Ressource en possession: 20 or + 30 fer")
+            self.label_ressource_possede_joueur = Label(self.cadre_ressource_que_possede_joueur, text="Ressource en possession: " + self.afficher_possession)
             self.label_ressource_possede_joueur.pack()
 
 
 
-            #Bouton pour construire entrepot
+
+
+
+            # Bouton pour construire entrepot
+
             self.cadre_bouton2 = Frame(self.cadre_menu_installation, height=200, width=200, bg="yellow")
             self.cadre_bouton2.pack(fill=X)
-            self.boutonConstruireEntrepot = Button(self.cadre_bouton2, text="Construire Entrepot", bg="yellow")
+            self.boutonConstruireEntrepot = Button(self.cadre_bouton2, text="Construire Entrepot " , bg="yellow")
             self.boutonConstruireEntrepot.config(command=self.construire_entrepot)
             self.boutonAmeliorerEntrepot = Button(self.cadre_bouton2, text="Ameliorer Entrepot", bg="yellow")
 
@@ -569,14 +602,16 @@ class Vue():
         #mettre le timer ici
         self.label_timer = Label(self.cadre_construire_entrepot, font=('Arial, 20'), bg="yellow")#Affichage du timer ici
         self.label_timer.pack()
+        self.parent.construireInstallation("entrepot", self.ma_selection[1]) #pour construire entrepot -> la fonction va veifier si on peut construire entrepot
         self.clock()#appel de la fonction clock pour demarrer le timer
     def construire_usine(self):
         self.cadre_menu_installation.pack_forget()
         self.cadre_construire_usine = Frame(self.cadreoutils, height=200, width=200, bg="pink")
         self.cadre_construire_usine.pack(side=LEFT, fill=Y)
-        self.label_timer2 = Label(self.cadre_construire_usine, font=('Arial, 20'), bg="yellow")
-        self.label_timer2.pack()
-        self.clock()
+        self.parent.construireInstallation("usine", self.ma_selection[1])
+       # self.label_timer2 = Label(self.cadre_construire_usine, font=('Arial, 20'), bg="yellow")
+        #self.label_timer2.pack()
+       # self.clock()
 
 
 
