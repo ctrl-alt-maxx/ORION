@@ -160,7 +160,7 @@ class Deplacement():
 
 
 class Vaisseau():
-    def __init__(self, parent, nom, x, y, estAccoste, tempsConstruction):
+    def __init__(self, parent, nom, x, y, estAccoste, tempsConstruction, cadreDebutConstruction, type_vaisseau):
         self.parent = parent
         self.id = get_prochain_id()
         self.proprietaire = nom
@@ -168,6 +168,8 @@ class Vaisseau():
         self.tempsConstruction = tempsConstruction
         self.estAccoste = estAccoste #Étoile sur laquelle le vaisseau est accosté
         self.Deplacement = None
+        self.cadreDebutConstruction = cadreDebutConstruction
+        self.type_vaisseau = type_vaisseau
 
         #HP du vaiseau
         self.vie = 250
@@ -239,8 +241,8 @@ class Vaisseau():
 
 
 class Cargo(Vaisseau):  #TODO À CHANGER
-    def __init__(self, parent, nom, x, y, estAccoste, tempsConstruction):
-        Vaisseau.__init__(self, parent, nom, x, y, estAccoste, tempsConstruction)
+    def __init__(self, parent, nom, x, y, estAccoste, tempsConstruction, cadreDebutConstruction, type_vaisseau):
+        Vaisseau.__init__(self, parent, nom, x, y, estAccoste, tempsConstruction, cadreDebutConstruction, type_vaisseau)
         self.capaciteMax = 1000
         self.capaciteUtilise = 0
         self.inventaire = {"Fer":0,
@@ -310,8 +312,8 @@ class Cargo(Vaisseau):  #TODO À CHANGER
         return qtMax
 
 class Eclaireur(Vaisseau):  #TODO À CHANGER
-    def __init__(self, parent, nom, x, y, estAccoste, tempsConstruction):
-        Vaisseau.__init__(self, parent, nom, x, y, estAccoste, tempsConstruction)
+    def __init__(self, parent, nom, x, y, estAccoste, tempsConstruction, cadreDebutConstruction, type_vaisseau):
+        Vaisseau.__init__(self, parent, nom, x, y, estAccoste, tempsConstruction, cadreDebutConstruction, type_vaisseau)
         self.energie = 500
         self.taille = 4
         self.vitesse = 5
@@ -348,23 +350,21 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
             if e.id == params[3]:
                 if e.installations.get("entrepot").isLibre() is not None:
                     type_vaisseau = params[0]
+                    cadreDebutConstruction = params[4]
                     if type_vaisseau == "Cargo":
-                        v = Cargo(self, self.nom, int(params[1]) + 10, int(params[2]), e.id, 15)
+                        v = Cargo(self, self.nom, int(params[1]) + 10, int(params[2]), e.id, 15, cadreDebutConstruction, type_vaisseau)
                     elif type_vaisseau == "Vaisseau":
-                        v = Vaisseau(self, self.nom, int(params[1]) + 10, int(params[2]), e.id, 15)
+                        v = Vaisseau(self, self.nom, int(params[1]) + 10, int(params[2]), e.id, 15, cadreDebutConstruction, type_vaisseau)
                     else:
-                        v = Eclaireur(self, self.nom, int(params[1]) + 10, int(params[2]), e.id, 15)
+                        v = Eclaireur(self, self.nom, int(params[1]) + 10, int(params[2]), e.id, 15, cadreDebutConstruction, type_vaisseau)
 
                     slot = e.installations.get("entrepot").isLibre()
                     e.installations.update({slot:v}) #Attribue le vaisseau en construction dans le premier slot de l'entrepot
-                    cadreDebutConstruction = params[4]
 
-                    #if cadreActuel == cadreDebutConstruction + 100:
-                    e.installations.update({slot:None}) #Libère le slot occupé après un certain nombre de tick
-                    self.flotte[type_vaisseau][v.id] = v
-                    if self.nom == self.parent.parent.mon_nom:
-                        self.parent.parent.lister_objet(type_vaisseau, v.id, v.niveau_Vaisseau)
-                    return v
+    def finConstructionVaisseau(self, vaisseau):
+        self.flotte[vaisseau.type_vaisseau][vaisseau.id] = vaisseau
+        if self.nom == self.parent.parent.mon_nom:
+            self.parent.parent.lister_objet(vaisseau.type_vaisseau, vaisseau.id, vaisseau.niveau_Vaisseau)
 
     def ciblerflotte(self, ids): #Cette fonction sera complètement refaite.
         idori, iddesti, type_cible = ids        #idor = origine, iddesti = destination
@@ -493,8 +493,9 @@ class Installation():
 
 class Usine(Installation):
     def __init__(self, parent, proprietaire, type, temps, production):
-        super().__init__(self, parent, proprietaire, type, temps)
         self.production = production
+        super().__init__(parent, proprietaire, type, temps)
+
 
 class Entrepot(Installation):
     def __init__(self, parent, proprietaire, type, temps):
@@ -502,17 +503,27 @@ class Entrepot(Installation):
                          "slot2": None,
                          "slot3": None}
         super().__init__( parent, proprietaire, type, temps)
+        self.keysSlots = None
 
     '''
         La fonction détermine si un emplacement dans l'entrepot est libre pour y construire un vaisseau. 
         Returns le slot libre ou false si aucun slot n'est disponible.
     '''
     def isLibre(self):
-        keysSlots = self.capacite.keys()
-        for k in keysSlots:
+        self.keysSlots = self.capacite.keys()
+        for k in self.keysSlots:
             if self.capacite.get(k) is None:
                 return k
         return False
+
+    def constructionVaisseau(self, cadre):
+        self.keysSlots = self.capacite.keys()
+        for k in self.keysSlots:
+            if self.capacite.get(k) is not None:
+                if cadre == self.capacite.get(k).cadreDebutConstruction + 100:
+                    Joueur.finConstructionVaisseau(self.capacite.get(k))
+                    self.capacite.update({k, None})
+
 class Modele():
     def __init__(self, parent, joueurs):
         self.parent = parent
@@ -713,6 +724,10 @@ class Modele():
         coefProduction = 0
         for i in self.etoiles:
            i.production(cadre)
+
+        for i in self.etoiles:
+            if i.installations.get("entrepot") is not None:
+                i.installations.get("entrepot").constructionVaisseau(cadre)
 
        # for i in self.etoiles:
          #   self.etoiles[i].jouer_prochain_coup()
