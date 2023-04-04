@@ -226,7 +226,7 @@ class Controleur():
     ############        VOTRE CODE      ######################
 
     def creer_vaisseau(self, type_vaisseau, x, y, idetoile):
-        self.actionsrequises.append([self.mon_nom, "creervaisseau", [type_vaisseau, x, y, idetoile]], self.cadrejeu)
+        self.actionsrequises.append([self.mon_nom, "creervaisseau", [type_vaisseau, x, y, idetoile, self.cadrejeu]])
 
     def cibler_flotte(self, idorigine, iddestination, type_cible):
         self.actionsrequises.append([self.mon_nom, "ciblerflotte", [idorigine, iddestination, type_cible]])

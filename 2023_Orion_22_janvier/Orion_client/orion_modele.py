@@ -8,6 +8,7 @@ import string
 from id import *
 from helper import Helper as hlp
 
+cadreActuel = None
 
 class Porte_de_vers(): #Porte dans laquelle on rentre dans le trou de ver
     def __init__(self, parent, x, y, couleur, taille):
@@ -76,9 +77,9 @@ class Etoile():
     '''
     def construire(self, type):
         if type == "entrepot":
-            installation = Installation(self.parent,self.proprietaire,"entrepot",30)
+            installation = Entrepot(self.parent,self.proprietaire,"entrepot",30)
         else:
-            installation = Installation(self.parent, self.proprietaire, "usine", 25)
+            installation = Usine(self.parent, self.proprietaire, "usine", 25, 100)
         if self.is_construisible(installation):
             #TODO POSSIBILITÉ DE CHANGER LA FONCTION EN BOUCLE
             self.inventaire.update({"Fer":          self.inventaire.get("Fer") - installation.cout.get("Fer")})
@@ -159,11 +160,10 @@ class Deplacement():
 
 
 class Vaisseau():
-    def __init__(self, parent, nom, x, y,type_Vaisseau,estAccoste,tempsConstruction,Icone):
+    def __init__(self, parent, nom, x, y, estAccoste, tempsConstruction):
         self.parent = parent
         self.id = get_prochain_id()
         self.proprietaire = nom
-        self.type_Vaisseau = type_Vaisseau
         self.niveau_Vaisseau = 1
         self.tempsConstruction = tempsConstruction
         self.estAccoste = estAccoste #Étoile sur laquelle le vaisseau est accosté
@@ -173,7 +173,6 @@ class Vaisseau():
         self.vie = 250
 
         #Image du vaisseau
-        self.Icone = Icone
         self.x = x
         self.y = y
         self.espace_cargo = 0
@@ -240,8 +239,8 @@ class Vaisseau():
 
 
 class Cargo(Vaisseau):  #TODO À CHANGER
-    def __init__(self, parent, nom, x, y, type_Vaisseau, estAccoste, tempsConstruction, Icone):
-        Vaisseau.__init__(self, parent, nom, x, y, type_Vaisseau, estAccoste, tempsConstruction, Icone)
+    def __init__(self, parent, nom, x, y, estAccoste, tempsConstruction):
+        Vaisseau.__init__(self, parent, nom, x, y, estAccoste, tempsConstruction)
         self.capaciteMax = 1000
         self.capaciteUtilise = 0
         self.inventaire = {"Fer":0,
@@ -311,8 +310,8 @@ class Cargo(Vaisseau):  #TODO À CHANGER
         return qtMax
 
 class Eclaireur(Vaisseau):  #TODO À CHANGER
-    def __init__(self, parent, nom, x, y, type_Vaisseau, estAccoste, tempsConstruction, Icone):
-        Vaisseau.__init__(self, parent, nom, x, y, type_Vaisseau, estAccoste, tempsConstruction, Icone)
+    def __init__(self, parent, nom, x, y, estAccoste, tempsConstruction):
+        Vaisseau.__init__(self, parent, nom, x, y, estAccoste, tempsConstruction)
         self.energie = 500
         self.taille = 4
         self.vitesse = 5
@@ -344,28 +343,28 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
             if e.id == idEtoile:
                 e.construire(typeInstallation)
 
-    def creervaisseau(self, params, cadre): #Fonction qui permet de créer un vaisseau \\\ À DÉPLACER DANS LA CLASSE ENTREPOT : IL FAUT CRÉER UN VAISSEAU DANS UN ENTREPOT, PAS PAR LE JOUEUR
+    def creervaisseau(self, params): #Fonction qui permet de créer un vaisseau \\\ À DÉPLACER DANS LA CLASSE ENTREPOT : IL FAUT CRÉER UN VAISSEAU DANS UN ENTREPOT, PAS PAR LE JOUEUR
         for e in self.etoilescontrolees:
             if e.id == params[3]:
                 if e.installations.get("entrepot").isLibre() is not None:
                     type_vaisseau = params[0]
                     if type_vaisseau == "Cargo":
-                        v = Cargo(self, self.nom, int(params[1]) + 10, int(params[2]), 1, "a", e.id, 15, 15, 0)
+                        v = Cargo(self, self.nom, int(params[1]) + 10, int(params[2]), e.id, 15)
                     elif type_vaisseau == "Vaisseau":
-                        v = Vaisseau(self, self.nom, int(params[1]) + 10, int(params[2]), 1, "a", e.id, 15, 15, 0)
+                        v = Vaisseau(self, self.nom, int(params[1]) + 10, int(params[2]), e.id, 15)
                     else:
-                        v = Eclaireur(self, self.nom, int(params[1]) + 10, int(params[2]), 1, "a", e.id, 15, 15, 0)
+                        v = Eclaireur(self, self.nom, int(params[1]) + 10, int(params[2]), e.id, 15)
 
                     slot = e.installations.get("entrepot").isLibre()
                     e.installations.update({slot:v}) #Attribue le vaisseau en construction dans le premier slot de l'entrepot
-                    cadreDebutConstruction = cadre
+                    cadreDebutConstruction = params[4]
 
-                    if cadre == cadreDebutConstruction + 100:
-                        e.installations.update({slot:None}) #Libère le slot occupé après un certain nombre de tick
-                        self.flotte[type_vaisseau][v.id] = v
-                        if self.nom == self.parent.parent.mon_nom:
-                            self.parent.parent.lister_objet(type_vaisseau, v.id, v.niveau_Vaisseau)
-                        return v
+                    #if cadreActuel == cadreDebutConstruction + 100:
+                    e.installations.update({slot:None}) #Libère le slot occupé après un certain nombre de tick
+                    self.flotte[type_vaisseau][v.id] = v
+                    if self.nom == self.parent.parent.mon_nom:
+                        self.parent.parent.lister_objet(type_vaisseau, v.id, v.niveau_Vaisseau)
+                    return v
 
     def ciblerflotte(self, ids): #Cette fonction sera complètement refaite.
         idori, iddesti, type_cible = ids        #idor = origine, iddesti = destination
@@ -500,7 +499,7 @@ class Usine(Installation):
         self.production = production
 
 class Entrepot(Installation):
-    def __init__(self, parent, proprietaire, type, temps, capacite):
+    def __init__(self, parent, proprietaire, type, temps):
         self.capacite = {"slot1": None,
                          "slot2": None,
                          "slot3": None}
@@ -691,6 +690,7 @@ class Modele():
     def jouer_prochain_coup(self, cadre):
         #  NE PAS TOUCHER LES LIGNES SUIVANTES  ################
         self.cadre_courant = cadre
+        cadreActuel = cadre
         # insertion de la prochaine action demandée par le joueur
         if cadre in self.actions_a_faire:
             for i in self.actions_a_faire[cadre]:
