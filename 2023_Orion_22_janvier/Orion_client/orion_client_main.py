@@ -245,7 +245,7 @@ class Controleur():
         self.actionsrequises.append([self.mon_nom, "construire", [installation, id]])
 
     def to_secondes(self, nb_ticks):
-        return nb_ticks // 20
+        return nb_ticks // 16
 
 
 

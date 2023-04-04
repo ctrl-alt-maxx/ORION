@@ -211,7 +211,7 @@ class Vue():
         self.canevas = Canvas(self.cadrejeu, width=800, height=600,
                               xscrollcommand=self.scrollX.set,
                               yscrollcommand=self.scrollY.set, bg="grey11")
-        self.timer_partie = Label(self.cadrejeu, textvariable=self.ticks, width=10, height=1, bg="red")
+        self.timer_partie = Label(self.cadrejeu, text="Temps écoulé: ", textvariable=self.ticks, width=10, height=1)
 
         self.scrollX.config(command=self.canevas.xview)
         self.scrollY.config(command=self.canevas.yview)
@@ -219,7 +219,7 @@ class Vue():
         self.canevas.grid(column=0, row=0, sticky=W + E + N + S)
         self.scrollX.grid(column=0, row=1, sticky=W + E)
         self.scrollY.grid(column=1, row=0, sticky=N + S)
-        self.timer_partie.grid(column=0, row=0)
+        self.timer_partie.grid(column=0, row=0, sticky=E + N, padx=20, pady=20)
 
         self.cadrejeu.columnconfigure(0, weight=1)
         self.cadrejeu.rowconfigure(0, weight=1)
