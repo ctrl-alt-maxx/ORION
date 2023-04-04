@@ -68,7 +68,7 @@ class Controleur():
         reptext = self.appeler_serveur(url, params)
 
         self.joueur_createur = 1  # on est le createur
-        self.vue.root.title("je suis " + self.mon_nom)
+        self.vue.root.title("Player: " + self.mon_nom)
         # on passe au lobby pour attendre les autres joueurs
         self.vue.changer_cadre("lobby")
         self.boucler_sur_lobby()
