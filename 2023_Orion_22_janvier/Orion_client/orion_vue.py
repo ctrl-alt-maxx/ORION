@@ -369,7 +369,7 @@ class Vue():
             self.forget_all() #on oublie tout les cadres
 
             #on creer un cadre
-            self.cadre_menu_installation = Frame(self.cadreoutils,height=200, width=200, bg="blue")#on creer un cadre
+            self.cadre_menu_installation = Frame(self.cadreoutils,height=200, width=200, bg="#6F6D6D")#on creer un cadre
             self.cadre_menu_installation.pack(side=LEFT, fill=Y)
 
             #on creer un label pour le titre
@@ -421,7 +421,7 @@ class Vue():
             self.cadre_label_entrepot_vaisseau = Frame(self.cadre_menu_installation, height=200, width=200, bg="#848484")#cadre pour partie entrepot
             self.cadre_label_entrepot_vaisseau.pack(fill=X)
             self.label_entrepotVaisseau = Label(self.cadre_label_entrepot_vaisseau, text="Entrepot a vaisseaux",bg="#848484")
-            self.label_entrepotVaisseau.pack(side=TOP)
+            self.label_entrepotVaisseau.pack(fill=X)
 
             self.cadre_img2 = Frame(self.cadre_menu_installation, height=200, width=200)#dans cadre img2 je met image + descritpion
             self.cadre_img2.pack()
@@ -511,8 +511,8 @@ class Vue():
             self.recup = self.parent.recupEtoile(self.ma_selection[1])
             self.forget_all()
 
-            self.cadre_menu_ressource = Frame(self.cadreoutils, height=200, width=200, bg="blue")
-            self.cadre_menu_ressource.pack(side=LEFT, fill=Y)
+            self.cadre_menu_ressource = Frame(self.cadreoutils, height=200, width=200, bg="#6F6D6D")
+            self.cadre_menu_ressource.pack(fill=X)
             self.a_clique_sur_installation = 0
             #mettre tout ici
             self.label_fer = Label(self.cadre_menu_ressource, text="Fer : " + str(self.recup.inventaire.get("Fer")), anchor=CENTER, width=25, height=2, border=2, borderwidth=1,
@@ -539,13 +539,13 @@ class Vue():
                                                    borderwidth=1,
                                                    relief="solid", bg="purple")
 
-            self.label_fer.pack()
-            self.label_cuivre.pack()
-            self.label_or.pack()
-            self.label_titane.pack()
-            self.label_hydrogene.pack()
-            self.label_pluto.pack()
-            self.label_antimatiere.pack()
+            self.label_fer.pack(fill=X)
+            self.label_cuivre.pack(fill=X)
+            self.label_or.pack(fill=X)
+            self.label_titane.pack(fill=X)
+            self.label_hydrogene.pack(fill=X)
+            self.label_pluto.pack(fill=X)
+            self.label_antimatiere.pack(fill=X)
 
 
     def menu_ressource_ex(self):
