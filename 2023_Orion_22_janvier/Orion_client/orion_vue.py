@@ -870,12 +870,10 @@ class Vue():
                     j = i.flotte[k][j]
                     tailleF = j.taille * self.zoom
                     if k == "Vaisseau":  # CREATION DU CARRE ROUGE REPRESENTANT LE VAISSEAU
-                        self.canevas.create_rectangle((j.x - tailleF), (j.y - tailleF),
-                                                      (j.x + tailleF), (j.y + tailleF), fill='red', #i.couleur (couleur du joueur)
+                        self.canevas.create_image(j.x, j.y, image= self.images["Vaisseau"],
                                                       tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact", "False"))
                     elif k == "Cargo":  # CREATION DU CARGO
-                        self.canevas.create_rectangle((j.x - tailleF), (j.y - tailleF),
-                                                      (j.x + tailleF), (j.y + tailleF), fill='blue',
+                        self.canevas.create_image(j.x, j.y, image= self.images["cargo"],
                                                       tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact", "False"))
 
                     elif k == "Eclaireur": #CREATION DE L'ÉCLAIREUR
