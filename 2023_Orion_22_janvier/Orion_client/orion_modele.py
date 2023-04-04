@@ -359,7 +359,7 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
                         v = Eclaireur(self, self.nom, int(params[1]) + 10, int(params[2]), e.id, 15, cadreDebutConstruction, type_vaisseau)
 
                     slot = e.installations.get("entrepot").isLibre()
-                    e.installations.update({slot:v}) #Attribue le vaisseau en construction dans le premier slot de l'entrepot
+                    e.installations.get("entrepot").capacite.update({slot:v}) #Attribue le vaisseau en construction dans le premier slot de l'entrepot
 
     def finConstructionVaisseau(self, vaisseau):
         self.flotte[vaisseau.type_vaisseau][vaisseau.id] = vaisseau
@@ -521,7 +521,10 @@ class Entrepot(Installation):
         for k in self.keysSlots:
             if self.capacite.get(k) is not None:
                 if cadre == self.capacite.get(k).cadreDebutConstruction + 100:
-                    Joueur.finConstructionVaisseau(self.capacite.get(k))
+
+                    v = self.capacite.get(k)
+                    print(v)
+                    Joueur.finConstructionVaisseau(v)
                     self.capacite.update({k, None})
 
 class Modele():
