@@ -400,7 +400,7 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
                         if(abs(xEtoile - xVaisseau) <= 100 and abs(yEtoile - yVaisseau) <= 100): #Création de la hitbox
                             print("Hitbox collided")#quand le cargot arrive sur etoile on arrive ICI!!!
                             j.estAccoste = rep[1] #dans estAccoste est stocke l<id de letoile ou le cargot est accoste -> donc il a une valeur id donc sera true
-                            self.parent.parent.recupererValeurEstAccoste(j.estAccoste, rep[1])
+                            self.parent.parent.recupererValeurEstAccoste(j.estAccoste)
                             self.etoilescontrolees.append(rep[1])
                             self.parent.parent.afficher_etoile(self.nom, rep[1])
                     elif rep[0] == "Porte_de_ver":

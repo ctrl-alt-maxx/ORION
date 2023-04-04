@@ -244,8 +244,8 @@ class Controleur():
     def construireInstallation(self, installation, id):
         self.actionsrequises.append([self.mon_nom, "construire", [installation, id]])
 
-    def recupererValeurEstAccoste(self, estAccoste, id):
-        self.actionsrequises.append([self.mon_nom, "savoirSiAccoste", [estAccoste, id]])
+    def recupererValeurEstAccoste(self, estAccoste):
+         self.vue.savoirSiAccoste(estAccoste)
 
 
 if __name__ == "__main__":

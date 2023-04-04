@@ -114,8 +114,21 @@ class Vue():
 
 
 
-    def savoirSiAccoste(self, params):
-        self.estAccos = params[0]
+    def savoirSiAccoste(self, estAccoste):
+        self.estAccos = estAccoste
+        if(self.estAccos):
+            print("affiche bouton")
+            self.faireApparaitreBoutonTransfere()
+
+    def faireApparaitreBoutonTransfere(self):
+        self.bouton = Button(self.cadreinfochoix, text="bouton transfere")
+        self.bouton.pack()
+
+
+
+
+
+
     def clock(self):#des que je clique sur le bouton construire entrepot, ca lance cette fonction...
         self.chiffre += 1
         self.label_timer.config(text=self.chiffre)
@@ -314,11 +327,6 @@ class Vue():
         self.boutonAmeliorerEtoile.pack(fill=X)
         self.eteAfficher = False
 
-        #si le vaisseau cargot est accoste faire afficher ce bouton
-
-        if(self.estAccos):
-            self.boutonTransfererRessource = Button(self.cadreinfochoix, text="transferer ressources", foreground='#FCFCFC', background='#B462C2', font=('Arial', 12))
-            self.boutonTransfererRessource.pack(fill=X)
         # ---------------------------------------------------------------------------------------------------------------------------------
 
         self.cadreinfoliste = Frame(self.cadreinfo)
@@ -925,8 +933,11 @@ class Vue():
                 self.ma_selection = [self.mon_nom, tags[1], tags[2]]
                 if tags[2] == "Etoile":
                     self.montrer_etoile_selection()
-                    if self.shipSelected != []:
+                    if self.shipSelected != []: #TOUT LES VAISSEAUX SELECTIONNE
                         for ship in self.shipSelected:
+                            if(self.estAccos):
+                                self.faireApparaitreBoutonTransfere()
+
                             self.parent.cibler_flotte(ship[1], tags[1], tags[2])#cest ca qui envoi le vaisseau a letoile selectionne
                         self.shipSelected = []
                         self.ma_selection = []
@@ -956,7 +967,8 @@ class Vue():
         self.cadreinfochoix.pack(fill=BOTH)
 
     def montrer_flotte_selection(self):  # montrer le tag du vaisseau selectionne
-        print("À IMPLANTER - FLOTTE de ", self.mon_nom)
+        #print("À IMPLANTER - FLOTTE de ", self.mon_nom)
+        print("vaisseau selectionne")
 
     # Methodes pour multiselect#########################################################
     def debuter_multiselection(self, evt):
