@@ -202,7 +202,7 @@ class Vue():
 
     #FENETRE DU JEU -----------------------------------------------------------------------------
     def creer_cadre_partie(self):
-        self.ticks = IntVar()
+        self.ticks = IntVar() # Variable utilisé pour le temps (en secondes)
         self.cadrepartie = Frame(self.cadre_app, width=600, height=200, bg="yellow")
         self.cadrejeu = Frame(self.cadrepartie, width=600, height=200, bg="teal")
 
