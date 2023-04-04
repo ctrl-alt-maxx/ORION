@@ -377,23 +377,23 @@ class Vue():
             self.forget_all() #on oublie tout les cadres
 
             #on creer un cadre
-            self.cadre_menu_installation = Frame(self.cadreoutils,height=200, width=200, bg="#6F6D6D")#on creer un cadre
+            self.cadre_menu_installation = Frame(self.cadreoutils,height=200, width=200, bg="#DCE0D9")#on creer un cadre
             self.cadre_menu_installation.pack(side=LEFT, fill=Y)
 
             #on creer un label pour le titre
-            self.cadre_label_titre = Frame(self.cadre_menu_installation, height=200, width=200)
+            self.cadre_label_titre = Frame(self.cadre_menu_installation, height=200, width=200,bg="#DCE0D9")
             self.cadre_label_titre.pack(fill=X)
-            self.label_titre = Label(self.cadre_label_titre, text="Usine Ressource", bg='#848484')
+            self.label_titre = Label(self.cadre_label_titre, text="Usine Ressource", bg='#848484', font=('Arial', 13), foreground="white")
             self.label_titre.pack(fill=X)
-            self.cadre_img = Frame(self.cadre_menu_installation, height=200, width=200)#cadre pour image
+            self.cadre_img = Frame(self.cadre_menu_installation, height=200, width=200,bg="#DCE0D9")#cadre pour image
             self.cadre_img.pack(fill=X)
             self.label_img = Label(self.cadre_img, image=self.img_usine)#image de lusine
             self.label_img.pack(side=LEFT)
-            self.label_installation = Label(self.cadre_img, text="Description: usine pour stocker ressources")#label pour afficher "Description..."
+            self.label_installation = Label(self.cadre_img, text="Description: usine pour stocker ressources",bg="#DCE0D9")#label pour afficher "Description..."
             self.label_installation.pack(side=RIGHT)
 
             #Bouton pour construire usine
-            self.cadre_bouton = Frame(self.cadre_menu_installation, height=200, width=200, bg="yellow")#cadre bouton pour mettre bouton construire usine
+            self.cadre_bouton = Frame(self.cadre_menu_installation, height=200, width=200, bg="#DCE0D9")#cadre bouton pour mettre bouton construire usine
             self.cadre_bouton.pack(fill=X)
 
             self.boutonConstruireUsine = Button(self.cadre_bouton, text="Construire Usine",foreground='#F5E15D', background='#242423', font=('Arial', 12))
@@ -428,32 +428,32 @@ class Vue():
             #Cadre et Label Entrepot a vaisseaux
             self.cadre_label_entrepot_vaisseau = Frame(self.cadre_menu_installation, height=200, width=200, bg="#848484")#cadre pour partie entrepot
             self.cadre_label_entrepot_vaisseau.pack(fill=X)
-            self.label_entrepotVaisseau = Label(self.cadre_label_entrepot_vaisseau, text="Entrepot a vaisseaux",bg="#848484")
+            self.label_entrepotVaisseau = Label(self.cadre_label_entrepot_vaisseau, text="Entrepot a vaisseaux",bg="#848484",font=('Arial', 13),foreground='white')
             self.label_entrepotVaisseau.pack(fill=X)
 
-            self.cadre_img2 = Frame(self.cadre_menu_installation, height=200, width=200)#dans cadre img2 je met image + descritpion
+            self.cadre_img2 = Frame(self.cadre_menu_installation, height=200, width=200,background="#DCE0D9")#dans cadre img2 je met image + descritpion
             self.cadre_img2.pack()
-            self.label_img2 = Label(self.cadre_img2, image=self.img_entrepot)
+            self.label_img2 = Label(self.cadre_img2, image=self.images["entrepot"])
             self.label_img2.pack(side=LEFT)
-            self.label_installation2 = Label(self.cadre_img2, text="Description: Entrepot pour construire vaisseaux")
+            self.label_installation2 = Label(self.cadre_img2, text="Description: Entrepot pour construire vaisseaux",bg="#DCE0D9")
             self.label_installation2.pack(side=RIGHT)
 
-            self.cadre_nbr_installation_entrepot_present = Frame(self.cadre_menu_installation, height=200, width=200)#cadre
+            self.cadre_nbr_installation_entrepot_present = Frame(self.cadre_menu_installation, height=200, width=200,bg="#DCE0D9")#cadre
             self.cadre_nbr_installation_entrepot_present.pack(fill=X)
 
-            self.label_titre_nbr_installation_entrepot_present = Label(self.cadre_nbr_installation_entrepot_present, text=" Nbr Entrepot prensent sur Etoile: " + str(self.nbr_entrepot) + "/ 1")
+            self.label_titre_nbr_installation_entrepot_present = Label(self.cadre_nbr_installation_entrepot_present, text=" Nbr Entrepot prensent sur Etoile: " + str(self.nbr_entrepot) + "/ 1",bg="#DCE0D9")
             self.label_titre_nbr_installation_entrepot_present.pack(side=TOP)
 
-            self.cadre_ressouce_demande = Frame(self.cadre_menu_installation, height= 200, width=200)
+            self.cadre_ressouce_demande = Frame(self.cadre_menu_installation, height= 200, width=200,bg="#DCE0D9")
             self.cadre_ressouce_demande.pack(fill=X)
 
-            self.label_ressource_demande = Label(self.cadre_ressouce_demande,text="Ressource demande: " + self.afficher_cout)
+            self.label_ressource_demande = Label(self.cadre_ressouce_demande,text="Ressource demande: " + self.afficher_cout,bg="#DCE0D9")
             self.label_ressource_demande.pack()
 
-            self.cadre_ressource_que_possede_joueur = Frame(self.cadre_menu_installation, height=200,width=200)
+            self.cadre_ressource_que_possede_joueur = Frame(self.cadre_menu_installation, height=200,width=200,bg="#DCE0D9")
             self.cadre_ressource_que_possede_joueur.pack(fill=X)
 
-            self.label_ressource_possede_joueur = Label(self.cadre_ressource_que_possede_joueur, text="Ressource en possession: " + self.afficher_possession)
+            self.label_ressource_possede_joueur = Label(self.cadre_ressource_que_possede_joueur, text="Ressource en possession: " + self.afficher_possession,bg="#DCE0D9")
             self.label_ressource_possede_joueur.pack()
 
 
@@ -463,7 +463,7 @@ class Vue():
 
             # Bouton pour construire entrepot
 
-            self.cadre_bouton2 = Frame(self.cadre_menu_installation, height=200, width=200, bg="yellow")
+            self.cadre_bouton2 = Frame(self.cadre_menu_installation, height=200, width=200, bg="#848484")
             self.cadre_bouton2.pack(fill=X)
             self.boutonConstruireEntrepot = Button(self.cadre_bouton2, text="Construire Entrepot" ,foreground='#F5E15D', background='#242423', font=('Arial', 12))
             self.boutonConstruireEntrepot.config(command=self.construire_entrepot)
