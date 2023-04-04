@@ -159,17 +159,19 @@ class Deplacement():
 
 
 class Vaisseau():
-    def __init__(self, parent, nom, x, y,niveau_Vaisseau,type_Vaisseau,estAccoste,tempsConstruction,Vie,Icone):
+    def __init__(self, parent, nom, x, y,type_Vaisseau,estAccoste,tempsConstruction,Icone):
         self.parent = parent
         self.id = get_prochain_id()
         self.proprietaire = nom
         self.type_Vaisseau = type_Vaisseau
-        self.niveau_Vaisseau = niveau_Vaisseau
+        self.niveau_Vaisseau = 1
         self.tempsConstruction = tempsConstruction
         self.estAccoste = estAccoste #Étoile sur laquelle le vaisseau est accosté
         self.Deplacement = None
+
         #HP du vaiseau
-        self.Vie = Vie
+        self.vie = 250
+
         #Image du vaisseau
         self.Icone = Icone
         self.x = x
@@ -228,10 +230,18 @@ class Vaisseau():
         self.cible = 0
         return ["Porte_de_ver", cible]
 
+    def upgrade_vaisseau(self):
+        self.vitesse += 1
+
+        if(self.type_Vaisseau == "Cargo"):
+            self.espace_cargo += 500
+        elif(self.type_Vaisseau == "Vaisseau"):
+            self.vie += 250
+
 
 class Cargo(Vaisseau):  #TODO À CHANGER
-    def __init__(self, parent, nom, x, y, niveau_Vaisseau, type_Vaisseau, estAccoste, tempsConstruction, Vie, Icone):
-        Vaisseau.__init__(self, parent, nom, x, y, niveau_Vaisseau, type_Vaisseau, estAccoste, tempsConstruction, Vie, Icone)
+    def __init__(self, parent, nom, x, y, type_Vaisseau, estAccoste, tempsConstruction, Icone):
+        Vaisseau.__init__(self, parent, nom, x, y, type_Vaisseau, estAccoste, tempsConstruction, Icone)
         self.capaciteMax = 1000
         self.capaciteUtilise = 0
         self.inventaire = {"Fer":0,
@@ -301,8 +311,8 @@ class Cargo(Vaisseau):  #TODO À CHANGER
         return qtMax
 
 class Eclaireur(Vaisseau):  #TODO À CHANGER
-    def __init__(self, parent, nom, x, y, niveau_Vaisseau, type_Vaisseau, estAccoste, tempsConstruction, Vie, Icone):
-        Vaisseau.__init__(self, parent, nom, x, y, niveau_Vaisseau, type_Vaisseau, estAccoste, tempsConstruction, Vie, Icone)
+    def __init__(self, parent, nom, x, y, type_Vaisseau, estAccoste, tempsConstruction, Icone):
+        Vaisseau.__init__(self, parent, nom, x, y, type_Vaisseau, estAccoste, tempsConstruction, Icone)
         self.energie = 500
         self.taille = 4
         self.vitesse = 5
@@ -348,7 +358,7 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
 
                     slot = e.installations.get("entrepot").isLibre()
                     e.installations.update({slot:v}) #Attribue le vaisseau en construction dans le premier slot de l'entrepot
-                    cadreDebutConstruction = cadre;
+                    cadreDebutConstruction = cadre
 
                     if cadre == cadreDebutConstruction + 100:
                         e.installations.update({slot:None}) #Libère le slot occupé après un certain nombre de tick
