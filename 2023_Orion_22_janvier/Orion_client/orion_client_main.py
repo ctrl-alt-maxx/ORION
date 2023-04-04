@@ -244,6 +244,10 @@ class Controleur():
     def construireInstallation(self, installation, id):
         self.actionsrequises.append([self.mon_nom, "construire", [installation, id]])
 
+    def to_secondes(self, nb_ticks):
+        return nb_ticks // 16
+
+
 
 if __name__ == "__main__":
     c = Controleur()

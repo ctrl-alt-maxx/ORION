@@ -483,8 +483,6 @@ class Installation():
                              "Antimatiere":3}
         return self.cout
 
-
-
 class Usine(Installation):
     def __init__(self, parent, proprietaire, type, temps, production):
         super().__init__(self, parent, proprietaire, type, temps)
