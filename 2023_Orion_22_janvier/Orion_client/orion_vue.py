@@ -115,16 +115,20 @@ class Vue():
         #pour test mais a ameliorer
         self.peutAfficherBouton = True
         self.type_vaisseau_selectionne = ""
+        self.cargoArrive = False
 
 
 
 
-    def savoirSiAccoste(self, estAccoste):
+    def savoirSiAccoste(self, estAccoste, cargotEstAccoste): #est appele dans main
         self.estAccos = estAccoste
-        if(self.estAccos):
-            if(self.type_vaisseau_selectionne == "Cargo"):
-                self.cadre_bouton_transferer.pack_forget()
-                self.faireApparaitreBoutonTransfere()
+        self.cargoAccoste = cargotEstAccoste
+
+        if(self.estAccos): #si un vaisseau est accoste
+         if(self.cargoAccoste):# savoir si le cargot est accoste
+                 self.cadre_bouton_transferer.pack_forget()
+                 self.faireApparaitreBoutonTransfere()# on affiche le bouton
+        #    else sinon on enleve le bouton
 
     def faireApparaitreBoutonTransfere(self):
         self.cadre_bouton_transferer = Frame(self.cadreoutils ,width=200, height=200)
@@ -938,23 +942,30 @@ class Vue():
                     self.montrer_etoile_selection()
                     if self.shipSelected != []: #TOUT LES VAISSEAUX SELECTIONNE
                         for ship in self.shipSelected:
-                            # if(self.estAccos):
-                            #     if(tags[3] == "Cargo"): #quel serait la condition pour afficher le bouton en + de si il est accoste?
-                            #      self.faireApparaitreBoutonTransfere()#on fait apparaitre le bouton quand le vaisseau cargot accoste sur une etoile
-                            #      self.peutAfficherBouton = False
-
                             self.parent.cibler_flotte(ship[1], tags[1], tags[2])#cest ca qui envoi le vaisseau a letoile selectionne
                         self.shipSelected = []
                         self.ma_selection = []
                     else:
                         self.montrer_etoile_selection()
-                elif tags[2] == "Flotte":
+                elif tags[2] == "Flotte": #quand je clique sur un vaisseau
                     self.montrer_flotte_selection()
                     self.type_vaisseau_selectionne = tags[3] #je recupere le type de vaisseau selectionne
                     print("Type vaisseau = " + self.type_vaisseau_selectionne)
                     #enlever le menu du haut ici quand on clique sur le vaisseau car on ne veut plus savoir ce quil y a sur l'étoile
                     self.cadreinfochoix.pack_forget()
                     self.cadre_bouton_transferer.pack_forget()
+                    #si je clique sur le cargot
+                    if(self.type_vaisseau_selectionne == "Cargo"):
+                        if(self.estAccos):#si il est accoste
+                            #affiche le bouton transferer
+                            self.cadre_bouton_transferer.pack_forget()
+                            self.faireApparaitreBoutonTransfere()
+
+                        elif(self.estAccos == False):#mais quand il reaprt il ne repasse pas a False seul..
+                            self.cadre_bouton_transferer.pack_forget()
+
+
+
 
                     self.shipSelected.append(tags)
             elif ("Etoile" == tags[2] or "Porte_de_ver" == tags[2]) and self.shipSelected != []:
