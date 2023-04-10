@@ -122,10 +122,10 @@ class Vue():
 
     def savoirSiAccoste(self, estAccoste, cargotEstAccoste): #est appele dans main
         self.estAccos = estAccoste
-        self.cargoAccoste = cargotEstAccoste
+        self.cargoArrive = cargotEstAccoste
 
         if(self.estAccos): #si un vaisseau est accoste
-         if(self.cargoAccoste):# savoir si le cargot est accoste
+         if(self.cargoArrive):# savoir si le cargot est accoste
                  self.cadre_bouton_transferer.pack_forget()
                  self.faireApparaitreBoutonTransfere()# on affiche le bouton
         #    else sinon on enleve le bouton
@@ -956,10 +956,12 @@ class Vue():
                     self.cadre_bouton_transferer.pack_forget()
                     #si je clique sur le cargot
                     if(self.type_vaisseau_selectionne == "Cargo"):
-                        if(self.estAccos):#si il est accoste
+                        if(self.cargoArrive):#si il est accoste
+                            print("Val CargoEstAccoste : " + str(self.cargoArrive))
                             #affiche le bouton transferer
-                            self.cadre_bouton_transferer.pack_forget()
-                            self.faireApparaitreBoutonTransfere()
+                            print("affiche bouton")
+                            #self.cadre_bouton_transferer.pack_forget()
+                            #self.faireApparaitreBoutonTransfere()
 
                         elif(self.estAccos == False):#mais quand il reaprt il ne repasse pas a False seul..
                             self.cadre_bouton_transferer.pack_forget()

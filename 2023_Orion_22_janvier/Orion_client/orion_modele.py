@@ -407,7 +407,6 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
                             print("Hitbox collided")#quand le cargot arrive sur etoile on arrive ICI!!!
                             if(i == "Cargo"):#si je selectionne un cargo
                                 #si le cargot est accoste
-                                 print("Le cargot est accoste")
                                  cargoEstAccost = True
                                 #faire boolean cargotEstAccos = true -> mais il faut remettre cette variable a false a la ligne 208. Comment la recuperer la variable de la ligne 208??
                                 #utiliser cette variable avec la fonction recupererValeurEstAccoste dans le main et levoyer dans Vue.
