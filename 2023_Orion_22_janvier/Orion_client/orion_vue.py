@@ -459,7 +459,7 @@ class Vue():
             #Cadre et Label entrepot
             self.cadre_img2 = Frame(self.cadre_menu_installation, height=200, width=200,background="#DCE0D9")#dans cadre img2 je met image + descritpion
             self.cadre_img2.pack()
-            self.label_img2 = Label(self.cadre_img2, image=self.images["entrepot"])
+            self.label_img2 = Label(self.cadre_img2,height=200,width=200, image=self.images["entrepot"],bg="#DCE0D9")
             self.label_img2.pack(side=LEFT)
             self.label_installation2 = Label(self.cadre_img2, text="Description: Entrepot pour construire vaisseaux",bg="#DCE0D9")
             self.label_installation2.pack(side=RIGHT)
