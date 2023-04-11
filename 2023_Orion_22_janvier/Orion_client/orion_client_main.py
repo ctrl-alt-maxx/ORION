@@ -244,6 +244,10 @@ class Controleur():
     def construireInstallation(self, installation, id):
         self.actionsrequises.append([self.mon_nom, "construire", [installation, id]])
 
+
+    def recupererValeurEstAccoste(self, estAccoste, cargoEstAccoste):#on lappel l.408 dans modele
+         self.vue.savoirSiAccoste(estAccoste, cargoEstAccoste)
+
     def to_secondes(self, nb_ticks):
         return nb_ticks // 16
 

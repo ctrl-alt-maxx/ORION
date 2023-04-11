@@ -171,6 +171,7 @@ class Vaisseau():
         self.cadreDebutConstruction = cadreDebutConstruction
         self.type_vaisseau = type_vaisseau
 
+
         #HP du vaiseau
         self.vie = 250
 
@@ -202,6 +203,8 @@ class Vaisseau():
     def avancer(self):                                  #Permet le déplacement d'un vaisseau
         if self.cible != 0:
             x = self.cible.x
+            self.estAccoste = False #quand le vaisseau se deplace estAccoste = False
+            #recuperer estAccoste ici pour l<avoir ligne.408
             y = self.cible.y
             self.x, self.y = hlp.getAngledPoint(self.angle_cible, self.vitesse, self.x, self.y)
             if hlp.calcDistance(self.x, self.y, x, y) <= self.vitesse:
@@ -366,7 +369,7 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
         if self.nom == self.parent.parent.mon_nom:
             self.parent.parent.lister_objet(vaisseau.type_vaisseau, vaisseau.id, vaisseau.niveau_Vaisseau)
 
-    def ciblerflotte(self, ids): #Cette fonction sera complètement refaite.
+    def ciblerflotte(self, ids): #Cette fonction sera complètement refaite. //fait avancer les vaisseaux
         idori, iddesti, type_cible = ids        #idor = origine, iddesti = destination
         ori = None
         for i in self.flotte.keys():
@@ -395,7 +398,9 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
         self.avancer_flotte()
 
     def avancer_flotte(self, chercher_nouveau=0):
+        cargoEstAccost = False
         for i in self.flotte: #Chaque type de vaisseau
+
              for j in self.flotte[i]:
                 j = self.flotte[i][j]
                 rep = j.jouer_prochain_coup(chercher_nouveau) #Retourne liste ["TypeObjet", objet]
@@ -405,8 +410,19 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
                         yEtoile = rep[1].y
                         xVaisseau = j.x
                         yVaisseau = j.y
+
                         if(abs(xEtoile - xVaisseau) <= 100 and abs(yEtoile - yVaisseau) <= 100): #Création de la hitbox
-                            print("Hitbox collided")
+                            print("Hitbox collided")#quand le cargot arrive sur etoile on arrive ICI!!!
+                            if(i == "Cargo"):#si je selectionne un cargo
+                                #si le cargot est accoste
+                                 cargoEstAccost = True
+                                #faire boolean cargotEstAccos = true -> mais il faut remettre cette variable a false a la ligne 208. Comment la recuperer la variable de la ligne 208??
+                                #utiliser cette variable avec la fonction recupererValeurEstAccoste dans le main et levoyer dans Vue.
+
+
+
+                            j.estAccoste = rep[1] #dans estAccoste est stocke l<id de letoile ou le cargot est accoste -> donc il a une valeur id donc sera true
+                            self.parent.parent.recupererValeurEstAccoste(j.estAccoste, cargoEstAccost)#cette fonction est cree dans le main -> pb: sera toujours true
                             self.etoilescontrolees.append(rep[1])
                             self.parent.parent.afficher_etoile(self.nom, rep[1])
                     elif rep[0] == "Porte_de_ver":
