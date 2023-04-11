@@ -7,7 +7,7 @@ from tkinter.simpledialog import *
 from tkinter.messagebox import *
 from helper import Helper as hlp
 import math
-from PIL import ImageTk, Image
+# from PIL import ImageTk, Image
 import tkinter as tk
 import time
 import os, os.path
@@ -111,7 +111,6 @@ class Vue():
         self.chiffre = 0
         self.nbr_entrepot = 0
         self.selectedTags = None
-
         #pour test mais a ameliorer
         self.peutAfficherBouton = True
         self.type_vaisseau_selectionne = ""
@@ -137,9 +136,8 @@ class Vue():
         self.bouton.pack()
 
 
-
-
-
+        #creation des labels autres
+        self.timer_partie = Label()
 
     def clock(self):#des que je clique sur le bouton construire entrepot, ca lance cette fonction...
         self.chiffre += 1
@@ -252,21 +250,29 @@ class Vue():
 
     #FENETRE DU JEU -----------------------------------------------------------------------------
     def creer_cadre_partie(self):
+        self.ticks = IntVar() # Variable utilisé pour le temps (en secondes)
         self.cadrepartie = Frame(self.cadre_app, width=600, height=200, bg="yellow")
-        self.cadrejeu = Frame(self.cadrepartie, width=600, height=200, bg="teal")
+        self.cadrejeu = Frame(self.cadrepartie, width=600, height=200, bg="grey11")
 
         self.scrollX = Scrollbar(self.cadrejeu, orient=HORIZONTAL)
         self.scrollY = Scrollbar(self.cadrejeu, orient=VERTICAL)
         self.canevas = Canvas(self.cadrejeu, width=800, height=600,
                               xscrollcommand=self.scrollX.set,
+
                               yscrollcommand=self.scrollY.set, bg="grey11")
+        self.timer_partie = Label(self.cadrejeu, text="Temps écoulé: ", textvariable=self.ticks, width=10, height=1)
+
 
         self.scrollX.config(command=self.canevas.xview)
         self.scrollY.config(command=self.canevas.yview)
 
+        self.scrollX.lower()
+        self.scrollY.lower()
+
         self.canevas.grid(column=0, row=0, sticky=W + E + N + S)
         self.scrollX.grid(column=0, row=1, sticky=W + E)
         self.scrollY.grid(column=1, row=0, sticky=N + S)
+        self.timer_partie.grid(column=0, row=0, sticky=E + N, padx=20, pady=20)
 
         self.cadrejeu.columnconfigure(0, weight=1)
         self.cadrejeu.rowconfigure(0, weight=1)
@@ -291,7 +297,7 @@ class Vue():
 
     def creer_cadre_outils(self):
 
-        self.cadreoutils = Frame(self.cadrepartie, width=200, height=200, bg="grey50")  #petite fenetre sur la gauche (celle juste au dessus de la mini map)->ici que l<on affiche le menu
+        self.cadreoutils = Frame(self.cadrepartie, width=200, height=200, bg="#3E363D")  #petite fenetre sur la gauche (celle juste au dessus de la mini map)->ici que l<on affiche le menu
         self.cadreoutils.pack(side=LEFT, fill=Y)
         self.cadreinfo = Frame(self.cadreoutils, width=200, height=200, bg="darkgrey")#??????????
         self.cadreinfo.pack(fill=BOTH)
@@ -393,7 +399,7 @@ class Vue():
             self.forget_all() #on oublie tout les cadres
 
             #on creer un cadre
-            self.cadre_menu_installation = Frame(self.cadreoutils,height=200, width=200, bg="blue")#on creer un cadre
+            self.cadre_menu_installation = Frame(self.cadreoutils,height=200, width=200, bg="#6F6D6D")#on creer un cadre
             self.cadre_menu_installation.pack(side=LEFT, fill=Y)
 
             #on creer un label pour le titre
@@ -413,9 +419,10 @@ class Vue():
             #Bouton pour construire usine
             self.cadre_bouton = Frame(self.cadre_menu_installation, height=200, width=200, bg="yellow")#cadre bouton pour mettre bouton construire usine
             self.cadre_bouton.pack(fill=X)
-            self.boutonConstruireUsine = Button(self.cadre_bouton, text="Construire Usine", bg="yellow")
+
+            self.boutonConstruireUsine = Button(self.cadre_bouton, text="Construire Usine",foreground='#F5E15D', background='#242423', font=('Arial', 12))
             self.boutonConstruireUsine.config(command=self.construire_usine)
-            self.boutonConstruireUsine.pack()
+            self.boutonConstruireUsine.pack(fill=X)
 
             #cadre pour creer un espace entre Usine Ressource et Entrepot a vaisseau
             self.cadre_espacement = Frame(self.cadre_menu_installation, height=10, width=200, bg="#FFFFFF")# cadre pour creer un espace entre Usine Ressource et Entrepot a vaisseau
@@ -477,22 +484,22 @@ class Vue():
 
             self.cadre_bouton2 = Frame(self.cadre_menu_installation, height=200, width=200, bg="yellow")
             self.cadre_bouton2.pack(fill=X)
-            self.boutonConstruireEntrepot = Button(self.cadre_bouton2, text="Construire Entrepot " , bg="yellow")
+            self.boutonConstruireEntrepot = Button(self.cadre_bouton2, text="Construire Entrepot" ,foreground='#F5E15D', background='#242423', font=('Arial', 12))
             self.boutonConstruireEntrepot.config(command=self.construire_entrepot)
-            self.boutonAmeliorerEntrepot = Button(self.cadre_bouton2, text="Ameliorer Entrepot", bg="yellow")
+            self.boutonAmeliorerEntrepot = Button(self.cadre_bouton2, text="Ameliorer Entrepot",foreground='#CB92CE', background='#242423', font=('Arial', 12))
 
             #self.boutonAmeliorerEntrepot.config(command=self.ameliorer_entrepot)  ## a faire
 
             if(self.nbr_entrepot == 0):
-                self.boutonConstruireEntrepot.pack()
+                self.boutonConstruireEntrepot.pack(fill=X)
 
             #Bouton pour construire vaisseau
             if(self.nbr_entrepot == 1):
                 self.boutonConstruireEntrepot.pack_forget()
-                self.boutonAmeliorerEntrepot.pack(side="left")
-                self.boutonConstruireVaisseau = Button(self.cadre_bouton2, text="construire Vaisseau", bg="blue")
+                self.boutonAmeliorerEntrepot.pack(side=LEFT)
+                self.boutonConstruireVaisseau = Button(self.cadre_bouton2, text="Construire Vaisseau",foreground='#A7FCC2', background='#242423', font=('Arial', 12))
                 self.boutonConstruireVaisseau.config(command=self.construction_vaisseau)
-                self.boutonConstruireVaisseau.pack(side="right")
+                self.boutonConstruireVaisseau.pack(side=RIGHT)
 
 
 
@@ -535,8 +542,8 @@ class Vue():
             self.recup = self.parent.recupEtoile(self.ma_selection[1])
             self.forget_all()
 
-            self.cadre_menu_ressource = Frame(self.cadreoutils, height=200, width=200, bg="blue")
-            self.cadre_menu_ressource.pack(side=LEFT, fill=Y)
+            self.cadre_menu_ressource = Frame(self.cadreoutils, height=200, width=200, bg="#6F6D6D")
+            self.cadre_menu_ressource.pack(fill=X)
             self.a_clique_sur_installation = 0
             #mettre tout ici
             self.label_fer = Label(self.cadre_menu_ressource, text="Fer : " + str(self.recup.inventaire.get("Fer")), anchor=CENTER, width=25, height=2, border=2, borderwidth=1,
@@ -563,13 +570,13 @@ class Vue():
                                                    borderwidth=1,
                                                    relief="solid", bg="purple")
 
-            self.label_fer.pack()
-            self.label_cuivre.pack()
-            self.label_or.pack()
-            self.label_titane.pack()
-            self.label_hydrogene.pack()
-            self.label_pluto.pack()
-            self.label_antimatiere.pack()
+            self.label_fer.pack(fill=X)
+            self.label_cuivre.pack(fill=X)
+            self.label_or.pack(fill=X)
+            self.label_titane.pack(fill=X)
+            self.label_hydrogene.pack(fill=X)
+            self.label_pluto.pack(fill=X)
+            self.label_antimatiere.pack(fill=X)
 
 
     def menu_ressource_ex(self):
@@ -641,9 +648,7 @@ class Vue():
         self.cadre_construire_usine = Frame(self.cadreoutils, height=200, width=200, bg="red")
         self.cadre_construire_usine.pack(side=LEFT, fill=Y)
         self.parent.construireInstallation("usine", self.ma_selection[1])
-       # self.label_timer2 = Label(self.cadre_construire_usine, font=('Arial, 20'), bg="yellow")
-        #self.label_timer2.pack()
-       # self.clock()
+
 
 
 
@@ -893,12 +898,10 @@ class Vue():
                     j = i.flotte[k][j]
                     tailleF = j.taille * self.zoom
                     if k == "Vaisseau":  # CREATION DU CARRE ROUGE REPRESENTANT LE VAISSEAU
-                        self.canevas.create_rectangle((j.x - tailleF), (j.y - tailleF),
-                                                      (j.x + tailleF), (j.y + tailleF), fill='red', #i.couleur (couleur du joueur)
+                        self.canevas.create_image(j.x, j.y, image= self.images["Vaisseau"],
                                                       tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact", "False"))
                     elif k == "Cargo":  # CREATION DU CARGO
-                        self.canevas.create_rectangle((j.x - tailleF), (j.y - tailleF),
-                                                      (j.x + tailleF), (j.y + tailleF), fill='blue',
+                        self.canevas.create_image(j.x, j.y, image= self.images["cargo"],
                                                       tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact", "False"))
 
                     elif k == "Eclaireur": #CREATION DE L'ÉCLAIREUR
@@ -914,6 +917,8 @@ class Vue():
                 self.canevas.create_oval(i.x - i.pulse, i.y - i.pulse,
                                          i.x + i.pulse, i.y + i.pulse, outline=i.couleur, width=2, fill="grey15",
                                          tags=("", i.id, "Porte_de_ver", "objet_spatial"))
+
+        self.ticks.set(value=self.parent.to_secondes(self.parent.cadrejeu))
 
     def dessiner_cargo(self, obj, tailleF, joueur, type_obj):
         t = obj.taille * self.zoom
@@ -995,6 +1000,7 @@ class Vue():
         #print("À IMPLANTER - FLOTTE de ", self.mon_nom)
 
         print("vaisseau selectionne")
+
 
     # Methodes pour multiselect#########################################################
     def debuter_multiselection(self, evt):

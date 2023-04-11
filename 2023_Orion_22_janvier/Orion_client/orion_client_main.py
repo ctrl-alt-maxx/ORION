@@ -68,7 +68,7 @@ class Controleur():
         reptext = self.appeler_serveur(url, params)
 
         self.joueur_createur = 1  # on est le createur
-        self.vue.root.title("je suis " + self.mon_nom)
+        self.vue.root.title("Player: " + self.mon_nom)
         # on passe au lobby pour attendre les autres joueurs
         self.vue.changer_cadre("lobby")
         self.boucler_sur_lobby()
@@ -244,8 +244,13 @@ class Controleur():
     def construireInstallation(self, installation, id):
         self.actionsrequises.append([self.mon_nom, "construire", [installation, id]])
 
+
     def recupererValeurEstAccoste(self, estAccoste, cargoEstAccoste):#on lappel l.408 dans modele
          self.vue.savoirSiAccoste(estAccoste, cargoEstAccoste)
+
+    def to_secondes(self, nb_ticks):
+        return nb_ticks // 16
+
 
 
 if __name__ == "__main__":
