@@ -45,7 +45,7 @@ class Ressources():
         self.tempsExtraction = rarete * rarete * 5;
 
 class Etoile():
-    def __init__(self, parent, x, y, nomEtoile, ressources, vie):
+    def __init__(self, parent, x, y, nomEtoile, ressources):
 
         self.id = get_prochain_id()
         self.parent = parent
@@ -69,7 +69,7 @@ class Etoile():
                           "Plutonium":0,
                           "Antimatiere":0}
 
-        self.vie = vie # nbr de vie de la planete
+        self.vie = 500 # nbr de vie de la planete
     '''
     Fonction permet de construire ou d'améliorer une installation, elle retire les ressources utilisées et update les installations de l'étoile
     Args:
@@ -173,7 +173,7 @@ class Vaisseau():
 
 
         #HP du vaiseau
-        self.vie = 250
+        self.vie = 100
 
         #Image du vaisseau
         self.x = x
@@ -202,12 +202,13 @@ class Vaisseau():
 
     def avancer(self):                                  #Permet le déplacement d'un vaisseau
         if self.cible != 0:
-            x = self.cible.x
+            x = self.cible.x + random.randint(-15,15) # Distance de l'étoile à l'arrivée
+            y = self.cible.y + random.randint(-15,15)
+
             self.estAccoste = False #quand le vaisseau se deplace estAccoste = False
             #recuperer estAccoste ici pour l<avoir ligne.408
-            y = self.cible.y
             self.x, self.y = hlp.getAngledPoint(self.angle_cible, self.vitesse, self.x, self.y)
-            if hlp.calcDistance(self.x, self.y, x, y) <= self.vitesse:
+            if hlp.calcDistance(self.x, self.y, x, y) <= self.vitesse + 15:
                 type_obj = type(self.cible).__name__                        #Trouver le type de la cible (Étoile, Porte de vers)
                 rep = self.arriver[type_obj]()                              #Lancer l'action à faire selon le type de cible (arriver_etoile ou arriver_porte)
                 return rep
@@ -424,7 +425,26 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
                             j.estAccoste = rep[1] #dans estAccoste est stocke l<id de letoile ou le cargot est accoste -> donc il a une valeur id donc sera true
                             self.parent.parent.recupererValeurEstAccoste(j.estAccoste, cargoEstAccost)#cette fonction est cree dans le main -> pb: sera toujours true
                             self.etoilescontrolees.append(rep[1])
-                            self.parent.parent.afficher_etoile(self.nom, rep[1])
+                            if rep[1].proprietaire == 'neutre' or rep[1].vie <= 0:
+                                rep[1].proprietaire = j.proprietaire
+                                self.parent.parent.afficher_etoile(self.nom, rep[1])
+                            print(rep[1].proprietaire, j.proprietaire)
+
+                            if rep[1].proprietaire != j.proprietaire and rep[1].proprietaire != 'neutre':
+                                if( rep[1].vie > j.vie):
+                                    rep[1].vie -= j.vie
+                                    j.vie = 0
+                                else:
+                                    j.vie -= rep[1].vie
+                                    rep[1].vie = 0
+
+
+                                print(rep[1].vie, j.vie)
+
+
+
+
+
                     elif rep[0] == "Porte_de_ver":
                         pass
 
@@ -587,7 +607,7 @@ class Modele():
             y = random.randrange(self.hauteur - (2 * bordure)) + bordure
             nom:str = "Etoile" + str(i)
             ressourcesExploitables = self.genererRessources()
-            self.etoiles.append(Etoile(self,x,y,nom,ressourcesExploitables,100))
+            self.etoiles.append(Etoile(self,x,y,nom,ressourcesExploitables))
         np = len(joueurs) #np = number of players
         etoile_occupee = []
         while np:   #Choisi les étoiles mères

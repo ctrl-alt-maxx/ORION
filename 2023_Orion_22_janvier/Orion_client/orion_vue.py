@@ -854,7 +854,7 @@ class Vue():
     def creer_vaisseau(self, evt):
         self.forget_all()
         type_vaisseau = evt.widget.cget("text")
-        self.parent.creer_vaisseau(type_vaisseau, self.selectedTags[3], self.selectedTags[4], self.selectedTags[1])
+        self.parent.creer_vaisseau(type_vaisseau, int(self.selectedTags[3]) + random.choice([i for i in range(-30, 30) if i not in [-10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]]), int(self.selectedTags[4]) + random.choice([i for i in range(-30, 30) if i not in [-10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]]))
         self.ma_selection = None
         self.canevas.delete("marqueur")
         #self.cadreinfochoix.pack_forget()
@@ -892,11 +892,9 @@ class Vue():
         # afficher asset (LES RESSOURCES QU'A LE JOUEUR) des joueurs
         for i in mod.joueurs.keys():
             i = mod.joueurs[i]
-            vaisseau_local = []
             for k in i.flotte:
                 for j in i.flotte[k]:
                     j = i.flotte[k][j]
-                    tailleF = j.taille * self.zoom
                     if k == "Vaisseau":  # CREATION DU CARRE ROUGE REPRESENTANT LE VAISSEAU
                         self.canevas.create_image(j.x, j.y, image= self.images["Vaisseau"],
                                                       tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact", "False"))
