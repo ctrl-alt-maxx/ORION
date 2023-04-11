@@ -80,7 +80,7 @@ class Vue():
         self.clickUneFoisSurRessource = 0
         self.clickUneFoisSurVaiss = 0
         self.img_usine = tk.PhotoImage(file='img/imgUsine.png').subsample(6, 6)
-        self.img_entrepot = tk.PhotoImage(file='img/entrepot.png').subsample(6, 6)
+        #self.img_entrepot = tk.PhotoImage(file='img/entrepot.png').subsample(6, 6)
 
         # var global methode installation()
         self.cadre_label_ressource = Frame()
@@ -411,10 +411,10 @@ class Vue():
             #on creer un cadre pour l'image
             self.cadre_img = Frame(self.cadre_menu_installation, height=200, width=200,bg="#DCE0D9")#cadre pour image
             self.cadre_img.pack(fill=X)
-            self.label_img = Label(self.cadre_img, image=self.img_usine)#image de lusine
+            self.label_img = Label(self.cadre_img, image=self.images["usine"],bg="#DCE0D9")#image de lusine
             self.label_img.pack(side=LEFT)
             self.label_installation = Label(self.cadre_img, text="Description: usine pour stocker ressources",bg="#DCE0D9")#label pour afficher "Description..."
-            self.label_installation.pack(side=RIGHT)
+            self.label_installation.pack()
 
 
             #Bouton pour construire usine
@@ -458,11 +458,11 @@ class Vue():
 
             #Cadre et Label entrepot
             self.cadre_img2 = Frame(self.cadre_menu_installation, height=200, width=200,background="#DCE0D9")#dans cadre img2 je met image + descritpion
-            self.cadre_img2.pack()
+            self.cadre_img2.pack(fill=X)
             self.label_img2 = Label(self.cadre_img2, image=self.images["entrepot3"],bg="#DCE0D9")
             self.label_img2.pack(side=LEFT)
             self.label_installation2 = Label(self.cadre_img2, text="Description: Entrepot pour construire vaisseaux",bg="#DCE0D9")
-            self.label_installation2.pack(side=RIGHT)
+            self.label_installation2.pack()
 
 
             self.cadre_nbr_installation_entrepot_present = Frame(self.cadre_menu_installation, height=200, width=200,bg="#DCE0D9")#cadre
