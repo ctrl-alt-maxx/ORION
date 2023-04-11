@@ -225,8 +225,8 @@ class Controleur():
 
     ############        VOTRE CODE      ######################
 
-    def creer_vaisseau(self, type_vaisseau, x, y):
-        self.actionsrequises.append([self.mon_nom, "creervaisseau", [type_vaisseau, x, y]])
+    def creer_vaisseau(self, type_vaisseau, x, y, idetoile):
+        self.actionsrequises.append([self.mon_nom, "creervaisseau", [type_vaisseau, x, y, idetoile, self.cadrejeu]])
 
     def cibler_flotte(self, idorigine, iddestination, type_cible):
         self.actionsrequises.append([self.mon_nom, "ciblerflotte", [idorigine, iddestination, type_cible]])
@@ -243,6 +243,10 @@ class Controleur():
 
     def construireInstallation(self, installation, id):
         self.actionsrequises.append([self.mon_nom, "construire", [installation, id]])
+
+
+    def recupererValeurEstAccoste(self, estAccoste, cargoEstAccoste):#on lappel l.408 dans modele
+         self.vue.savoirSiAccoste(estAccoste, cargoEstAccoste)
 
     def to_secondes(self, nb_ticks):
         return nb_ticks // 16
