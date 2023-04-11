@@ -370,7 +370,7 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
             self.parent.parent.lister_objet(vaisseau.type_vaisseau, vaisseau.id, vaisseau.niveau_Vaisseau)
 
     def ciblerflotte(self, ids): #Cette fonction sera complètement refaite. //fait avancer les vaisseaux
-        idori, iddesti, type_cible = ids        #idor = origine, iddesti = destination
+        idori, iddesti, type_cible = ids        #idor = orig-ine, iddesti = destination
         ori = None
         for i in self.flotte.keys():
             if idori in self.flotte[i]:
@@ -539,8 +539,8 @@ class Entrepot(Installation):
                 if cadre == self.capacite.get(k).cadreDebutConstruction + 100:
                     self.v = self.capacite.get(k)
                     print(self.v)
-                    Joueur.finConstructionVaisseau(self.v)
-                    self.capacite.update({k, None})
+                    self.v.parent.finConstructionVaisseau(self.v)
+                    self.capacite.update({k:None})
 
 class Modele():
     def __init__(self, parent, joueurs):
