@@ -521,10 +521,9 @@ class Entrepot(Installation):
         for k in self.keysSlots:
             if self.capacite.get(k) is not None:
                 if cadre == self.capacite.get(k).cadreDebutConstruction + 100:
-
-                    v = self.capacite.get(k)
-                    print(v)
-                    Joueur.finConstructionVaisseau(v)
+                    self.v = self.capacite.get(k)
+                    print(self.v)
+                    Joueur.finConstructionVaisseau(self.v)
                     self.capacite.update({k, None})
 
 class Modele():
