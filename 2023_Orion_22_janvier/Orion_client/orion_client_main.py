@@ -239,6 +239,7 @@ class Controleur():
 
     def recupEtoile(self, id):
         recup = self.modele.recupererEtoile(id)
+        print("ok")
         return recup
 
     def construireInstallation(self, installation, id):
