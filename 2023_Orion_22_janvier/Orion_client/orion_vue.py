@@ -149,31 +149,30 @@ class Vue():
         # FER-----
         self.cadre_quantite_fer = Frame(self.cadre_choisir_transfere, width=200, height=200)
         self.label_qtite_fer = Label(self.cadre_quantite_fer,text="Fer:")
-        self.label_chiffre_fer = Label(self.cadre_quantite_fer,text="Fer : " + str(round(self.recup.ressource.get("Fer") * 100, 2)) + "%")#quantite presente sur letoie
+        self.label_chiffre_fer = Label(self.cadre_quantite_fer,text= str(round(self.recup.ressource.get("Fer") * 100, 2)) + "%")#quantite presente sur letoie
 
         self.cadre_entre_qtite_fer = Frame(self.cadre_choisir_transfere, width=400, height=200)
         self.label_entrez_qtite = Label(self.cadre_entre_qtite_fer, text="Entrez une quantite:")
-        self.label_qtiteFer_entre = Label(self.cadre_entre_qtite_fer, text="100")
+        self.entree_qtiteFer = Entry(self.cadre_entre_qtite_fer)
+        quantiteFerEntre = self.entree_qtiteFer.get(); #on recupere la valeur que lutilisateur a entre
+        print(quantiteFerEntre)
 
-        #PACK-----------------------------------------------------------
         self.cadre_choisir_transfere.pack()
-
         self.cadre_quantite_fer.pack()
         self.label_qtite_fer.pack(side=LEFT)
         self.label_chiffre_fer.pack()
-
         self.cadre_entre_qtite_fer.pack(fill=X)
         self.label_entrez_qtite.pack(side=LEFT)
-        self.label_qtiteFer_entre.pack()
+        self.entree_qtiteFer.pack()
 
         # cuivre
         self.cadre_quantite_cuivre = Frame(self.cadre_choisir_transfere, width=200, height=200)
-        self.label_qtite_cuivre = Label(self.cadre_quantite_cuivre, text="Cuivre:")
-        self.label_chiffre_cuivre = Label(self.cadre_quantite_cuivre, text="50")
+        self.label_qtite_cuivre = Label(self.cadre_quantite_cuivre, text= "Cuivre:")
+        self.label_chiffre_cuivre = Label(self.cadre_quantite_cuivre, text=str(round(self.recup.ressource.get("Cuivre") * 100, 2)) + "%")
 
         self.cadre_entre_qtite_cuivre = Frame(self.cadre_choisir_transfere, width=400, height=200)
         self.label_entrez_qtite_cuivre = Label(self.cadre_entre_qtite_cuivre, text="Entrez une quantite:")
-        self.label_qtiteCuivre_entre = Label(self.cadre_entre_qtite_cuivre, text="100")
+        self.entre_qtiteCuivre = Entry(self.cadre_entre_qtite_cuivre)
 
         self.cadre_quantite_cuivre.pack()
         self.label_qtite_cuivre.pack(side=LEFT)
@@ -181,16 +180,16 @@ class Vue():
 
         self.cadre_entre_qtite_cuivre.pack(fill=X)
         self.label_entrez_qtite_cuivre.pack(side=LEFT)
-        self.label_qtiteCuivre_entre.pack()
+        self.entre_qtiteCuivre.pack()
 
         #OR
         self.cadre_quantite_or = Frame(self.cadre_choisir_transfere, width=200, height=200)
         self.label_qtite_or = Label(self.cadre_quantite_or, text="Or:")
-        self.label_chiffre_or = Label(self.cadre_quantite_or, text="50")
+        self.label_chiffre_or = Label(self.cadre_quantite_or, text=str(round(self.recup.ressource.get("Or") * 100, 2)) + "%")
 
         self.cadre_entre_qtite_or = Frame(self.cadre_choisir_transfere, width=400, height=200)
         self.label_entrez_qtite_or = Label(self.cadre_entre_qtite_or, text="Entrez une quantite:")
-        self.label_qtiteOr_entre = Label(self.cadre_entre_qtite_or, text="100")
+        self.entre_qtiteOr = Entry(self.cadre_entre_qtite_or)
 
         self.cadre_quantite_or.pack()
         self.label_qtite_or.pack(side=LEFT)
@@ -198,16 +197,16 @@ class Vue():
 
         self.cadre_entre_qtite_or.pack(fill=X)
         self.label_entrez_qtite_or.pack(side=LEFT)
-        self.label_qtiteOr_entre.pack()
+        self.entre_qtiteOr.pack()
 
         #Titane
         self.cadre_quantite_titane = Frame(self.cadre_choisir_transfere, width=200, height=200)
         self.label_qtite_titane = Label(self.cadre_quantite_titane, text="Titane:")
-        self.label_chiffre_titane = Label(self.cadre_quantite_titane, text="50")
+        self.label_chiffre_titane = Label(self.cadre_quantite_titane, text=str(round(self.recup.ressource.get("Titane") * 100, 2)) + "%")
 
         self.cadre_entre_qtite_titane = Frame(self.cadre_choisir_transfere, width=400, height=200)
         self.label_entrez_qtite_titane = Label(self.cadre_entre_qtite_titane, text="Entrez une quantite:")
-        self.label_qtiteTitane_entre = Label(self.cadre_entre_qtite_titane, text="100")
+        self.entre_qtiteTitane = Entry(self.cadre_entre_qtite_titane)
 
         self.cadre_quantite_titane.pack()
         self.label_qtite_titane.pack(side=LEFT)
@@ -215,16 +214,16 @@ class Vue():
 
         self.cadre_entre_qtite_titane.pack(fill=X)
         self.label_entrez_qtite_titane.pack(side=LEFT)
-        self.label_qtiteTitane_entre.pack()
+        self.entre_qtiteTitane.pack()
 
         #Hydrogene
         self.cadre_quantite_hydrogene = Frame(self.cadre_choisir_transfere, width=200, height=200)
         self.label_qtite_hydrogene = Label(self.cadre_quantite_hydrogene, text="Hydrogene:")
-        self.label_chiffre_hydrogene = Label(self.cadre_quantite_hydrogene, text="50")
+        self.label_chiffre_hydrogene = Label(self.cadre_quantite_hydrogene, text=str(round(self.recup.ressource.get("Hydrogene") * 100, 2)) + "%")
 
         self.cadre_entre_qtite_hydrogene = Frame(self.cadre_choisir_transfere, width=400, height=200)
         self.label_entrez_qtite_hydrogene = Label(self.cadre_entre_qtite_hydrogene, text="Entrez une quantite:")
-        self.label_qtiteHydrogene_entre = Label(self.cadre_entre_qtite_hydrogene, text="100")
+        self.entre_qtiteHydrogene = Entry(self.cadre_entre_qtite_hydrogene)
 
         self.cadre_quantite_hydrogene.pack()
         self.label_qtite_hydrogene.pack(side=LEFT)
@@ -232,16 +231,16 @@ class Vue():
 
         self.cadre_entre_qtite_hydrogene.pack(fill=X)
         self.label_entrez_qtite_hydrogene.pack(side=LEFT)
-        self.label_qtiteHydrogene_entre.pack()
+        self.entre_qtiteHydrogene.pack()
 
         #Plutonium
         self.cadre_quantite_plutonium = Frame(self.cadre_choisir_transfere, width=200, height=200)
         self.label_qtite_plutonium = Label(self.cadre_quantite_plutonium, text="Plutonium:")
-        self.label_chiffre_plutonium = Label(self.cadre_quantite_plutonium, text="50")
+        self.label_chiffre_plutonium = Label(self.cadre_quantite_plutonium, text=str(round(self.recup.ressource.get("Plutonium") * 100, 2)) + "%")
 
         self.cadre_entre_qtite_plutonium = Frame(self.cadre_choisir_transfere, width=400, height=200)
         self.label_entrez_qtite_plutonium = Label(self.cadre_entre_qtite_plutonium, text="Entrez une quantite:")
-        self.label_qtitePlutonium_entre = Label(self.cadre_entre_qtite_plutonium, text="100")
+        self.entre_qtitePlutonium = Entry(self.cadre_entre_qtite_plutonium)
 
         self.cadre_quantite_plutonium.pack()
         self.label_qtite_plutonium.pack(side=LEFT)
@@ -249,16 +248,16 @@ class Vue():
 
         self.cadre_entre_qtite_plutonium.pack(fill=X)
         self.label_entrez_qtite_plutonium.pack(side=LEFT)
-        self.label_qtitePlutonium_entre.pack()
+        self.entre_qtitePlutonium.pack()
 
         #Antimatiere
         self.cadre_quantite_anti = Frame(self.cadre_choisir_transfere, width=200, height=200)
         self.label_qtite_anti = Label(self.cadre_quantite_anti, text="Antimatiere:")
-        self.label_chiffre_anti = Label(self.cadre_quantite_anti, text="50")
+        self.label_chiffre_anti = Label(self.cadre_quantite_anti, text= str(round(self.recup.ressource.get("Antimatiere") * 100, 2)) + "%")
 
         self.cadre_entre_qtite_anti = Frame(self.cadre_choisir_transfere, width=400, height=200)
         self.label_entrez_qtite_anti = Label(self.cadre_entre_qtite_anti, text="Entrez une quantite:")
-        self.label_qtiteAnti_entre = Label(self.cadre_entre_qtite_anti, text="100")
+        self.entre_qtiteAntimatiere = Entry(self.cadre_entre_qtite_anti)
 
         self.cadre_quantite_anti.pack()
         self.label_qtite_anti.pack(side=LEFT)
@@ -266,18 +265,24 @@ class Vue():
 
         self.cadre_entre_qtite_anti.pack(fill=X)
         self.label_entrez_qtite_anti.pack(side=LEFT)
-        self.label_qtiteAnti_entre.pack()
+        self.entre_qtiteAntimatiere.pack()
 
         #bouton transferer
         self.cadre_bouton_transferer_mat = Frame(self.cadre_choisir_transfere, width=200, height=200)
-        self.boutonTransfererMat = Button(self.cadre_bouton_transferer_mat,text="TANSFERER")
+        self.boutonTransfererMat = Button(self.cadre_bouton_transferer_mat,text="TANSFERER", command=self.transferer)
 
         self.cadre_bouton_transferer_mat.pack()
         self.boutonTransfererMat.pack()
 
-
-
-
+    def transferer(self):#quand lutilisateur clique sur le bouton transferer on recupere les valeur quil a entre
+        quantiteFerEntre = self.entree_qtiteFer.get();  # on recupere la valeur que lutilisateur a entre
+        quantiteCuivreEntre = self.entre_qtiteCuivre.get();
+        quantiteOrEntre = self.entre_qtiteOr.get();
+        quantiteTitaneEntre = self.entre_qtiteTitane.get();
+        quantiteHydrogeneEntre = self.entre_qtiteHydrogene.get();
+        quantitePlutoniumEntre = self.entre_qtitePlutonium.get();
+        quantiteAntimatiere = self.entre_qtiteAntimatiere.get();
+        #soustraire la quantite demande à ce que possede letoile......
 
 
 
@@ -1107,6 +1112,7 @@ class Vue():
                     self.cadreinfochoix.pack_forget()# on enleve le menu du haut ici quand on clique sur le vaisseau car on ne veut plus savoir ce quil y a sur l'étoile
                     self.cadre_bouton_transferer.pack_forget()#on enleve le bouton transferer
                     self.cadre_menu_ressource.pack_forget()#on enleve le menu de linventaire
+                    self.cadre_menu_ressource_ex.pack_forget()
                     #si je clique sur le cargot
                     if(self.type_vaisseau_selectionne == "Cargo"):
                         if(self.cargoArrive):#si il est accoste
