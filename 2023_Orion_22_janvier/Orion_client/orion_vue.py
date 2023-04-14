@@ -283,6 +283,7 @@ class Vue():
         quantitePlutoniumEntre = self.entre_qtitePlutonium.get();
         quantiteAntimatiere = self.entre_qtiteAntimatiere.get();
         #soustraire la quantite demande à ce que possede letoile......
+        #utiliser methode Isidore?
 
 
 
