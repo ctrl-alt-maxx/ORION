@@ -263,10 +263,28 @@ class Cargo(Vaisseau):  #TODO À CHANGER
         self.ang = 0
 
     '''
+        Fonction effectue le transfert automatique de toutes les ressources du cargo pour les entreposer à l'étoile accosté.
+        Args:
+        
+    '''
+    # NON TESTÉ
+    # NON IMPLEMENTÉ
+    def vider_cargo(self):
+        if self.estAccoste is None:
+            return
+        listeRessources = self.inventaire.keys()
+
+        for i in listeRessources:
+            self.estAccoste.inventaire.update({i: self.estAccoste.inventaire.get(i) + self.inventaire.get(i)})
+            self.inventaire.update({i: 0})
+
+    '''
     Fonction effectue le transfert des ressources en ajoutant les quantités de ressources dans l'inventaire du cargo et en enlevant les quantités de ressources dans l'inventaire de l'étoile accostée
     Args:
         chargment est un dictionnaire des ressources à transferer de l'étoile -> cargo
     '''
+    # NON TESTÉ
+    # NON IMPLEMENTÉ
     def transfererRessources(self, chargement):
         if self.isTransferable(chargement):
             listeRessources = chargement.keys()
@@ -276,7 +294,6 @@ class Cargo(Vaisseau):  #TODO À CHANGER
             #pour l'étoile
             for i in range (0, len(listeRessources)):
                 self.estAccoste.inventaire.update(listeRessources[i], self.estAccoste.inventaire.get(listeRessources) - chargement.get(listeRessources[i]))
-
 
     '''
     Fonction détermine si un transfert de ressources d'étoile -> cargo est possible.
@@ -561,6 +578,7 @@ class Entrepot(Installation):
                     print(self.v)
                     self.v.parent.finConstructionVaisseau(self.v)
                     self.capacite.update({k:None})
+
 
 class Modele():
     def __init__(self, parent, joueurs):
