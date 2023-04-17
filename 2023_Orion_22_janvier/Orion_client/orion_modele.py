@@ -609,6 +609,15 @@ class Modele():
                 recup = e
         return recup
 
+    def recupererJoueur(self, id):
+        keys = self.joueurs.keys()
+        for j in keys:
+            if self.joueurs.get(j).nom == id:
+                recup = self.joueurs.get(j)
+        return recup
+
+
+
     def creer_troudevers(self, n):
         bordure = 10
         for i in range(n):
