@@ -149,7 +149,7 @@ class Vue():
         # FER-----
         self.cadre_quantite_fer = Frame(self.cadre_choisir_transfere, width=200, height=200)
         self.label_qtite_fer = Label(self.cadre_quantite_fer,text="Fer:")
-        self.label_chiffre_fer = Label(self.cadre_quantite_fer,text= str(round(self.recup.ressource.get("Fer") * 100, 2)) + "%")#quantite presente sur letoie
+        self.label_chiffre_fer = Label(self.cadre_quantite_fer,text= str(round(self.recup.inventaire.get("Fer"), 2)))#quantite presente sur letoie
 
         self.cadre_entre_qtite_fer = Frame(self.cadre_choisir_transfere, width=400, height=200)
         self.label_entrez_qtite = Label(self.cadre_entre_qtite_fer, text="Entrez une quantite:")
@@ -168,7 +168,7 @@ class Vue():
         # cuivre
         self.cadre_quantite_cuivre = Frame(self.cadre_choisir_transfere, width=200, height=200)
         self.label_qtite_cuivre = Label(self.cadre_quantite_cuivre, text= "Cuivre:")
-        self.label_chiffre_cuivre = Label(self.cadre_quantite_cuivre, text=str(round(self.recup.ressource.get("Cuivre") * 100, 2)) + "%")
+        self.label_chiffre_cuivre = Label(self.cadre_quantite_cuivre, text=str(round(self.recup.inventaire.get("Cuivre"), 2)))
 
         self.cadre_entre_qtite_cuivre = Frame(self.cadre_choisir_transfere, width=400, height=200)
         self.label_entrez_qtite_cuivre = Label(self.cadre_entre_qtite_cuivre, text="Entrez une quantite:")
@@ -185,7 +185,7 @@ class Vue():
         #OR
         self.cadre_quantite_or = Frame(self.cadre_choisir_transfere, width=200, height=200)
         self.label_qtite_or = Label(self.cadre_quantite_or, text="Or:")
-        self.label_chiffre_or = Label(self.cadre_quantite_or, text=str(round(self.recup.ressource.get("Or") * 100, 2)) + "%")
+        self.label_chiffre_or = Label(self.cadre_quantite_or, text=str(round(self.recup.inventaire.get("Or"), 2)))
 
         self.cadre_entre_qtite_or = Frame(self.cadre_choisir_transfere, width=400, height=200)
         self.label_entrez_qtite_or = Label(self.cadre_entre_qtite_or, text="Entrez une quantite:")
@@ -202,7 +202,7 @@ class Vue():
         #Titane
         self.cadre_quantite_titane = Frame(self.cadre_choisir_transfere, width=200, height=200)
         self.label_qtite_titane = Label(self.cadre_quantite_titane, text="Titane:")
-        self.label_chiffre_titane = Label(self.cadre_quantite_titane, text=str(round(self.recup.ressource.get("Titane") * 100, 2)) + "%")
+        self.label_chiffre_titane = Label(self.cadre_quantite_titane, text=str(round(self.recup.inventaire.get("Titane"), 2)))
 
         self.cadre_entre_qtite_titane = Frame(self.cadre_choisir_transfere, width=400, height=200)
         self.label_entrez_qtite_titane = Label(self.cadre_entre_qtite_titane, text="Entrez une quantite:")
@@ -219,7 +219,7 @@ class Vue():
         #Hydrogene
         self.cadre_quantite_hydrogene = Frame(self.cadre_choisir_transfere, width=200, height=200)
         self.label_qtite_hydrogene = Label(self.cadre_quantite_hydrogene, text="Hydrogene:")
-        self.label_chiffre_hydrogene = Label(self.cadre_quantite_hydrogene, text=str(round(self.recup.ressource.get("Hydrogene") * 100, 2)) + "%")
+        self.label_chiffre_hydrogene = Label(self.cadre_quantite_hydrogene, text=str(round(self.recup.inventaire.get("Hydrogene"), 2)))
 
         self.cadre_entre_qtite_hydrogene = Frame(self.cadre_choisir_transfere, width=400, height=200)
         self.label_entrez_qtite_hydrogene = Label(self.cadre_entre_qtite_hydrogene, text="Entrez une quantite:")
@@ -236,7 +236,7 @@ class Vue():
         #Plutonium
         self.cadre_quantite_plutonium = Frame(self.cadre_choisir_transfere, width=200, height=200)
         self.label_qtite_plutonium = Label(self.cadre_quantite_plutonium, text="Plutonium:")
-        self.label_chiffre_plutonium = Label(self.cadre_quantite_plutonium, text=str(round(self.recup.ressource.get("Plutonium") * 100, 2)) + "%")
+        self.label_chiffre_plutonium = Label(self.cadre_quantite_plutonium, text=str(round(self.recup.inventaire.get("Plutonium"), 2)))
 
         self.cadre_entre_qtite_plutonium = Frame(self.cadre_choisir_transfere, width=400, height=200)
         self.label_entrez_qtite_plutonium = Label(self.cadre_entre_qtite_plutonium, text="Entrez une quantite:")
@@ -253,7 +253,7 @@ class Vue():
         #Antimatiere
         self.cadre_quantite_anti = Frame(self.cadre_choisir_transfere, width=200, height=200)
         self.label_qtite_anti = Label(self.cadre_quantite_anti, text="Antimatiere:")
-        self.label_chiffre_anti = Label(self.cadre_quantite_anti, text= str(round(self.recup.ressource.get("Antimatiere") * 100, 2)) + "%")
+        self.label_chiffre_anti = Label(self.cadre_quantite_anti, text= str(round(self.recup.inventaire.get("Antimatiere"), 2)))
 
         self.cadre_entre_qtite_anti = Frame(self.cadre_choisir_transfere, width=400, height=200)
         self.label_entrez_qtite_anti = Label(self.cadre_entre_qtite_anti, text="Entrez une quantite:")
@@ -275,15 +275,33 @@ class Vue():
         self.boutonTransfererMat.pack()
 
     def transferer(self):#quand lutilisateur clique sur le bouton transferer on recupere les valeur quil a entre
+        #mettre les quantite a 0 au cas ou lutilisateur ne rentre rien
+        #quantiteFerEntre = 0;
+
         quantiteFerEntre = self.entree_qtiteFer.get();  # on recupere la valeur que lutilisateur a entre
+        if(quantiteFerEntre == ''):
+            quantiteFerEntre = '0'
         quantiteCuivreEntre = self.entre_qtiteCuivre.get();
+        if(quantiteCuivreEntre == ''):
+            quantiteCuivreEntre = '0'
         quantiteOrEntre = self.entre_qtiteOr.get();
+        if(quantiteOrEntre == ''):
+            quantiteOrEntre = '0'
         quantiteTitaneEntre = self.entre_qtiteTitane.get();
+        if(quantiteTitaneEntre == ''):
+            quantiteTitaneEntre = '0'
         quantiteHydrogeneEntre = self.entre_qtiteHydrogene.get();
+        if(quantiteHydrogeneEntre == ''):
+            quantiteHydrogeneEntre = '0'
         quantitePlutoniumEntre = self.entre_qtitePlutonium.get();
-        quantiteAntimatiere = self.entre_qtiteAntimatiere.get();
-        #soustraire la quantite demande à ce que possede letoile......
-        #utiliser methode Isidore?
+        if(quantitePlutoniumEntre == ''):
+            quantitePlutoniumEntre = '0'
+        quantiteAntimatiereEntre = self.entre_qtiteAntimatiere.get();
+        if(quantiteAntimatiereEntre == ''):
+            quantiteAntimatiere = '0'
+        dictChargement:{"Fer":quantiteFerEntre, "Cuivre":quantiteCuivreEntre, "Or":quantiteOrEntre, "Titane": quantiteTitaneEntre, "Hydrogene":quantiteHydrogeneEntre, "Plutonium":quantitePlutoniumEntre, "Antimatiere":quantiteAntimatiereEntre}
+        #appeler transfererRessources qui est dans modele pour soustraction
+        self.parent.recupQuantiteMatiereDeUtilisateur(dictChargement); #la jenvoie les quantites que lutilisateur veut au Controlleur
 
 
 
