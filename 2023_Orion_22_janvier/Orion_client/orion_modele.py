@@ -70,6 +70,13 @@ class Etoile():
                           "Antimatiere":0}
 
         self.vie = 500 # nbr de vie de la planete
+        self.temporaire = {"entrepot": None,
+                           "usine": None}
+
+    def construireEntrepot(self):
+        installation = Entrepot(self.parent, self.proprietaire, "entrepot", 30)
+        self.temporaire.update({"entrepot": installation})
+
     '''
     Fonction permet de construire ou d'améliorer une installation, elle retire les ressources utilisées et update les installations de l'étoile
     Args:
@@ -77,7 +84,9 @@ class Etoile():
     '''
     def construire(self, type):
         if type == "entrepot":
-            installation = Entrepot(self.parent,self.proprietaire,"entrepot",30)
+            #self.parent.parent.entrepot()
+            #installation = self.temporaire.get("entrepot")
+            installation = Entrepot(self.parent, self.proprietaire, "entrepot", 30)
         else:
             installation = Usine(self.parent, self.proprietaire, "usine", 25, 100)
         if self.is_construisible(installation):
@@ -90,6 +99,7 @@ class Etoile():
             self.inventaire.update({"Plutonium":    self.inventaire.get("Plutonium") - installation.cout.get("Plutonium")})
             self.inventaire.update({"Antimatiere":  self.inventaire.get("Antimatiere") - installation.cout.get("Antimatiere")})
             self.installations.update({installation.type:installation})
+            self.temporaire.update({installation.type:None})
             print(self.installations)
 
     '''
@@ -195,7 +205,7 @@ class Vaisseau():
             cible = random.choice(self.parent.parent.etoiles)
             self.acquerir_cible(cible, "Etoile")
 
-    def acquerir_cible(self, cible, type_cible):                #Utilisé seulement par l'AI
+    def acquerir_cible(self, cible, type_cible):
         self.type_cible = type_cible
         self.cible = cible
         self.angle_cible = hlp.calcAngle(self.x, self.y, self.cible.x, self.cible.y)
@@ -216,7 +226,7 @@ class Vaisseau():
     def arriver_etoile(self):   #Fonction pour prendre possession d'une étoile
         #self.parent.log.append(                                                                                            journal de débogagge (inutile)
             #["Arrive:", self.parent.parent.cadre_courant, "Etoile", self.id, self.cible.id, self.cible.proprietaire])
-        if not self.cible.proprietaire:
+        if not self.cible.proprietaire and self.cible.proprietaire != "neutre":
             self.cible.proprietaire = self.proprietaire     #Associer un nouveau propriétaire
         cible = self.cible
         self.cible = 0
@@ -434,17 +444,23 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
                                 if( rep[1].vie > j.vie):
                                     rep[1].vie -= j.vie
                                     j.vie = 0
+
                                 else:
                                     j.vie -= rep[1].vie
                                     rep[1].vie = 0
 
+                                if rep[1].vie <= 0:
+                                    listeCles = rep[1].parent.joueurs
+                                    for k in listeCles:
+                                        joueur = rep[1].parent.joueurs.get(k)
+                                        joueur.etoilescontrolees.remove(rep[1])
+                                    j.parent.etoilescontrolees.append(rep[1])
+                                    rep[1].proprietaire = j.proprietaire
+                                    print(rep[1].installations)
+
+
 
                                 print(rep[1].vie, j.vie)
-
-
-
-
-
                     elif rep[0] == "Porte_de_ver":
                         pass
 
