@@ -79,8 +79,6 @@ class Vue():
         self.clickUneFoisSurInsta = 0 #pour que le frame ne reaparaisse pas si je clique 2 fois de suite sur le meme bouton
         self.clickUneFoisSurRessource = 0
         self.clickUneFoisSurVaiss = 0
-        self.img_usine = tk.PhotoImage(file='img/imgUsine.png').subsample(6, 6)
-        #self.img_entrepot = tk.PhotoImage(file='img/entrepot.png').subsample(6, 6)
 
         # var global methode installation()
         self.cadre_label_ressource = Frame()
@@ -947,15 +945,13 @@ class Vue():
         # affichage des etoiles
         for i in mod.etoiles:
             t = i.taille * self.zoom
-            self.canevas.create_oval(i.x - t, i.y - t, i.x + t, i.y + t,
-                                     fill="grey80", outline=col,
+            self.canevas.create_image(i.x, i.y,image= self.images["Starwhite"],
                                      tags=(i.proprietaire, str(i.id), "Etoile", i.x, i.y))
         # affichage des etoiles possedees par les joueurs
         for i in mod.joueurs.keys():
             for j in mod.joueurs[i].etoilescontrolees:
                 t = j.taille * self.zoom
-                self.canevas.create_oval(j.x - t, j.y - t, j.x + t, j.y + t,
-                                         fill=mod.joueurs[i].couleur,
+                self.canevas.create_image(j.x, j.y, image = self.images["Star" + mod.joueurs[i].couleur],
                                          tags=(j.proprietaire, str(j.id), "Etoile", j.x, j.y))
                 # on affiche dans minimap
                 minix = j.x / self.modele.largeur * self.taille_minimap
@@ -1042,7 +1038,7 @@ class Vue():
     def creer_vaisseau(self, evt):
         self.forget_all()
         type_vaisseau = evt.widget.cget("text")
-        self.parent.creer_vaisseau(type_vaisseau, int(self.selectedTags[3]) + random.choice([i for i in range(-30, 30) if i not in [-10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]]), int(self.selectedTags[4]) + random.choice([i for i in range(-30, 30) if i not in [-10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]]))
+        self.parent.creer_vaisseau(type_vaisseau, int(self.selectedTags[3]) + random.choice([i for i in range(-30, 30) if i not in [-10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]]), int(self.selectedTags[4]) + random.choice([i for i in range(-30, 30) if i not in [-10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]]), self.ma_selection[1])
         self.ma_selection = None
         self.canevas.delete("marqueur")
         #self.cadreinfochoix.pack_forget()
@@ -1083,6 +1079,7 @@ class Vue():
             for k in i.flotte:
                 for j in i.flotte[k]:
                     j = i.flotte[k][j]
+                    recupCouleur = self.parent.recupJoueur(self.mon_nom)
                     if k == "Vaisseau":  # CREATION DU CARRE ROUGE REPRESENTANT LE VAISSEAU
                         self.canevas.create_image(j.x, j.y, image= self.images["Vaisseau"],
                                                       tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact", "False"))
