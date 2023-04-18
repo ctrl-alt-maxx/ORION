@@ -7,7 +7,6 @@ from tkinter.simpledialog import *
 from tkinter.messagebox import *
 from helper import Helper as hlp
 import math
-from PIL import Image as ImagePIL
 # from PIL import ImageTk, Image
 import tkinter as tk
 import time
@@ -80,6 +79,8 @@ class Vue():
         self.clickUneFoisSurInsta = 0 #pour que le frame ne reaparaisse pas si je clique 2 fois de suite sur le meme bouton
         self.clickUneFoisSurRessource = 0
         self.clickUneFoisSurVaiss = 0
+        self.img_usine = tk.PhotoImage(file='img/imgUsine.png').subsample(6, 6)
+        #self.img_entrepot = tk.PhotoImage(file='img/entrepot.png').subsample(6, 6)
 
         # var global methode installation()
         self.cadre_label_ressource = Frame()
@@ -762,16 +763,17 @@ class Vue():
             col = random.choice(["LightYellow", "azure1", "pink"])
             self.canevas.create_oval(x, y, x + n, y + n, fill=col, tags=("fond",))
         # affichage des etoiles
-        #TODO : afficher les etoiles EN IMAGES de differentes tailles
         for i in mod.etoiles:
             t = i.taille * self.zoom
-            self.canevas.create_image(i.x, i.y ,image= self.images["Starwhite"],
+            self.canevas.create_oval(i.x - t, i.y - t, i.x + t, i.y + t,
+                                     fill="grey80", outline=col,
                                      tags=(i.proprietaire, str(i.id), "Etoile", i.x, i.y))
         # affichage des etoiles possedees par les joueurs
         for i in mod.joueurs.keys():
             for j in mod.joueurs[i].etoilescontrolees:
                 t = j.taille * self.zoom
-                self.canevas.create_image(j.x, j.y, image= self.images["Star" + mod.joueurs[i].couleur],
+                self.canevas.create_oval(j.x - t, j.y - t, j.x + t, j.y + t,
+                                         fill=mod.joueurs[i].couleur,
                                          tags=(j.proprietaire, str(j.id), "Etoile", j.x, j.y))
                 # on affiche dans minimap
                 minix = j.x / self.modele.largeur * self.taille_minimap
@@ -841,12 +843,11 @@ class Vue():
         self.barrevie.pack(fill=BOTH)
 
         # change l'appartenance d'une etoile et donc les propriétés des dessins les représentants
-    #TODO AFFICHER ÉTOILE IMAGE
     def afficher_etoile(self, joueur, cible):
         joueur1 = self.modele.joueurs[joueur]
         id = cible.id
         couleur = joueur1.couleur
-        self.canevas.itemconfig(id, image= self.images["Star" + couleur])
+        self.canevas.itemconfig(id, fill=couleur)
         self.canevas.itemconfig(id, tags=(joueur, id, "Etoile", cible.x, cible.y))
 
     # ajuster la liste des vaisseaux
@@ -905,7 +906,6 @@ class Vue():
                                                       tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact", "False"))
 
                     elif k == "Eclaireur": #CREATION DE L'ÉCLAIREUR
-
 
                         self.canevas.create_image(j.x, j.y, image= self.images["Spy"+ recupCouleur.couleur],
                                                   tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact", "True"))
