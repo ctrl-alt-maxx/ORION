@@ -243,7 +243,7 @@ class Controleur():
         return recup
 
     # def recupQuantiteMatiereDeUtilisateur(self, chargement):#dans chargement je met les quantites de matiere presente sur etoile
-    #    self.actionsrequises.append(self.mon_nom, "transfererRessources",[chargement])#ajoute dans modele
+    #    self.actionsrequises.append(self.monrecup_nom, "transfererRessources",[chargement])#ajoute dans modele
 
     def construireInstallation(self, installation, id):
         self.actionsrequises.append([self.mon_nom, "construire", [installation, id]])
