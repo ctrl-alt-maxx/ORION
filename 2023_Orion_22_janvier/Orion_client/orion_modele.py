@@ -283,9 +283,9 @@ class Cargo(Vaisseau):  #TODO À CHANGER
     Args:
         chargment est un dictionnaire des ressources à transferer de l'étoile -> cargo
     '''
-    # NON TESTÉ
-    # NON IMPLEMENTÉ
-    def transfererRessources(self, chargement):
+
+    def transfererRessources(self, chargement):# chargement contient les quantite de matiere que lutilisateur veut
+
         if self.isTransferable(chargement):
             listeRessources = chargement.keys()
             #pour le cargo
