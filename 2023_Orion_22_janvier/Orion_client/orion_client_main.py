@@ -241,11 +241,6 @@ class Controleur():
         recup = self.modele.recupererEtoile(id)
         return recup
 
-    def recupJoueur(self, nom):
-        recup = self.modele.recupererJoueur(nom)
-        return recup
-
-
     def construireInstallation(self, installation, id):
         self.actionsrequises.append([self.mon_nom, "construire", [installation, id]])
 
