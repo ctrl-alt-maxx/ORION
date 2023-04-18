@@ -905,12 +905,9 @@ class Vue():
                                                       tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact", "False"))
 
                     elif k == "Eclaireur": #CREATION DE L'ÉCLAIREUR
-<<<<<<< HEAD
+
 
                         self.canevas.create_image(j.x, j.y, image= self.images["Spy"+ recupCouleur.couleur],
-=======
-                        self.canevas.create_image(j.x, j.y, image= self.images["eclaireur"],
->>>>>>> parent of 375e5ee (colorislife)
                                                   tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact", "True"))
         for t in self.modele.trou_de_vers:
             i = t.porte_a
