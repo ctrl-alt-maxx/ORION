@@ -8,6 +8,7 @@ import string
 from id import *
 from helper import Helper as hlp
 
+cadreActuel = None
 
 class Porte_de_vers(): #Porte dans laquelle on rentre dans le trou de ver
     def __init__(self, parent, x, y, couleur, taille):
@@ -44,7 +45,7 @@ class Ressources():
         self.tempsExtraction = rarete * rarete * 5;
 
 class Etoile():
-    def __init__(self, parent, x, y, nomEtoile, ressources, vie):
+    def __init__(self, parent, x, y, nomEtoile, ressources):
 
         self.id = get_prochain_id()
         self.parent = parent
@@ -68,7 +69,7 @@ class Etoile():
                           "Plutonium":0,
                           "Antimatiere":0}
 
-        self.vie = vie # nbr de vie de la planete
+        self.vie = 500 # nbr de vie de la planete
     '''
     Fonction permet de construire ou d'améliorer une installation, elle retire les ressources utilisées et update les installations de l'étoile
     Args:
@@ -76,9 +77,9 @@ class Etoile():
     '''
     def construire(self, type):
         if type == "entrepot":
-            installation = Installation(self.parent,self.proprietaire,"entrepot",30)
+            installation = Entrepot(self.parent,self.proprietaire,"entrepot",30)
         else:
-            installation = Installation(self.parent, self.proprietaire, "usine", 25)
+            installation = Usine(self.parent, self.proprietaire, "usine", 25, 100)
         if self.is_construisible(installation):
             #TODO POSSIBILITÉ DE CHANGER LA FONCTION EN BOUCLE
             self.inventaire.update({"Fer":          self.inventaire.get("Fer") - installation.cout.get("Fer")})
@@ -159,22 +160,22 @@ class Deplacement():
 
 
 class Vaisseau():
-    def __init__(self, parent, nom, x, y,type_Vaisseau,estAccoste,tempsConstruction,Icone):
+    def __init__(self, parent, nom, x, y, estAccoste, tempsConstruction, cadreDebutConstruction, type_vaisseau):
         self.parent = parent
         self.id = get_prochain_id()
         self.proprietaire = nom
-        self.type_Vaisseau = type_Vaisseau
         self.niveau_Vaisseau = 1
         self.tempsConstruction = tempsConstruction
         self.estAccoste = estAccoste #Étoile sur laquelle le vaisseau est accosté
         self.Deplacement = None
+        self.cadreDebutConstruction = cadreDebutConstruction
+        self.type_vaisseau = type_vaisseau
 
 
         #HP du vaiseau
-        self.vie = 250
+        self.vie = 100
 
         #Image du vaisseau
-        self.Icone = Icone
         self.x = x
         self.y = y
         self.espace_cargo = 0
@@ -201,12 +202,13 @@ class Vaisseau():
 
     def avancer(self):                                  #Permet le déplacement d'un vaisseau
         if self.cible != 0:
-            x = self.cible.x
+            x = self.cible.x + random.randint(-15,15) # Distance de l'étoile à l'arrivée
+            y = self.cible.y + random.randint(-15,15)
+
             self.estAccoste = False #quand le vaisseau se deplace estAccoste = False
             #recuperer estAccoste ici pour l<avoir ligne.408
-            y = self.cible.y
             self.x, self.y = hlp.getAngledPoint(self.angle_cible, self.vitesse, self.x, self.y)
-            if hlp.calcDistance(self.x, self.y, x, y) <= self.vitesse:
+            if hlp.calcDistance(self.x, self.y, x, y) <= self.vitesse + 15:
                 type_obj = type(self.cible).__name__                        #Trouver le type de la cible (Étoile, Porte de vers)
                 rep = self.arriver[type_obj]()                              #Lancer l'action à faire selon le type de cible (arriver_etoile ou arriver_porte)
                 return rep
@@ -243,8 +245,8 @@ class Vaisseau():
 
 
 class Cargo(Vaisseau):  #TODO À CHANGER
-    def __init__(self, parent, nom, x, y, type_Vaisseau, estAccoste, tempsConstruction, Icone):
-        Vaisseau.__init__(self, parent, nom, x, y, type_Vaisseau, estAccoste, tempsConstruction, Icone)
+    def __init__(self, parent, nom, x, y, estAccoste, tempsConstruction, cadreDebutConstruction, type_vaisseau):
+        Vaisseau.__init__(self, parent, nom, x, y, estAccoste, tempsConstruction, cadreDebutConstruction, type_vaisseau)
         self.capaciteMax = 1000
         self.capaciteUtilise = 0
         self.inventaire = {"Fer":0,
@@ -261,11 +263,29 @@ class Cargo(Vaisseau):  #TODO À CHANGER
         self.ang = 0
 
     '''
+        Fonction effectue le transfert automatique de toutes les ressources du cargo pour les entreposer à l'étoile accosté.
+        Args:
+        
+    '''
+    # NON TESTÉ
+    # NON IMPLEMENTÉ
+    def vider_cargo(self):
+        if self.estAccoste is None:
+            return
+        listeRessources = self.inventaire.keys()
+
+        for i in listeRessources:
+            self.estAccoste.inventaire.update({i: self.estAccoste.inventaire.get(i) + self.inventaire.get(i)})
+            self.inventaire.update({i: 0})
+
+    '''
     Fonction effectue le transfert des ressources en ajoutant les quantités de ressources dans l'inventaire du cargo et en enlevant les quantités de ressources dans l'inventaire de l'étoile accostée
     Args:
         chargment est un dictionnaire des ressources à transferer de l'étoile -> cargo
     '''
+
     def transfererRessources(self, chargement):# chargement contient les quantite de matiere que lutilisateur veut
+
         if self.isTransferable(chargement):
             listeRessources = chargement.keys()
             #pour le cargo
@@ -274,7 +294,6 @@ class Cargo(Vaisseau):  #TODO À CHANGER
             #pour l'étoile
             for i in range (0, len(listeRessources)):
                 self.estAccoste.inventaire.update(listeRessources[i], self.estAccoste.inventaire.get(listeRessources) - chargement.get(listeRessources[i]))
-
 
     '''
     Fonction détermine si un transfert de ressources d'étoile -> cargo est possible.
@@ -314,8 +333,8 @@ class Cargo(Vaisseau):  #TODO À CHANGER
         return qtMax
 
 class Eclaireur(Vaisseau):  #TODO À CHANGER
-    def __init__(self, parent, nom, x, y, type_Vaisseau, estAccoste, tempsConstruction, Icone):
-        Vaisseau.__init__(self, parent, nom, x, y, type_Vaisseau, estAccoste, tempsConstruction, Icone)
+    def __init__(self, parent, nom, x, y, estAccoste, tempsConstruction, cadreDebutConstruction, type_vaisseau):
+        Vaisseau.__init__(self, parent, nom, x, y, estAccoste, tempsConstruction, cadreDebutConstruction, type_vaisseau)
         self.energie = 500
         self.taille = 4
         self.vitesse = 5
@@ -348,21 +367,28 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
                 e.construire(typeInstallation)
 
     def creervaisseau(self, params): #Fonction qui permet de créer un vaisseau \\\ À DÉPLACER DANS LA CLASSE ENTREPOT : IL FAUT CRÉER UN VAISSEAU DANS UN ENTREPOT, PAS PAR LE JOUEUR
-        type_vaisseau = params[0]
-        if type_vaisseau == "Cargo":
-            v = Cargo(self, self.nom, int(params[1]) + 10, int(params[2]), "Cargo", True, 15, 0)
-        elif type_vaisseau == "Vaisseau":
-            v = Vaisseau(self, self.nom, int(params[1]) + 10, int(params[2]), "Vaisseau", True, 15, 0)
-        else:
-            v = Eclaireur(self, self.nom, int(params[1]) + 10, int(params[2]), "Eclaireur", True, 15, 0)
-        self.flotte[type_vaisseau][v.id] = v
+        for e in self.etoilescontrolees:
+            if e.id == params[3]:
+                if e.installations.get("entrepot").isLibre() is not None:
+                    type_vaisseau = params[0]
+                    cadreDebutConstruction = params[4]
+                    if type_vaisseau == "Cargo":
+                        v = Cargo(self, self.nom, int(params[1]) + 10, int(params[2]), e.id, 15, cadreDebutConstruction, type_vaisseau)
+                    elif type_vaisseau == "Vaisseau":
+                        v = Vaisseau(self, self.nom, int(params[1]) + 10, int(params[2]), e.id, 15, cadreDebutConstruction, type_vaisseau)
+                    else:
+                        v = Eclaireur(self, self.nom, int(params[1]) + 10, int(params[2]), e.id, 15, cadreDebutConstruction, type_vaisseau)
 
+                    slot = e.installations.get("entrepot").isLibre()
+                    e.installations.get("entrepot").capacite.update({slot:v}) #Attribue le vaisseau en construction dans le premier slot de l'entrepot
+
+    def finConstructionVaisseau(self, vaisseau):
+        self.flotte[vaisseau.type_vaisseau][vaisseau.id] = vaisseau
         if self.nom == self.parent.parent.mon_nom:
-            self.parent.parent.lister_objet(type_vaisseau, v.id, v.niveau_Vaisseau)
-        return v
+            self.parent.parent.lister_objet(vaisseau.type_vaisseau, vaisseau.id, vaisseau.niveau_Vaisseau)
 
     def ciblerflotte(self, ids): #Cette fonction sera complètement refaite. //fait avancer les vaisseaux
-        idori, iddesti, type_cible = ids        #idor = origine, iddesti = destination
+        idori, iddesti, type_cible = ids        #idor = orig-ine, iddesti = destination
         ori = None
         for i in self.flotte.keys():
             if idori in self.flotte[i]:
@@ -416,7 +442,26 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
                             j.estAccoste = rep[1] #dans estAccoste est stocke l<id de letoile ou le cargot est accoste -> donc il a une valeur id donc sera true
                             self.parent.parent.recupererValeurEstAccoste(j.estAccoste, cargoEstAccost)#cette fonction est cree dans le main -> pb: sera toujours true
                             self.etoilescontrolees.append(rep[1])
-                            self.parent.parent.afficher_etoile(self.nom, rep[1])
+                            if rep[1].proprietaire == 'neutre' or rep[1].vie <= 0:
+                                rep[1].proprietaire = j.proprietaire
+                                self.parent.parent.afficher_etoile(self.nom, rep[1])
+                            print(rep[1].proprietaire, j.proprietaire)
+
+                            if rep[1].proprietaire != j.proprietaire and rep[1].proprietaire != 'neutre':
+                                if( rep[1].vie > j.vie):
+                                    rep[1].vie -= j.vie
+                                    j.vie = 0
+                                else:
+                                    j.vie -= rep[1].vie
+                                    rep[1].vie = 0
+
+
+                                print(rep[1].vie, j.vie)
+
+
+
+
+
                     elif rep[0] == "Porte_de_ver":
                         pass
 
@@ -501,13 +546,39 @@ class Installation():
 
 class Usine(Installation):
     def __init__(self, parent, proprietaire, type, temps, production):
-        super().__init__(self, parent, proprietaire, type, temps)
         self.production = production
+        super().__init__(parent, proprietaire, type, temps)
+
 
 class Entrepot(Installation):
-    def __init__(self, parent, proprietaire, type, temps, capacite):
-        self.capacite = capacite
+    def __init__(self, parent, proprietaire, type, temps):
+        self.capacite = {"slot1": None,
+                         "slot2": None,
+                         "slot3": None}
         super().__init__( parent, proprietaire, type, temps)
+        self.keysSlots = None
+
+    '''
+        La fonction détermine si un emplacement dans l'entrepot est libre pour y construire un vaisseau. 
+        Returns le slot libre ou false si aucun slot n'est disponible.
+    '''
+    def isLibre(self):
+        self.keysSlots = self.capacite.keys()
+        for k in self.keysSlots:
+            if self.capacite.get(k) is None:
+                return k
+        return False
+
+    def constructionVaisseau(self, cadre):
+        self.keysSlots = self.capacite.keys()
+        for k in self.keysSlots:
+            if self.capacite.get(k) is not None:
+                if cadre == self.capacite.get(k).cadreDebutConstruction + 100:
+                    self.v = self.capacite.get(k)
+                    print(self.v)
+                    self.v.parent.finConstructionVaisseau(self.v)
+                    self.capacite.update({k:None})
+
 
 class Modele():
     def __init__(self, parent, joueurs):
@@ -554,7 +625,7 @@ class Modele():
             y = random.randrange(self.hauteur - (2 * bordure)) + bordure
             nom:str = "Etoile" + str(i)
             ressourcesExploitables = self.genererRessources()
-            self.etoiles.append(Etoile(self,x,y,nom,ressourcesExploitables,100))
+            self.etoiles.append(Etoile(self,x,y,nom,ressourcesExploitables))
         np = len(joueurs) #np = number of players
         etoile_occupee = []
         while np:   #Choisi les étoiles mères
@@ -684,6 +755,7 @@ class Modele():
     def jouer_prochain_coup(self, cadre):
         #  NE PAS TOUCHER LES LIGNES SUIVANTES  ################
         self.cadre_courant = cadre
+        cadreActuel = cadre
         # insertion de la prochaine action demandée par le joueur
         if cadre in self.actions_a_faire:
             for i in self.actions_a_faire[cadre]:
@@ -708,6 +780,10 @@ class Modele():
         coefProduction = 0
         for i in self.etoiles:
            i.production(cadre)
+
+        for i in self.etoiles:
+            if i.installations.get("entrepot") is not None:
+                i.installations.get("entrepot").constructionVaisseau(cadre)
 
        # for i in self.etoiles:
          #   self.etoiles[i].jouer_prochain_coup()
