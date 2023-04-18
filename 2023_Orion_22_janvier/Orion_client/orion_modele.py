@@ -191,7 +191,7 @@ class Vaisseau():
         self.espace_cargo = 0
         self.energie = 100
         self.taille = 5
-        self.vitesse = 2
+        self.vitesse = 10
         self.cible = 0
         self.type_cible = None                              # Type de cible (Étoile ou porte de ver)
         self.angle_cible = 0                                # Angle de direction
@@ -411,7 +411,6 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
     def avancer_flotte(self, chercher_nouveau=0):
         cargoEstAccost = False
         for i in self.flotte: #Chaque type de vaisseau
-
              for j in self.flotte[i]:
                 j = self.flotte[i][j]
                 rep = j.jouer_prochain_coup(chercher_nouveau) #Retourne liste ["TypeObjet", objet]
@@ -441,10 +440,12 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
                             print(rep[1].proprietaire, j.proprietaire)
 
                             if rep[1].proprietaire != j.proprietaire and rep[1].proprietaire != 'neutre':
-                                if( rep[1].vie > j.vie):
+                                if(rep[1].vie > j.vie):
                                     rep[1].vie -= j.vie
                                     j.vie = 0
-
+                                elif(rep[1].vie == j.vie):
+                                    rep[1].vie = 0
+                                    j.vie = 0
                                 else:
                                     j.vie -= rep[1].vie
                                     rep[1].vie = 0
@@ -458,9 +459,10 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
                                     rep[1].proprietaire = j.proprietaire
                                     print(rep[1].installations)
 
+                                if(j.vie == 0):
+                                    self.parent.parent.supprimer_vaisseau(j.id)
 
 
-                                print(rep[1].vie, j.vie)
                     elif rep[0] == "Porte_de_ver":
                         pass
 

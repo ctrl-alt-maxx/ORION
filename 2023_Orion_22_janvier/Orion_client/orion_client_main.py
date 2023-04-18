@@ -234,6 +234,9 @@ class Controleur():
     def afficher_etoile(self, joueur, cible):
         self.vue.afficher_etoile(joueur, cible)
 
+    def supprimer_vaisseau(self, id_vaisseau):
+        self.vue.supprimer_vaisseau(id_vaisseau)
+
     def lister_objet(self, objet, id, niveau):
         self.vue.lister_objet(objet, id, niveau)
 

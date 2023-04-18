@@ -897,7 +897,7 @@ class Vue():
                     j = i.flotte[k][j]
                     if k == "Vaisseau":  # CREATION DU CARRE ROUGE REPRESENTANT LE VAISSEAU
                         self.canevas.create_image(j.x, j.y, image= self.images["Vaisseau"],
-                                                      tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact", "False"))
+                                                      tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact", "True"))
                     elif k == "Cargo":  # CREATION DU CARGO
                         self.canevas.create_image(j.x, j.y, image= self.images["cargo"],
                                                       tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact", "False"))
@@ -935,6 +935,9 @@ class Vue():
                                  (j.x + tailleF), (j.y + tailleF), fill=i.couleur,
                                  tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact"))
 
+    def supprimer_vaisseau(self, tags):
+        self.canevas.delete(tags) ############### TRAVAILLE LA DESSUUSSSS #####################
+
     def cliquer_cosmos(self, evt):  # DES QU'ON CLIQUE QUELQUE PART DANS LE JEU -> travailler avec ca
         self.selectedTags = self.canevas.gettags(CURRENT)
         tags = self.selectedTags #contient
@@ -946,6 +949,7 @@ class Vue():
                     if self.shipSelected != []: #TOUT LES VAISSEAUX SELECTIONNE
                         for ship in self.shipSelected:
                             self.parent.cibler_flotte(ship[1], tags[1], tags[2])#cest ca qui envoi le vaisseau a letoile selectionne
+                            self.supprimer_vaisseau(tags)
                         self.shipSelected = []
                         self.ma_selection = []
                     else:
@@ -968,16 +972,13 @@ class Vue():
 
                         elif(self.estAccos == False):#mais quand il reaprt il ne repasse pas a False seul..
                             self.cadre_bouton_transferer.pack_forget()
-
-
-
-
                     self.shipSelected.append(tags)
             elif ("Etoile" == tags[2] or "Porte_de_ver" == tags[2]) and self.shipSelected != []:
                 for ship in self.shipSelected:
                     if "Etoile" == tags[2] and ship[5] == "True":
-                        self.parent.cibler_flotte(ship[1], tags[1], tags[2])
-                        self.shipSelected = []
+                        if ("neutre" == tags[0] and ship[3] == "Eclaireur") or  (not "neutre" == tags[0] and ship[3] == "Vaisseau"):
+                            self.parent.cibler_flotte(ship[1], tags[1], tags[2])
+                            self.shipSelected = []
                     elif "Porte_de_ver" == tags[2]:
                         self.parent.cibler_flotte(ship[1], tags[1], tags[2])
                         self.shipSelected = []
