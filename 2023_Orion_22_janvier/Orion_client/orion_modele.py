@@ -135,11 +135,11 @@ class Etoile():
         if cadre == self.en_construction.get(k).cadre_debut_construction + temps_construction:  # Temps à modifier
             i = self.en_construction.get(k)
             print("La construction de ", i, "est terminé.")
-            i.fin_construction_installation(i)
+            self.fin_construction_installation(i)
             self.en_construction.update({k: None})
 
     def fin_construction_installation(self, installation):
-        self.installations[installation.type_installation][installation.id] = installation
+        self.installations.update({installation.type:installation})
 
 
     '''
