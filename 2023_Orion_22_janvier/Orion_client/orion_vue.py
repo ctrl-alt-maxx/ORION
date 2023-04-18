@@ -120,7 +120,7 @@ class Vue():
 
         self.recup = None
 
-        self.test = 0
+
 
 
 
@@ -703,9 +703,9 @@ class Vue():
     #     self.cadre_construire_vaiss_cargot.pack()
     #     self.label_titre_construire_vaiss_cargot.pack()
 
-    def raffraichir(self, cadre_menu_ressource):
-        cadre_menu_ressource.update()
-        cadre_menu_ressource.after(5000, self.raffraichir,self.cadre_menu_ressource)
+    # def raffraichir(self, cadre_menu_ressource):
+    #     cadre_menu_ressource.update()
+    #     cadre_menu_ressource.after(5000, self.raffraichir,self.cadre_menu_ressource)
 
 
 
@@ -717,15 +717,15 @@ class Vue():
 
             self.recup = self.parent.recupEtoile(self.ma_selection[1])
             self.forget_all()
-            self.test += 1
+            
 
             self.cadre_menu_ressource = Frame(self.cadreoutils, height=200, width=200, bg="#6F6D6D")
             self.cadre_menu_ressource.pack(fill=X)
             self.a_clique_sur_installation = 0
             #mettre tout ici
-            # self.label_fer = Label(self.cadre_menu_ressource, text="Fer : " + str(self.recup.inventaire.get("Fer")), anchor=CENTER, width=25, height=2, border=2, borderwidth=1,
-            #                       relief="solid", bg="green")
-            self.label_fer = Label(self.cadre_menu_ressource, text="Fer: " + str(self.test))
+            self.label_fer = Label(self.cadre_menu_ressource, text="Fer : " + str(self.recup.inventaire.get("Fer")), anchor=CENTER, width=25, height=2, border=2, borderwidth=1,
+                                  relief="solid", bg="green")
+
             #
             self.label_cuivre = Label(self.cadre_menu_ressource, text="Cuivre : " + str(self.recup.inventaire.get("Cuivre")), anchor=CENTER, width=25, height=2, border=2,
                                                borderwidth=1,
@@ -755,7 +755,7 @@ class Vue():
             self.label_hydrogene.pack(fill=X)
             self.label_pluto.pack(fill=X)
             self.label_antimatiere.pack(fill=X)
-            self.raffraichir(self.cadre_menu_ressource)
+            #self.raffraichir(self.cadre_menu_ressource)
 
 
 
