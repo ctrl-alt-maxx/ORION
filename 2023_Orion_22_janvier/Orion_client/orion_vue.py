@@ -117,7 +117,7 @@ class Vue():
         self.peutAfficherBouton = True
         self.type_vaisseau_selectionne = ""
         self.cargoArrive = False
-
+        self.nbr_entrepot = 0
         self.recup = None
 
 
@@ -146,8 +146,6 @@ class Vue():
     def choisir_transfere(self):#methode quand on clique sur le bouton transferer qui affiche le menu permettant de transférer les ressources de l'inventaire de l'étoile à l'inventaire du cargo
         self.cadre_bouton_transferer.pack_forget()
         self.cadre_choisir_transfere = Frame(self.cadreoutils, width=400, height=200)
-
-
         # FER-----
         self.cadre_quantite_fer = Frame(self.cadre_choisir_transfere, width=200, height=200)
         self.label_qtite_fer = Label(self.cadre_quantite_fer,text="Fer:")
@@ -157,7 +155,7 @@ class Vue():
         self.label_entrez_qtite = Label(self.cadre_entre_qtite_fer, text="Entrez une quantite:")
         self.entree_qtiteFer = Entry(self.cadre_entre_qtite_fer)
         quantiteFerEntre = self.entree_qtiteFer.get(); #on recupere la valeur que lutilisateur a entre
-        print(quantiteFerEntre)
+
 
         self.cadre_choisir_transfere.pack()
         self.cadre_quantite_fer.pack()
@@ -303,9 +301,11 @@ class Vue():
         quantiteAntimatiereEntre = self.entre_qtiteAntimatiere.get();
         if(quantiteAntimatiereEntre == ''):
             quantiteAntimatiere = '0'
-        dictChargement:{"Fer":quantiteFerEntre, "Cuivre":quantiteCuivreEntre, "Or":quantiteOrEntre, "Titane": quantiteTitaneEntre, "Hydrogene":quantiteHydrogeneEntre, "Plutonium":quantitePlutoniumEntre, "Antimatiere":quantiteAntimatiereEntre}
+        dictChargement = {"Fer":quantiteFerEntre, "Cuivre":quantiteCuivreEntre, "Or":quantiteOrEntre, "Titane": quantiteTitaneEntre, "Hydrogene":quantiteHydrogeneEntre, "Plutonium":quantitePlutoniumEntre, "Antimatiere":quantiteAntimatiereEntre}
         #appeler transfererRessources qui est dans modele pour soustraction
-        #self.parent.recupQuantiteMatiereDeUtilisateur(dictChargement); #la jenvoie les quantites que lutilisateur veut au Controlleur
+        self.parent.recupQuantiteMatiereDeUtilisateur(dictChargement); #la jenvoie les quantites que lutilisateur veut au Controlleur
+
+
 
 
 
@@ -319,9 +319,8 @@ class Vue():
 
         elif(self.chiffre >= 5):
             #ferme la fenetre
-            self.nbr_entrepot += 1
+            #self.nbr_entrepot += 1
             self.chiffre = 0
-
             #self.cadre_menu_installation.pack()
             self.menu_installation()
 
@@ -598,23 +597,9 @@ class Vue():
             self.cadre_espacement = Frame(self.cadre_menu_installation, height=10, width=200, bg="#FFFFFF")# cadre pour creer un espace entre Usine Ressource et Entrepot a vaisseau
             self.cadre_espacement.pack(fill=X)
                      # partie basse
+
             # a utiliser pour chosir le menu si je construit un entrepot ou pas-----------
             recupEtoile = self.parent.recupEtoile(self.ma_selection[1]) #on recup ce quil ya dans etoile selectionne -> une des var cest celle qui a les installation presente sur etoile
-            if recupEtoile.installations.get("entrepot") is not None :#si il y a un entrepot
-                #afficher menu creation vaisseau (entrepot existe)
-                print("affiche menu creation vaisseau")
-                self.boutonConstruireEntrepot.pack_forget()
-                self.boutonAmeliorerEntrepot.pack(side=LEFT)
-                self.boutonConstruireVaisseau = Button(self.cadre_bouton2, text="Construire Vaisseau",
-                                                       foreground='#A7FCC2', background='#242423', font=('Arial', 12))
-                self.boutonConstruireVaisseau.config(command=self.construction_vaisseau)
-                self.boutonConstruireVaisseau.pack(side=RIGHT)
-
-            else:
-                #afficher menu creation entrepot (entrepot existe pas)
-                print("Affiche bouton creation entrepot")
-                self.boutonConstruireEntrepot.pack(fill=X)
-
 
             # Afficher le cout de l'entrepot
             self.afficher_cout = ""
@@ -649,10 +634,26 @@ class Vue():
             self.label_installation2 = Label(self.cadre_img2, text="Description: Entrepot pour construire vaisseaux")
             self.label_installation2.pack()
 
+            #pour bouton construction entrepot
+
+            self.cadre_bouton_construction_entrepot = Frame(self.cadre_menu_installation, height=200, width=200)
+            self.cadre_bouton_construction_entrepot.pack(fill=X)
+            self.boutonConstruireEntrepot = Button(self.cadre_bouton_construction_entrepot, text="Construire Entrepot", foreground='#F5E15D',
+                                                   background='#242423', font=('Arial', 12))
+            self.boutonConstruireEntrepot.config(command=self.construire_entrepot)
+
+            self.boutonAmeliorerEntrepot = Button(self.cadre_bouton_construction_entrepot, text="Ameliorer Entrepot", foreground='#CB92CE',
+                                                  background='#242423', font=('Arial', 12))
+
             self.cadre_nbr_installation_entrepot_present = Frame(self.cadre_menu_installation, height=200, width=200)#cadre
             self.cadre_nbr_installation_entrepot_present.pack(fill=X)
 
-            self.label_titre_nbr_installation_entrepot_present = Label(self.cadre_nbr_installation_entrepot_present, text=" Nbr Entrepot prensent sur Etoile: " + "/ 1")
+            if recupEtoile.installations.get("entrepot") is not None: #si il y a un entrepot
+                self.nbr_entrepot = 1
+            else:
+                self.nbr_entrepot = 0
+            self.label_titre_nbr_installation_entrepot_present = Label(self.cadre_nbr_installation_entrepot_present, text=" Nbr Entrepot prensent sur Etoile: " + (str) (self.nbr_entrepot) +"/ 1")
+            print("nbr entrepot: " + (str)(self.nbr_entrepot))
             self.label_titre_nbr_installation_entrepot_present.pack(side=TOP)
 
             self.cadre_ressouce_demande = Frame(self.cadre_menu_installation, height= 200, width=200)
@@ -667,27 +668,21 @@ class Vue():
             self.label_ressource_possede_joueur = Label(self.cadre_ressource_que_possede_joueur, text="Ressource en possession: " + self.afficher_possession)
             self.label_ressource_possede_joueur.pack()
 
-            # Bouton pour construire entrepot
+            if recupEtoile.installations.get("entrepot") is not None:  # si il y a un entrepot on affiche pas le bouton construire Entrepot
+                print("il y a un entrepot")
+                # afficher menu creation vaisseau (entrepot existe)
+                self.boutonConstruireEntrepot.pack_forget()
+                self.boutonAmeliorerEntrepot.pack(side=LEFT)
+                self.boutonConstruireVaisseau = Button(self.cadre_bouton_construction_entrepot, text="Construire Vaisseau",
+                                                       foreground='#A7FCC2', background='#242423', font=('Arial', 12))
+                self.boutonConstruireVaisseau.config(command=self.construction_vaisseau)
+                self.boutonConstruireVaisseau.pack(side=RIGHT)
 
-            self.cadre_bouton2 = Frame(self.cadre_menu_installation, height=200, width=200, bg="yellow")
-            self.cadre_bouton2.pack(fill=X)
-            self.boutonConstruireEntrepot = Button(self.cadre_bouton2, text="Construire Entrepot" ,foreground='#F5E15D', background='#242423', font=('Arial', 12))
-            self.boutonConstruireEntrepot.config(command=self.construire_entrepot)
-            self.boutonAmeliorerEntrepot = Button(self.cadre_bouton2, text="Ameliorer Entrepot",foreground='#CB92CE', background='#242423', font=('Arial', 12))
+            else:  # si il ny a pas dentrepot affiche le bouton construire entrepot
+                # afficher menu creation entrepot (entrepot existe pas)
+                self.boutonConstruireEntrepot.pack(fill=X)
 
-            #self.boutonAmeliorerEntrepot.config(command=self.ameliorer_entrepot)  ## a faire
 
-            #if(self.nbr_entrepot == 0):
-            # if self.peutConstuireEntrpot:
-            #     self.boutonConstruireEntrepot.pack(fill=X)
-
-            #Bouton pour construire vaisseau
-            # if(self.nbr_entrepot == 1):
-            #     self.boutonConstruireEntrepot.pack_forget()
-            #     self.boutonAmeliorerEntrepot.pack(side=LEFT)
-            #     self.boutonConstruireVaisseau = Button(self.cadre_bouton2, text="Construire Vaisseau",foreground='#A7FCC2', background='#242423', font=('Arial', 12))
-            #     self.boutonConstruireVaisseau.config(command=self.construction_vaisseau)
-            #     self.boutonConstruireVaisseau.pack(side=RIGHT)
 
 
 
@@ -697,7 +692,6 @@ class Vue():
 
         self.cadre_bouton_construction_vaisseau = Frame(self.cadreoutils,height=200,width=200,bg="yellow")
         self.cadre_bouton_construction_vaisseau.pack()
-
 
         self.btncreervaisseau = Button(self.cadre_bouton_construction_vaisseau, text="Vaisseau")
         """pour creer un vaisseau"""
@@ -1149,8 +1143,6 @@ class Vue():
                 elif tags[2] == "Flotte": #quand je clique sur un vaisseau
                     self.montrer_flotte_selection()
                     self.type_vaisseau_selectionne = tags[3] #je recupere le type de vaisseau selectionne
-                    print("Type vaisseau = " + self.type_vaisseau_selectionne)
-
                     self.cadreinfochoix.pack_forget()# on enleve le menu du haut ici quand on clique sur le vaisseau car on ne veut plus savoir ce quil y a sur l'étoile
                     self.cadre_bouton_transferer.pack_forget()#on enleve le bouton transferer
                     self.cadre_menu_ressource.pack_forget()#on enleve le menu de linventaire
@@ -1162,19 +1154,13 @@ class Vue():
                             print("Val CargoEstAccoste : " + str(self.cargoArrive))
                             #affiche le bouton transferer
                             self.faireApparaitreBoutonTransfere()
-                            #self.cadre_bouton_transferer.pack_forget()
-
 
                         elif(self.estAccos == False):#mais quand il reaprt il ne repasse pas a False seul..
-                            print("cargo nest pas accoste")
                             self.cadre_bouton_transferer.pack_forget()
 
-
-
-
                     self.shipSelected.append(tags)
+
             elif ("Etoile" == tags[2] or "Porte_de_ver" == tags[2]) and self.shipSelected != []:#si je clique sur quelque chose qui nest pas a moi
-                self.nbr_entrepot = 0
                 for ship in self.shipSelected:
                     if "Etoile" == tags[2] and ship[5] == "True":#si jai clique sur une etoile et que le vaisseau est un eclaireur
                         self.peutConstuireEntrpot = True
@@ -1190,8 +1176,6 @@ class Vue():
             self.ma_selection = None
 
     def montrer_etoile_selection(self):  # montrer le tag de letoile selectionne
-        #self.cadreinfoliste.pack_forget()
-        #self.barrevie.pack_forget()
         self.cadre_bouton_transferer.pack_forget() #jenleve le bouton transferer si il est present
         self.btnInventaire.pack()
         self.btnInstallation.pack()
