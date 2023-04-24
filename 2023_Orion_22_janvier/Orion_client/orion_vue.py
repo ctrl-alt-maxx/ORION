@@ -1028,7 +1028,7 @@ class Vue():
         joueur1 = self.modele.joueurs[joueur]
         id = cible.id
         couleur = joueur1.couleur
-        self.canevas.itemconfig(id, fill=couleur)
+        self.canevas.itemconfig(id, image= self.images["Star" + couleur])
         self.canevas.itemconfig(id, tags=(joueur, id, "Etoile", cible.x, cible.y))
 
     # ajuster la liste des vaisseaux
@@ -1081,7 +1081,7 @@ class Vue():
                     j = i.flotte[k][j]
                     recupCouleur = self.parent.recupJoueur(self.mon_nom)
                     if k == "Vaisseau":  # CREATION DU CARRE ROUGE REPRESENTANT LE VAISSEAU
-                        self.canevas.create_image(j.x, j.y, image= self.images["Vaisseau"],
+                        self.canevas.create_image(j.x, j.y, image= self.images["Atck"+ recupCouleur.couleur],
                                                       tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact", "False"))
                     elif k == "Cargo":  # CREATION DU CARGO
                         self.canevas.create_image(j.x, j.y, image= self.images["cargo"],

@@ -125,7 +125,7 @@ class Etoile():
 
         for k in self.key_en_construction:
             if self.en_construction.get(k) is not None:
-                if self.en_construction.get(k) == "entrepot":
+                if k =="entrepot":
                     self.verifier_fin_construction_selon_installation(cadre, k, 100) # Temps à changer
                 else:
                     self.verifier_fin_construction_selon_installation(cadre, k, 200) # Temps à changer
