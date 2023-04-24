@@ -79,8 +79,6 @@ class Vue():
         self.clickUneFoisSurInsta = 0 #pour que le frame ne reaparaisse pas si je clique 2 fois de suite sur le meme bouton
         self.clickUneFoisSurRessource = 0
         self.clickUneFoisSurVaiss = 0
-        self.img_usine = tk.PhotoImage(file='img/imgUsine.png').subsample(6, 6)
-        self.img_entrepot = tk.PhotoImage(file='img/entrepot.png').subsample(6, 6)
 
         # var global methode installation()
         self.cadre_label_ressource = Frame()
@@ -108,6 +106,8 @@ class Vue():
         self.cadre_construire_entrepot = Frame()
         self.cadre_construire_usine = Frame()
         self.cadre_bouton_transferer = Frame()
+        self.cadre_choisir_transfere = Frame()
+
         self.chiffre = 0
         self.nbr_entrepot = 0
         self.selectedTags = None
@@ -115,6 +115,10 @@ class Vue():
         self.peutAfficherBouton = True
         self.type_vaisseau_selectionne = ""
         self.cargoArrive = False
+
+        self.recup = None
+
+
 
 
 
@@ -132,17 +136,178 @@ class Vue():
     def faireApparaitreBoutonTransfere(self):
         self.cadre_bouton_transferer = Frame(self.cadreoutils ,width=200, height=200)
         self.cadre_bouton_transferer.pack()
-        self.bouton = Button(self.cadre_bouton_transferer, text="bouton transfere")
+        self.bouton = Button(self.cadre_bouton_transferer, text="bouton transfere",command=self.choisir_transfere)
         self.bouton.pack()
-
-
         #creation des labels autres
         self.timer_partie = Label()
+
+    def choisir_transfere(self):#methode quand on clique sur le bouton transferer qui affiche le menu permettant de transférer les ressources de l'inventaire de l'étoile à l'inventaire du cargo
+        self.cadre_bouton_transferer.pack_forget()
+        self.cadre_choisir_transfere = Frame(self.cadreoutils, width=400, height=200)
+
+
+        # FER-----
+        self.cadre_quantite_fer = Frame(self.cadre_choisir_transfere, width=200, height=200)
+        self.label_qtite_fer = Label(self.cadre_quantite_fer,text="Fer:")
+        self.label_chiffre_fer = Label(self.cadre_quantite_fer,text= str(round(self.recup.inventaire.get("Fer"), 2)))#quantite presente sur letoie
+
+        self.cadre_entre_qtite_fer = Frame(self.cadre_choisir_transfere, width=400, height=200)
+        self.label_entrez_qtite = Label(self.cadre_entre_qtite_fer, text="Entrez une quantite:")
+        self.entree_qtiteFer = Entry(self.cadre_entre_qtite_fer)
+        quantiteFerEntre = self.entree_qtiteFer.get(); #on recupere la valeur que lutilisateur a entre
+        print(quantiteFerEntre)
+
+        self.cadre_choisir_transfere.pack()
+        self.cadre_quantite_fer.pack()
+        self.label_qtite_fer.pack(side=LEFT)
+        self.label_chiffre_fer.pack()
+        self.cadre_entre_qtite_fer.pack(fill=X)
+        self.label_entrez_qtite.pack(side=LEFT)
+        self.entree_qtiteFer.pack()
+
+        # cuivre
+        self.cadre_quantite_cuivre = Frame(self.cadre_choisir_transfere, width=200, height=200)
+        self.label_qtite_cuivre = Label(self.cadre_quantite_cuivre, text= "Cuivre:")
+        self.label_chiffre_cuivre = Label(self.cadre_quantite_cuivre, text=str(round(self.recup.inventaire.get("Cuivre"), 2)))
+
+        self.cadre_entre_qtite_cuivre = Frame(self.cadre_choisir_transfere, width=400, height=200)
+        self.label_entrez_qtite_cuivre = Label(self.cadre_entre_qtite_cuivre, text="Entrez une quantite:")
+        self.entre_qtiteCuivre = Entry(self.cadre_entre_qtite_cuivre)
+
+        self.cadre_quantite_cuivre.pack()
+        self.label_qtite_cuivre.pack(side=LEFT)
+        self.label_chiffre_cuivre.pack()
+
+        self.cadre_entre_qtite_cuivre.pack(fill=X)
+        self.label_entrez_qtite_cuivre.pack(side=LEFT)
+        self.entre_qtiteCuivre.pack()
+
+        #OR
+        self.cadre_quantite_or = Frame(self.cadre_choisir_transfere, width=200, height=200)
+        self.label_qtite_or = Label(self.cadre_quantite_or, text="Or:")
+        self.label_chiffre_or = Label(self.cadre_quantite_or, text=str(round(self.recup.inventaire.get("Or"), 2)))
+
+        self.cadre_entre_qtite_or = Frame(self.cadre_choisir_transfere, width=400, height=200)
+        self.label_entrez_qtite_or = Label(self.cadre_entre_qtite_or, text="Entrez une quantite:")
+        self.entre_qtiteOr = Entry(self.cadre_entre_qtite_or)
+
+        self.cadre_quantite_or.pack()
+        self.label_qtite_or.pack(side=LEFT)
+        self.label_chiffre_or.pack()
+
+        self.cadre_entre_qtite_or.pack(fill=X)
+        self.label_entrez_qtite_or.pack(side=LEFT)
+        self.entre_qtiteOr.pack()
+
+        #Titane
+        self.cadre_quantite_titane = Frame(self.cadre_choisir_transfere, width=200, height=200)
+        self.label_qtite_titane = Label(self.cadre_quantite_titane, text="Titane:")
+        self.label_chiffre_titane = Label(self.cadre_quantite_titane, text=str(round(self.recup.inventaire.get("Titane"), 2)))
+
+        self.cadre_entre_qtite_titane = Frame(self.cadre_choisir_transfere, width=400, height=200)
+        self.label_entrez_qtite_titane = Label(self.cadre_entre_qtite_titane, text="Entrez une quantite:")
+        self.entre_qtiteTitane = Entry(self.cadre_entre_qtite_titane)
+
+        self.cadre_quantite_titane.pack()
+        self.label_qtite_titane.pack(side=LEFT)
+        self.label_chiffre_titane.pack()
+
+        self.cadre_entre_qtite_titane.pack(fill=X)
+        self.label_entrez_qtite_titane.pack(side=LEFT)
+        self.entre_qtiteTitane.pack()
+
+        #Hydrogene
+        self.cadre_quantite_hydrogene = Frame(self.cadre_choisir_transfere, width=200, height=200)
+        self.label_qtite_hydrogene = Label(self.cadre_quantite_hydrogene, text="Hydrogene:")
+        self.label_chiffre_hydrogene = Label(self.cadre_quantite_hydrogene, text=str(round(self.recup.inventaire.get("Hydrogene"), 2)))
+
+        self.cadre_entre_qtite_hydrogene = Frame(self.cadre_choisir_transfere, width=400, height=200)
+        self.label_entrez_qtite_hydrogene = Label(self.cadre_entre_qtite_hydrogene, text="Entrez une quantite:")
+        self.entre_qtiteHydrogene = Entry(self.cadre_entre_qtite_hydrogene)
+
+        self.cadre_quantite_hydrogene.pack()
+        self.label_qtite_hydrogene.pack(side=LEFT)
+        self.label_chiffre_hydrogene.pack()
+
+        self.cadre_entre_qtite_hydrogene.pack(fill=X)
+        self.label_entrez_qtite_hydrogene.pack(side=LEFT)
+        self.entre_qtiteHydrogene.pack()
+
+        #Plutonium
+        self.cadre_quantite_plutonium = Frame(self.cadre_choisir_transfere, width=200, height=200)
+        self.label_qtite_plutonium = Label(self.cadre_quantite_plutonium, text="Plutonium:")
+        self.label_chiffre_plutonium = Label(self.cadre_quantite_plutonium, text=str(round(self.recup.inventaire.get("Plutonium"), 2)))
+
+        self.cadre_entre_qtite_plutonium = Frame(self.cadre_choisir_transfere, width=400, height=200)
+        self.label_entrez_qtite_plutonium = Label(self.cadre_entre_qtite_plutonium, text="Entrez une quantite:")
+        self.entre_qtitePlutonium = Entry(self.cadre_entre_qtite_plutonium)
+
+        self.cadre_quantite_plutonium.pack()
+        self.label_qtite_plutonium.pack(side=LEFT)
+        self.label_chiffre_plutonium.pack()
+
+        self.cadre_entre_qtite_plutonium.pack(fill=X)
+        self.label_entrez_qtite_plutonium.pack(side=LEFT)
+        self.entre_qtitePlutonium.pack()
+
+        #Antimatiere
+        self.cadre_quantite_anti = Frame(self.cadre_choisir_transfere, width=200, height=200)
+        self.label_qtite_anti = Label(self.cadre_quantite_anti, text="Antimatiere:")
+        self.label_chiffre_anti = Label(self.cadre_quantite_anti, text= str(round(self.recup.inventaire.get("Antimatiere"), 2)))
+
+        self.cadre_entre_qtite_anti = Frame(self.cadre_choisir_transfere, width=400, height=200)
+        self.label_entrez_qtite_anti = Label(self.cadre_entre_qtite_anti, text="Entrez une quantite:")
+        self.entre_qtiteAntimatiere = Entry(self.cadre_entre_qtite_anti)
+
+        self.cadre_quantite_anti.pack()
+        self.label_qtite_anti.pack(side=LEFT)
+        self.label_chiffre_anti.pack()
+
+        self.cadre_entre_qtite_anti.pack(fill=X)
+        self.label_entrez_qtite_anti.pack(side=LEFT)
+        self.entre_qtiteAntimatiere.pack()
+
+        #bouton transferer
+        self.cadre_bouton_transferer_mat = Frame(self.cadre_choisir_transfere, width=200, height=200)
+        self.boutonTransfererMat = Button(self.cadre_bouton_transferer_mat,text="TANSFERER", command=self.transferer)
+
+        self.cadre_bouton_transferer_mat.pack()
+        self.boutonTransfererMat.pack()
+
+    def transferer(self):#quand lutilisateur clique sur le bouton transferer on recupere les valeur quil a entre
+        #mettre les quantite a 0 au cas ou lutilisateur ne rentre rien
+        #quantiteFerEntre = 0;
+
+        quantiteFerEntre = self.entree_qtiteFer.get();  # on recupere la valeur que lutilisateur a entre
+        if(quantiteFerEntre == ''):
+            quantiteFerEntre = '0'
+        quantiteCuivreEntre = self.entre_qtiteCuivre.get();
+        if(quantiteCuivreEntre == ''):
+            quantiteCuivreEntre = '0'
+        quantiteOrEntre = self.entre_qtiteOr.get();
+        if(quantiteOrEntre == ''):
+            quantiteOrEntre = '0'
+        quantiteTitaneEntre = self.entre_qtiteTitane.get();
+        if(quantiteTitaneEntre == ''):
+            quantiteTitaneEntre = '0'
+        quantiteHydrogeneEntre = self.entre_qtiteHydrogene.get();
+        if(quantiteHydrogeneEntre == ''):
+            quantiteHydrogeneEntre = '0'
+        quantitePlutoniumEntre = self.entre_qtitePlutonium.get();
+        if(quantitePlutoniumEntre == ''):
+            quantitePlutoniumEntre = '0'
+        quantiteAntimatiereEntre = self.entre_qtiteAntimatiere.get();
+        if(quantiteAntimatiereEntre == ''):
+            quantiteAntimatiere = '0'
+        dictChargement:{"Fer":quantiteFerEntre, "Cuivre":quantiteCuivreEntre, "Or":quantiteOrEntre, "Titane": quantiteTitaneEntre, "Hydrogene":quantiteHydrogeneEntre, "Plutonium":quantitePlutoniumEntre, "Antimatiere":quantiteAntimatiereEntre}
+        #appeler transfererRessources qui est dans modele pour soustraction
+        #self.parent.recupQuantiteMatiereDeUtilisateur(dictChargement); #la jenvoie les quantites que lutilisateur veut au Controlleur
+
+
 
     def clock(self):#des que je clique sur le bouton construire entrepot, ca lance cette fonction...
         self.chiffre += 1
         self.label_timer.config(text=self.chiffre)
-        #self.label_timer.after(1000, self.clock)#appel clock toute les seconde -> donc chiffre augmente de 1 a chaque seconde
         if(self.chiffre < 5):
             #appler fonction pour construire entrepot
             #augmente de 1 entrepot
@@ -399,25 +564,26 @@ class Vue():
             self.forget_all() #on oublie tout les cadres
 
             #on creer un cadre
-            self.cadre_menu_installation = Frame(self.cadreoutils,height=200, width=200, bg="#6F6D6D")#on creer un cadre
+            self.cadre_menu_installation = Frame(self.cadreoutils,height=200, width=200, bg="#DCE0D9")#on creer un cadre
             self.cadre_menu_installation.pack(side=LEFT, fill=Y)
 
             #on creer un label pour le titre
-            self.cadre_label_titre = Frame(self.cadre_menu_installation, height=200, width=200)
+            self.cadre_label_titre = Frame(self.cadre_menu_installation, height=200, width=200,bg="#DCE0D9")
             self.cadre_label_titre.pack(fill=X)
-            self.label_titre = Label(self.cadre_label_titre, text="Usine Ressource", bg='#848484')
+            self.label_titre = Label(self.cadre_label_titre, text="Usine a Ressource", bg='#848484', font=('Arial', 13), foreground="white")
             self.label_titre.pack(fill=X)
 
-            self.cadre_img = Frame(self.cadre_menu_installation, height=200, width=200)#cadre pour image
+            #on creer un cadre pour l'image
+            self.cadre_img = Frame(self.cadre_menu_installation, height=200, width=200,bg="#DCE0D9")#cadre pour image
             self.cadre_img.pack(fill=X)
-
-            self.label_img = Label(self.cadre_img, image=self.img_usine)#image de lusine
+            self.label_img = Label(self.cadre_img, image=self.images["usine"],bg="#DCE0D9")#image de lusine
             self.label_img.pack(side=LEFT)
-            self.label_installation = Label(self.cadre_img, text="Description: usine pour stocker ressources")#label pour afficher "Description..."
+            self.label_installation = Label(self.cadre_img, text="Description: usine pour stocker ressources",bg="#DCE0D9")#label pour afficher "Description..."
             self.label_installation.pack()
 
+
             #Bouton pour construire usine
-            self.cadre_bouton = Frame(self.cadre_menu_installation, height=200, width=200, bg="yellow")#cadre bouton pour mettre bouton construire usine
+            self.cadre_bouton = Frame(self.cadre_menu_installation, height=200, width=200, bg="#DCE0D9")#cadre bouton pour mettre bouton construire usine
             self.cadre_bouton.pack(fill=X)
 
             self.boutonConstruireUsine = Button(self.cadre_bouton, text="Construire Usine",foreground='#F5E15D', background='#242423', font=('Arial', 12))
@@ -452,37 +618,39 @@ class Vue():
             #Cadre et Label Entrepot a vaisseaux
             self.cadre_label_entrepot_vaisseau = Frame(self.cadre_menu_installation, height=200, width=200, bg="#848484")#cadre pour partie entrepot
             self.cadre_label_entrepot_vaisseau.pack(fill=X)
-            self.label_entrepotVaisseau = Label(self.cadre_label_entrepot_vaisseau, text="Entrepot a vaisseaux",bg="#848484")
+            self.label_entrepotVaisseau = Label(self.cadre_label_entrepot_vaisseau, text="Entrepot a vaisseaux",bg="#848484",font=('Arial', 13),foreground='white')
             self.label_entrepotVaisseau.pack(fill=X)
 
-            self.cadre_img2 = Frame(self.cadre_menu_installation, height=200, width=200)#dans cadre img2 je met image + descritpion
+            #Cadre et Label entrepot
+            self.cadre_img2 = Frame(self.cadre_menu_installation, height=200, width=200,background="#DCE0D9")#dans cadre img2 je met image + descritpion
             self.cadre_img2.pack(fill=X)
-            self.label_img2 = Label(self.cadre_img2, image=self.img_entrepot)
+            self.label_img2 = Label(self.cadre_img2, image=self.images["entrepot3"],bg="#DCE0D9")
             self.label_img2.pack(side=LEFT)
-            self.label_installation2 = Label(self.cadre_img2, text="Description: Entrepot pour construire vaisseaux")
+            self.label_installation2 = Label(self.cadre_img2, text="Description: Entrepot pour construire vaisseaux",bg="#DCE0D9")
             self.label_installation2.pack()
 
-            self.cadre_nbr_installation_entrepot_present = Frame(self.cadre_menu_installation, height=200, width=200)#cadre
+
+            self.cadre_nbr_installation_entrepot_present = Frame(self.cadre_menu_installation, height=200, width=200,bg="#DCE0D9")#cadre
             self.cadre_nbr_installation_entrepot_present.pack(fill=X)
 
-            self.label_titre_nbr_installation_entrepot_present = Label(self.cadre_nbr_installation_entrepot_present, text=" Nbr Entrepot prensent sur Etoile: " + str(self.nbr_entrepot) + "/ 1")
+            self.label_titre_nbr_installation_entrepot_present = Label(self.cadre_nbr_installation_entrepot_present, text=" Nbr Entrepot prensent sur Etoile: " + str(self.nbr_entrepot) + "/ 1",bg="#DCE0D9")
             self.label_titre_nbr_installation_entrepot_present.pack(side=TOP)
 
-            self.cadre_ressouce_demande = Frame(self.cadre_menu_installation, height= 200, width=200)
+            self.cadre_ressouce_demande = Frame(self.cadre_menu_installation, height= 200, width=200,bg="#DCE0D9")
             self.cadre_ressouce_demande.pack(fill=X)
 
-            self.label_ressource_demande = Label(self.cadre_ressouce_demande,text="Ressource demande: " + self.afficher_cout)
+            self.label_ressource_demande = Label(self.cadre_ressouce_demande,text="Ressource demande: " + self.afficher_cout,bg="#DCE0D9")
             self.label_ressource_demande.pack()
 
-            self.cadre_ressource_que_possede_joueur = Frame(self.cadre_menu_installation, height=200,width=200)
+            self.cadre_ressource_que_possede_joueur = Frame(self.cadre_menu_installation, height=200,width=200,bg="#DCE0D9")
             self.cadre_ressource_que_possede_joueur.pack(fill=X)
 
-            self.label_ressource_possede_joueur = Label(self.cadre_ressource_que_possede_joueur, text="Ressource en possession: " + self.afficher_possession)
+            self.label_ressource_possede_joueur = Label(self.cadre_ressource_que_possede_joueur, text="Ressource en possession: " + self.afficher_possession,bg="#DCE0D9")
             self.label_ressource_possede_joueur.pack()
 
             # Bouton pour construire entrepot
 
-            self.cadre_bouton2 = Frame(self.cadre_menu_installation, height=200, width=200, bg="yellow")
+            self.cadre_bouton2 = Frame(self.cadre_menu_installation, height=200, width=200, bg="#848484")
             self.cadre_bouton2.pack(fill=X)
             self.boutonConstruireEntrepot = Button(self.cadre_bouton2, text="Construire Entrepot" ,foreground='#F5E15D', background='#242423', font=('Arial', 12))
             self.boutonConstruireEntrepot.config(command=self.construire_entrepot)
@@ -536,11 +704,21 @@ class Vue():
     #     self.cadre_construire_vaiss_cargot.pack()
     #     self.label_titre_construire_vaiss_cargot.pack()
 
+    # def raffraichir(self, cadre_menu_ressource):
+    #     cadre_menu_ressource.update()
+    #     cadre_menu_ressource.after(5000, self.raffraichir,self.cadre_menu_ressource)
 
 
-    def menu_ressource(self):# on arrive ici quand on clique sur le bouton "Ressources"
+
+
+
+
+    def menu_ressource(self):# on arrive ici quand on clique sur le bouton "Inventaire" -> inventaire de ce que possede le joueur
+        #raffraichir valeur self.recup.inventaire.get("Fer)
+
             self.recup = self.parent.recupEtoile(self.ma_selection[1])
             self.forget_all()
+            
 
             self.cadre_menu_ressource = Frame(self.cadreoutils, height=200, width=200, bg="#6F6D6D")
             self.cadre_menu_ressource.pack(fill=X)
@@ -548,6 +726,7 @@ class Vue():
             #mettre tout ici
             self.label_fer = Label(self.cadre_menu_ressource, text="Fer : " + str(self.recup.inventaire.get("Fer")), anchor=CENTER, width=25, height=2, border=2, borderwidth=1,
                                   relief="solid", bg="green")
+
             #
             self.label_cuivre = Label(self.cadre_menu_ressource, text="Cuivre : " + str(self.recup.inventaire.get("Cuivre")), anchor=CENTER, width=25, height=2, border=2,
                                                borderwidth=1,
@@ -577,9 +756,13 @@ class Vue():
             self.label_hydrogene.pack(fill=X)
             self.label_pluto.pack(fill=X)
             self.label_antimatiere.pack(fill=X)
+            #self.raffraichir(self.cadre_menu_ressource)
 
 
-    def menu_ressource_ex(self):
+
+
+
+    def menu_ressource_ex(self):#Ressource de letoile
         self.recup = self.parent.recupEtoile(self.ma_selection[1])
         self.forget_all()
 
@@ -762,15 +945,13 @@ class Vue():
         # affichage des etoiles
         for i in mod.etoiles:
             t = i.taille * self.zoom
-            self.canevas.create_oval(i.x - t, i.y - t, i.x + t, i.y + t,
-                                     fill="grey80", outline=col,
+            self.canevas.create_image(i.x, i.y,image= self.images["Starwhite"],
                                      tags=(i.proprietaire, str(i.id), "Etoile", i.x, i.y))
         # affichage des etoiles possedees par les joueurs
         for i in mod.joueurs.keys():
             for j in mod.joueurs[i].etoilescontrolees:
                 t = j.taille * self.zoom
-                self.canevas.create_oval(j.x - t, j.y - t, j.x + t, j.y + t,
-                                         fill=mod.joueurs[i].couleur,
+                self.canevas.create_image(j.x, j.y, image = self.images["Star" + mod.joueurs[i].couleur],
                                          tags=(j.proprietaire, str(j.id), "Etoile", j.x, j.y))
                 # on affiche dans minimap
                 minix = j.x / self.modele.largeur * self.taille_minimap
@@ -816,6 +997,7 @@ class Vue():
         self.clickUneFoisSurRessource = 0
         self.clickUneFoisSurVaiss += 1
         self.clickUneFoisSurInsta = 0
+        print("Efface")
 
         if self.clickUneFoisSurVaiss == 1:
             self.boutonConstruireUsine.pack_forget()
@@ -833,6 +1015,8 @@ class Vue():
             self.label_hydrogene.pack_forget()
             self.btnInstallation.pack_forget()
             self.btnInventaire.pack_forget()
+
+
 
         self.barrevie.value = objet.Vie
 
@@ -895,6 +1079,7 @@ class Vue():
             for k in i.flotte:
                 for j in i.flotte[k]:
                     j = i.flotte[k][j]
+                    recupCouleur = self.parent.recupJoueur(self.mon_nom)
                     if k == "Vaisseau":  # CREATION DU CARRE ROUGE REPRESENTANT LE VAISSEAU
                         self.canevas.create_image(j.x, j.y, image= self.images["Vaisseau"],
                                                       tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact", "True"))
@@ -903,7 +1088,8 @@ class Vue():
                                                       tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact", "False"))
 
                     elif k == "Eclaireur": #CREATION DE L'ÉCLAIREUR
-                        self.canevas.create_image(j.x, j.y, image= self.images["eclaireur"],
+
+                        self.canevas.create_image(j.x, j.y, image= self.images["Spy"+ recupCouleur.couleur],
                                                   tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact", "True"))
         for t in self.modele.trou_de_vers:
             i = t.porte_a
@@ -946,6 +1132,8 @@ class Vue():
                 self.ma_selection = [self.mon_nom, tags[1], tags[2]]
                 if tags[2] == "Etoile":
                     self.montrer_etoile_selection()
+                    #enlenver menu transferer pour vaisseau cargo
+                    self.cadre_choisir_transfere.pack_forget()
                     if self.shipSelected != []: #TOUT LES VAISSEAUX SELECTIONNE
                         for ship in self.shipSelected:
                             self.parent.cibler_flotte(ship[1], tags[1], tags[2])#cest ca qui envoi le vaisseau a letoile selectionne
@@ -958,19 +1146,22 @@ class Vue():
                     self.montrer_flotte_selection()
                     self.type_vaisseau_selectionne = tags[3] #je recupere le type de vaisseau selectionne
                     print("Type vaisseau = " + self.type_vaisseau_selectionne)
-                    #enlever le menu du haut ici quand on clique sur le vaisseau car on ne veut plus savoir ce quil y a sur l'étoile
-                    self.cadreinfochoix.pack_forget()
-                    self.cadre_bouton_transferer.pack_forget()
+
+                    self.cadreinfochoix.pack_forget()# on enleve le menu du haut ici quand on clique sur le vaisseau car on ne veut plus savoir ce quil y a sur l'étoile
+                    self.cadre_bouton_transferer.pack_forget()#on enleve le bouton transferer
+                    self.cadre_menu_ressource.pack_forget()#on enleve le menu de linventaire
+                    self.cadre_menu_ressource_ex.pack_forget()
                     #si je clique sur le cargot
                     if(self.type_vaisseau_selectionne == "Cargo"):
                         if(self.cargoArrive):#si il est accoste
                             print("Val CargoEstAccoste : " + str(self.cargoArrive))
                             #affiche le bouton transferer
-                            print("affiche bouton")
+                            self.faireApparaitreBoutonTransfere()
                             #self.cadre_bouton_transferer.pack_forget()
-                            #self.faireApparaitreBoutonTransfere()
+
 
                         elif(self.estAccos == False):#mais quand il reaprt il ne repasse pas a False seul..
+                            print("cargo nest pas accoste")
                             self.cadre_bouton_transferer.pack_forget()
                     self.shipSelected.append(tags)
             elif ("Etoile" == tags[2] or "Porte_de_ver" == tags[2]) and self.shipSelected != []:
@@ -985,6 +1176,7 @@ class Vue():
                     self.ma_selection = None
         else:  # aucun tag => On a clické dans le vide donc aucun objet sur la carte
             print("Region inconnue")
+            self.forget_all()
             self.ma_selection = None
 
     def montrer_etoile_selection(self):  # montrer le tag de letoile selectionne

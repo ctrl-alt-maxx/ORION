@@ -242,10 +242,18 @@ class Controleur():
 
     def recupEtoile(self, id):
         recup = self.modele.recupererEtoile(id)
+        print("ok")
         return recup
 
+    def recupJoueur(self, nom):
+        recup = self.modele.recupererJoueur(nom)
+        return recup
+
+    # def recupQuantiteMatiereDeUtilisateur(self, chargement):#dans chargement je met les quantites de matiere presente sur etoile
+    #    self.actionsrequises.append(self.mon_nom, "transfererRessources",[chargement])#ajoute dans modele
+
     def construireInstallation(self, installation, id):
-        self.actionsrequises.append([self.mon_nom, "construire", [installation, id]])
+        self.actionsrequises.append([self.mon_nom, "construire", [installation, id, self.cadrejeu]])
 
     def recupererValeurEstAccoste(self, estAccoste, cargoEstAccoste):#on lappel l.408 dans modele
          self.vue.savoirSiAccoste(estAccoste, cargoEstAccoste)
