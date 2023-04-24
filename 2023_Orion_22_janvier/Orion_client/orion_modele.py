@@ -314,11 +314,11 @@ class Cargo(Vaisseau):  #TODO À CHANGER
         if self.isTransferable(chargement):
             listeRessources = chargement.keys()
             #pour le cargo
-            for i in range (0, len(listeRessources)):
-                self.inventaire.update(listeRessources[i], self.inventaire.get(listeRessources[i]) + chargement.get(listeRessources[i]))
+            for k in listeRessources:
+                self.inventaire.update({k: self.inventaire.get(k) + int(chargement.get(k))})
             #pour l'étoile
-            for i in range (0, len(listeRessources)):
-                self.estAccoste.inventaire.update(listeRessources[i], self.estAccoste.inventaire.get(listeRessources) - chargement.get(listeRessources[i]))
+            for k in listeRessources:
+                self.estAccoste.inventaire.update({k: self.estAccoste.inventaire.get(k) - int(chargement.get(k))})
 
     '''
     Fonction détermine si un transfert de ressources d'étoile -> cargo est possible.
@@ -327,19 +327,18 @@ class Cargo(Vaisseau):  #TODO À CHANGER
     Returns false si le transfert est impossible, true si le transfert est valide
     '''
     def isTransferable(self, chargement):
-        listeQuantites = chargement.values()
         listeRessources = chargement.keys()
-        qtTotale:int = 0
+        qtTotale = 0
 
         #Pour déterminer si la capacité du cargo n'est pas dépassée
-        for i in range (0, len(listeQuantites)):
-            qtTotale += listeQuantites[i]
+        for k in listeRessources:
+            qtTotale += int(chargement.get(k))
         if qtTotale > self.capaciteMax:
             return False
 
         #Pour déterminer si les quantités choisies sont valides
-        for i in range (0, len(listeRessources)):
-            if chargement.get(listeRessources[i]) > self.estAccoste.inventaire.get(listeRessources[i]):
+        for k in listeRessources:
+            if int(chargement.get(k)) > self.estAccoste.inventaire.get(k):
                 return False
         return True
 
@@ -382,7 +381,8 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
                        "Eclaireur": {}}
         self.actions = {"creervaisseau": self.creervaisseau,    #Appel la fonction de création de vaisseau : À DÉPLACER DANS LA CLASS ENTREPOT
                         "ciblerflotte": self.ciblerflotte,
-                        "construire": self.construire}      #Appel la fonction
+                        "construire": self.construire,
+                        "transfererRessources": self.transfert}      #Appel la fonction
 
     def construire(self, params):
         typeInstallation = params[0]
@@ -390,6 +390,11 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
         for e in self.etoilescontrolees:
             if e.id == idEtoile:
                 e.creer_installation(typeInstallation, params[2])
+
+    def transfert(self, params):
+        dictCargo = self.flotte.get("Cargo")
+        dictCargo.get(params[1]).transfererRessources(params[0])
+
 
     def creervaisseau(self, params): #Fonction qui permet de créer un vaisseau \\\ À DÉPLACER DANS LA CLASSE ENTREPOT : IL FAUT CRÉER UN VAISSEAU DANS UN ENTREPOT, PAS PAR LE JOUEUR
         for e in self.etoilescontrolees:
