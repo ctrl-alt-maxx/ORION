@@ -49,7 +49,6 @@ class Etoile():
 
         self.id = get_prochain_id()
         self.parent = parent
-        #self.proprietaire = ""
         self.x = x
         self.y = y
         self.taille = random.randrange(4, 8)
@@ -125,7 +124,7 @@ class Etoile():
 
         for k in self.key_en_construction:
             if self.en_construction.get(k) is not None:
-                if self.en_construction.get(k) == "entrepot":
+                if k == "entrepot":
                     self.verifier_fin_construction_selon_installation(cadre, k, 100) # Temps à changer
                 else:
                     self.verifier_fin_construction_selon_installation(cadre, k, 200) # Temps à changer
@@ -470,6 +469,10 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
                                 rep[1].proprietaire = j.proprietaire
                                 self.parent.parent.afficher_etoile(self.nom, rep[1])
                             print(rep[1].proprietaire, j.proprietaire)
+                            print(j.type_vaisseau)
+                            print(rep[1].nomEtoile)
+                            print(j.vie)
+                            print(rep[1].vie)
 
                             if rep[1].proprietaire != j.proprietaire and rep[1].proprietaire != 'neutre':
                                 if(rep[1].vie > j.vie):
@@ -492,8 +495,14 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
                                     print(rep[1].installations)
 
                                 if(j.vie == 0):
-                                    self.parent.parent.supprimer_vaisseau(j.id)
-
+                                    print(rep[1].proprietaire, j.proprietaire)
+                                    print(j.type_vaisseau)
+                                    print(rep[1].nomEtoile)
+                                    print(j.vie)
+                                    print(rep[1].vie)
+                                    print(rep[1])
+                                    print(j)
+                                    self.parent.parent.supprimer_vaisseau(j)
 
                     elif rep[0] == "Porte_de_ver":
                         pass
@@ -608,7 +617,7 @@ class Entrepot(Installation):
             if self.capacite.get(k) is not None:
                 if cadre == self.capacite.get(k).cadreDebutConstruction + 100:
                     self.v = self.capacite.get(k)
-                    print(self.v)
+                    print (self.v)
                     self.v.parent.finConstructionVaisseau(self.v)
                     self.capacite.update({k:None})
 

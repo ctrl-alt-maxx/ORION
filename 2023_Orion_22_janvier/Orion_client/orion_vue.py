@@ -1028,7 +1028,7 @@ class Vue():
         joueur1 = self.modele.joueurs[joueur]
         id = cible.id
         couleur = joueur1.couleur
-        self.canevas.itemconfig(id, fill=couleur)
+        self.canevas.itemconfig(id, image= self.images["Star"+couleur])
         self.canevas.itemconfig(id, tags=(joueur, id, "Etoile", cible.x, cible.y))
 
     # ajuster la liste des vaisseaux
@@ -1081,7 +1081,7 @@ class Vue():
                     j = i.flotte[k][j]
                     recupCouleur = self.parent.recupJoueur(self.mon_nom)
                     if k == "Vaisseau":  # CREATION DU CARRE ROUGE REPRESENTANT LE VAISSEAU
-                        self.canevas.create_image(j.x, j.y, image= self.images["Vaisseau"],
+                        self.canevas.create_image(j.x, j.y, image= self.images["Atck"+ recupCouleur.couleur],
                                                       tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact", "True"))
                     elif k == "Cargo":  # CREATION DU CARGO
                         self.canevas.create_image(j.x, j.y, image= self.images["cargo"],
@@ -1121,8 +1121,8 @@ class Vue():
                                  (j.x + tailleF), (j.y + tailleF), fill=i.couleur,
                                  tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact"))
 
-    def supprimer_vaisseau(self, tags):
-        self.canevas.delete(tags) ############### TRAVAILLE LA DESSUUSSSS #####################
+    def supprimer_vaisseau(self, vaisseau):
+        self.canevas.delete(vaisseau.id) #### t la
 
     def cliquer_cosmos(self, evt):  # DES QU'ON CLIQUE QUELQUE PART DANS LE JEU -> travailler avec ca
         self.selectedTags = self.canevas.gettags(CURRENT)
@@ -1137,7 +1137,6 @@ class Vue():
                     if self.shipSelected != []: #TOUT LES VAISSEAUX SELECTIONNE
                         for ship in self.shipSelected:
                             self.parent.cibler_flotte(ship[1], tags[1], tags[2])#cest ca qui envoi le vaisseau a letoile selectionne
-                            self.supprimer_vaisseau(tags)
                         self.shipSelected = []
                         self.ma_selection = []
                     else:
