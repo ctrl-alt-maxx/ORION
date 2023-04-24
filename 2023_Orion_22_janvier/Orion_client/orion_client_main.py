@@ -225,8 +225,8 @@ class Controleur():
 
     ############        VOTRE CODE      ######################
 
-    def creer_vaisseau(self, type_vaisseau, x, y):
-        self.actionsrequises.append([self.mon_nom, "creervaisseau", [type_vaisseau, x, y]])
+    def creer_vaisseau(self, type_vaisseau, x, y, idetoile):
+        self.actionsrequises.append([self.mon_nom, "creervaisseau", [type_vaisseau, x, y, idetoile, self.cadrejeu]])
 
     def cibler_flotte(self, idorigine, iddestination, type_cible):
         self.actionsrequises.append([self.mon_nom, "ciblerflotte", [idorigine, iddestination, type_cible]])
@@ -245,8 +245,16 @@ class Controleur():
     def recupQuantiteMatiereDeUtilisateur(self, chargement):#dans chargement je met les quantites de matiere presente sur etoile
      self.actionsrequises.append(self.monrecup_nom, "transfererRessources",[chargement])#chargement est un dictionnaire contenant les quantites de matieres que lutilisateurs souhaite
 
+    def recupJoueur(self, nom):
+        recup = self.modele.recupererJoueur(nom)
+        return recup
+
+    # def recupQuantiteMatiereDeUtilisateur(self, chargement):#dans chargement je met les quantites de matiere presente sur etoile
+    #    self.actionsrequises.append(self.mon_nom, "transfererRessources",[chargement])#ajoute dans modele
+
+
     def construireInstallation(self, installation, id):
-        self.actionsrequises.append([self.mon_nom, "construire", [installation, id]])
+        self.actionsrequises.append([self.mon_nom, "construire", [installation, id, self.cadrejeu]])
 
 
     def recupererValeurEstAccoste(self, estAccoste, cargoEstAccoste):#on lappel l.408 dans modele

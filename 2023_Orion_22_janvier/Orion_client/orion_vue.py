@@ -79,8 +79,6 @@ class Vue():
         self.clickUneFoisSurInsta = 0 #pour que le frame ne reaparaisse pas si je clique 2 fois de suite sur le meme bouton
         self.clickUneFoisSurRessource = 0
         self.clickUneFoisSurVaiss = 0
-        self.img_usine = tk.PhotoImage(file='img/imgUsine.png').subsample(6, 6)
-        self.img_entrepot = tk.PhotoImage(file='img/entrepot.png').subsample(6, 6)
 
         # var global methode installation()
         self.cadre_label_ressource = Frame()
@@ -568,25 +566,26 @@ class Vue():
             self.forget_all() #on oublie tout les cadres
 
             #on creer un cadre
-            self.cadre_menu_installation = Frame(self.cadreoutils,height=200, width=200, bg="#6F6D6D")#on creer un cadre
+            self.cadre_menu_installation = Frame(self.cadreoutils,height=200, width=200, bg="#DCE0D9")#on creer un cadre
             self.cadre_menu_installation.pack(side=LEFT, fill=Y)
 
             #on creer un label pour le titre
-            self.cadre_label_titre = Frame(self.cadre_menu_installation, height=200, width=200)
+            self.cadre_label_titre = Frame(self.cadre_menu_installation, height=200, width=200,bg="#DCE0D9")
             self.cadre_label_titre.pack(fill=X)
-            self.label_titre = Label(self.cadre_label_titre, text="Usine Ressource", bg='#848484')
+            self.label_titre = Label(self.cadre_label_titre, text="Usine a Ressource", bg='#848484', font=('Arial', 13), foreground="white")
             self.label_titre.pack(fill=X)
 
-            self.cadre_img = Frame(self.cadre_menu_installation, height=200, width=200)#cadre pour image
+            #on creer un cadre pour l'image
+            self.cadre_img = Frame(self.cadre_menu_installation, height=200, width=200,bg="#DCE0D9")#cadre pour image
             self.cadre_img.pack(fill=X)
-
-            self.label_img = Label(self.cadre_img, image=self.img_usine)#image de lusine
+            self.label_img = Label(self.cadre_img, image=self.images["usine"],bg="#DCE0D9")#image de lusine
             self.label_img.pack(side=LEFT)
-            self.label_installation = Label(self.cadre_img, text="Description: usine pour stocker ressources")#label pour afficher "Description..."
+            self.label_installation = Label(self.cadre_img, text="Description: usine pour stocker ressources",bg="#DCE0D9")#label pour afficher "Description..."
             self.label_installation.pack()
 
+
             #Bouton pour construire usine
-            self.cadre_bouton = Frame(self.cadre_menu_installation, height=200, width=200, bg="yellow")#cadre bouton pour mettre bouton construire usine
+            self.cadre_bouton = Frame(self.cadre_menu_installation, height=200, width=200, bg="#DCE0D9")#cadre bouton pour mettre bouton construire usine
             self.cadre_bouton.pack(fill=X)
 
             self.boutonConstruireUsine = Button(self.cadre_bouton, text="Construire Usine",foreground='#F5E15D', background='#242423', font=('Arial', 12))
@@ -624,15 +623,17 @@ class Vue():
             #Cadre et Label Entrepot a vaisseaux
             self.cadre_label_entrepot_vaisseau = Frame(self.cadre_menu_installation, height=200, width=200, bg="#848484")#cadre pour partie entrepot
             self.cadre_label_entrepot_vaisseau.pack(fill=X)
-            self.label_entrepotVaisseau = Label(self.cadre_label_entrepot_vaisseau, text="Entrepot a vaisseaux",bg="#848484")
+            self.label_entrepotVaisseau = Label(self.cadre_label_entrepot_vaisseau, text="Entrepot a vaisseaux",bg="#848484",font=('Arial', 13),foreground='white')
             self.label_entrepotVaisseau.pack(fill=X)
 
-            self.cadre_img2 = Frame(self.cadre_menu_installation, height=200, width=200)#dans cadre img2 je met image + descritpion
+            #Cadre et Label entrepot
+            self.cadre_img2 = Frame(self.cadre_menu_installation, height=200, width=200,background="#DCE0D9")#dans cadre img2 je met image + descritpion
             self.cadre_img2.pack(fill=X)
-            self.label_img2 = Label(self.cadre_img2, image=self.img_entrepot)
+            self.label_img2 = Label(self.cadre_img2, image=self.images["entrepot3"],bg="#DCE0D9")
             self.label_img2.pack(side=LEFT)
-            self.label_installation2 = Label(self.cadre_img2, text="Description: Entrepot pour construire vaisseaux")
+            self.label_installation2 = Label(self.cadre_img2, text="Description: Entrepot pour construire vaisseaux",bg="#DCE0D9")
             self.label_installation2.pack()
+
 
             #pour bouton construction entrepot
 
@@ -654,23 +655,34 @@ class Vue():
                 self.nbr_entrepot = 0
             self.label_titre_nbr_installation_entrepot_present = Label(self.cadre_nbr_installation_entrepot_present, text=" Nbr Entrepot prensent sur Etoile: " + (str) (self.nbr_entrepot) +"/ 1")
             print("nbr entrepot: " + (str)(self.nbr_entrepot))
+
             self.label_titre_nbr_installation_entrepot_present.pack(side=TOP)
 
-            self.cadre_ressouce_demande = Frame(self.cadre_menu_installation, height= 200, width=200)
+            self.cadre_ressouce_demande = Frame(self.cadre_menu_installation, height= 200, width=200,bg="#DCE0D9")
             self.cadre_ressouce_demande.pack(fill=X)
 
-            self.label_ressource_demande = Label(self.cadre_ressouce_demande,text="Ressource demande: " + self.afficher_cout)
+            self.label_ressource_demande = Label(self.cadre_ressouce_demande,text="Ressource demande: " + self.afficher_cout,bg="#DCE0D9")
             self.label_ressource_demande.pack()
 
-            self.cadre_ressource_que_possede_joueur = Frame(self.cadre_menu_installation, height=200,width=200)
+            self.cadre_ressource_que_possede_joueur = Frame(self.cadre_menu_installation, height=200,width=200,bg="#DCE0D9")
             self.cadre_ressource_que_possede_joueur.pack(fill=X)
 
-            self.label_ressource_possede_joueur = Label(self.cadre_ressource_que_possede_joueur, text="Ressource en possession: " + self.afficher_possession)
+            self.label_ressource_possede_joueur = Label(self.cadre_ressource_que_possede_joueur, text="Ressource en possession: " + self.afficher_possession,bg="#DCE0D9")
             self.label_ressource_possede_joueur.pack()
 
             if recupEtoile.installations.get("entrepot") is not None:  # si il y a un entrepot on affiche pas le bouton construire Entrepot
                 print("il y a un entrepot")
+                self.cadre_bouton2 = Frame(self.cadre_menu_installation, height=200, width=200, bg="#848484")
+                self.cadre_bouton2.pack(fill=X)
+                self.boutonConstruireEntrepot = Button(self.cadre_bouton2, text="Construire Entrepot",
+                                                       foreground='#F5E15D', background='#242423', font=('Arial', 12))
+                self.boutonConstruireEntrepot.config(command=self.construire_entrepot)
+                self.boutonAmeliorerEntrepot = Button(self.cadre_bouton2, text="Ameliorer Entrepot",
+                                                      foreground='#CB92CE', background='#242423', font=('Arial', 12))
+                self.boutonConstruireEntrepot.pack(fill=X)
+
                 # afficher menu creation vaisseau (entrepot existe)
+
                 self.boutonConstruireEntrepot.pack_forget()
                 self.boutonAmeliorerEntrepot.pack(side=LEFT)
                 self.boutonConstruireVaisseau = Button(self.cadre_bouton_construction_entrepot, text="Construire Vaisseau",
@@ -944,15 +956,13 @@ class Vue():
         # affichage des etoiles
         for i in mod.etoiles:
             t = i.taille * self.zoom
-            self.canevas.create_oval(i.x - t, i.y - t, i.x + t, i.y + t,
-                                     fill="grey80", outline=col,
+            self.canevas.create_image(i.x, i.y,image= self.images["Starwhite"],
                                      tags=(i.proprietaire, str(i.id), "Etoile", i.x, i.y))
         # affichage des etoiles possedees par les joueurs
         for i in mod.joueurs.keys():
             for j in mod.joueurs[i].etoilescontrolees:
                 t = j.taille * self.zoom
-                self.canevas.create_oval(j.x - t, j.y - t, j.x + t, j.y + t,
-                                         fill=mod.joueurs[i].couleur,
+                self.canevas.create_image(j.x, j.y, image = self.images["Star" + mod.joueurs[i].couleur],
                                          tags=(j.proprietaire, str(j.id), "Etoile", j.x, j.y))
                 # on affiche dans minimap
                 minix = j.x / self.modele.largeur * self.taille_minimap
@@ -1029,7 +1039,7 @@ class Vue():
         joueur1 = self.modele.joueurs[joueur]
         id = cible.id
         couleur = joueur1.couleur
-        self.canevas.itemconfig(id, fill=couleur)
+        self.canevas.itemconfig(id, image= self.images["Star" + couleur])
         self.canevas.itemconfig(id, tags=(joueur, id, "Etoile", cible.x, cible.y))
 
     # ajuster la liste des vaisseaux
@@ -1039,7 +1049,7 @@ class Vue():
     def creer_vaisseau(self, evt):
         self.forget_all()
         type_vaisseau = evt.widget.cget("text")
-        self.parent.creer_vaisseau(type_vaisseau, self.selectedTags[3], self.selectedTags[4])
+        self.parent.creer_vaisseau(type_vaisseau, int(self.selectedTags[3]) + random.choice([i for i in range(-30, 30) if i not in [-10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]]), int(self.selectedTags[4]) + random.choice([i for i in range(-30, 30) if i not in [-10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]]), self.ma_selection[1])
         self.ma_selection = None
         self.canevas.delete("marqueur")
         #self.cadreinfochoix.pack_forget()
@@ -1077,20 +1087,20 @@ class Vue():
         # afficher asset (LES RESSOURCES QU'A LE JOUEUR) des joueurs
         for i in mod.joueurs.keys():
             i = mod.joueurs[i]
-            vaisseau_local = []
             for k in i.flotte:
                 for j in i.flotte[k]:
                     j = i.flotte[k][j]
-                    tailleF = j.taille * self.zoom
+                    recupCouleur = self.parent.recupJoueur(self.mon_nom)
                     if k == "Vaisseau":  # CREATION DU CARRE ROUGE REPRESENTANT LE VAISSEAU
-                        self.canevas.create_image(j.x, j.y, image= self.images["Vaisseau"],
+                        self.canevas.create_image(j.x, j.y, image= self.images["Atck"+ recupCouleur.couleur],
                                                       tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact", "False"))
                     elif k == "Cargo":  # CREATION DU CARGO
                         self.canevas.create_image(j.x, j.y, image= self.images["cargo"],
                                                       tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact", "False"))
 
                     elif k == "Eclaireur": #CREATION DE L'ÉCLAIREUR
-                        self.canevas.create_image(j.x, j.y, image= self.images["eclaireur"],
+
+                        self.canevas.create_image(j.x, j.y, image= self.images["Spy"+ recupCouleur.couleur],
                                                   tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact", "True"))
         for t in self.modele.trou_de_vers:
             i = t.porte_a
