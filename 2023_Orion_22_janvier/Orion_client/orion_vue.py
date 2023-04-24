@@ -79,7 +79,7 @@ class Vue():
         self.clickUneFoisSurInsta = 0 #pour que le frame ne reaparaisse pas si je clique 2 fois de suite sur le meme bouton
         self.clickUneFoisSurRessource = 0
         self.clickUneFoisSurVaiss = 0
-
+        self.percentage_label = Label()
         # var global methode installation()
         self.cadre_label_ressource = Frame()
         self.label_titre = Label()
@@ -108,6 +108,8 @@ class Vue():
         self.cadre_bouton_transferer = Frame()
         self.cadre_choisir_transfere = Frame()
 
+        self.startTime = 0
+        self.strPourcentage = 0
         self.chiffre = 0
         self.nbr_entrepot = 0
         self.selectedTags = None
@@ -115,6 +117,7 @@ class Vue():
         self.peutAfficherBouton = True
         self.type_vaisseau_selectionne = ""
         self.cargoArrive = False
+        self.started = False
 
         self.recup = None
 
@@ -548,6 +551,38 @@ class Vue():
         url_serveur = self.urlsplash.get()
         self.parent.connecter_serveur(url_serveur)
 
+
+    def timer_start(self,start_time):
+        self.percentage_label = Label(self.cadre_construire_entrepot, foreground='#FCFCFC', background='#30292F',
+                                      font=('Arial', 12))
+        self.startTime = start_time
+        self.started = True
+        self.percentage_label.pack()
+
+    def timer_end(self):
+        self.percentage_label.pack_forget()
+        self.started = False
+        self.strPourcentage = 0
+        if self.nbr_entrepot == 0:
+            self.nbr_entrepot += 1
+        self.menu_installation()
+
+
+    def refresh(self, cadre):
+        if(self.started == True and self.strPourcentage < 100):
+            self.strPourcentage = ((cadre - self.startTime) / 100) * 100
+            self.percentage_label.config(text=str(self.strPourcentage) + "%")
+
+            print(self.strPourcentage)
+            self.percentage_label.pack()
+        elif self.strPourcentage == 100:
+            self.timer_end()
+
+
+
+
+
+
     def forget_all(self):
         self.cadre_menu_ressource.pack_forget()
         self.cadre_menu_ressource_ex.pack_forget()
@@ -695,24 +730,6 @@ class Vue():
         self.btncreereclaireur.pack()
 
 
-
-
-    # def construire_vaisseau_cargot(self):
-    #     self.cadre_bouton_construction_vaisseau.pack_forget()
-    #     self.cadre_construire_vaiss_cargot = Frame(self.cadreoutils, height=200, width=200, bg="blue")
-    #     self.label_titre_construire_vaiss_cargot = Label(self.cadre_construire_vaiss_cargot, text="Description: Entrepot pour construire vaisseaux")
-    #     self.cadre_construire_vaiss_cargot.pack()
-    #     self.label_titre_construire_vaiss_cargot.pack()
-
-    # def raffraichir(self, cadre_menu_ressource):
-    #     cadre_menu_ressource.update()
-    #     cadre_menu_ressource.after(5000, self.raffraichir,self.cadre_menu_ressource)
-
-
-
-
-
-
     def menu_ressource(self):# on arrive ici quand on clique sur le bouton "Inventaire" -> inventaire de ce que possede le joueur
         #raffraichir valeur self.recup.inventaire.get("Fer)
 
@@ -821,11 +838,12 @@ class Vue():
         self.cadre_menu_installation.pack_forget()
         self.cadre_construire_entrepot =  Frame(self.cadreoutils,height=200, width=200, bg="pink")#on creer un cadre que lon met dans cadre_outil
         self.cadre_construire_entrepot.pack(side=LEFT, fill=Y)
-        #mettre le timer ici
-        self.label_timer = Label(self.cadre_construire_entrepot, font=('Arial, 20'), bg="yellow")#Affichage du timer ici
-        self.label_timer.pack()
+
         self.parent.construireInstallation("entrepot", self.ma_selection[1]) #pour construire entrepot -> la fonction va veifier si on peut construire entrepot
-        self.clock()#appel de la fonction clock pour demarrer le timer
+
+        self.timer_start(self.parent.cadrejeu)
+
+
     def construire_usine(self):# on arrive ici quand on clique sur bouton construire_usine
         self.cadre_menu_installation.pack_forget()
         self.cadre_construire_usine = Frame(self.cadreoutils, height=200, width=200, bg="red")

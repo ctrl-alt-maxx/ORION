@@ -139,8 +139,12 @@ class Controleur():
             self.vue.root.after(50, self.boucler_sur_lobby)
 
     # BOUCLE PRINCIPALE
+
     def boucler_sur_jeu(self):
         self.cadrejeu += 1  # increment du compteur de boucle de jeu
+        # TODO: appeler refresh de la vue
+
+        self.vue.refresh(self.cadrejeu)
 
         if self.cadrejeu % self.moduloappeler_serveur == 0:  # appel périodique au serveur
             if self.actionsrequises:
