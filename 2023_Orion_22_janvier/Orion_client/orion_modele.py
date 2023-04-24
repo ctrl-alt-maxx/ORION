@@ -42,7 +42,7 @@ class Ressources():
     def __init__(self, type, rarete):
         self.type = type
         self.rarete = rarete
-        self.tempsExtraction = rarete * rarete * 5;
+        self.tempsExtraction = rarete * rarete * 5
 
 class Etoile():
     def __init__(self, parent, x, y, nomEtoile, ressources):
@@ -58,6 +58,8 @@ class Etoile():
         self.proprietaire = "neutre" #proprietaire = etoile owner
         self.installations = {"entrepot": None,
                               "usine": None} #installation = [] des installations du joueur
+        self.en_construction = {"entrepot": None,
+                              "usine": None} # installations en construction
         self.vaisseaux = None # [] de vaisseaux pose sur letoile
         self.estEclaire = False #etoile selectionne ou pas True ou False = False au debut du jeu
         self.niveauEtoile = 1 #niveau de l'étoile = 1/2/3 = toutes les étoiles seront de niveau 1 au debut du jeu
@@ -70,16 +72,17 @@ class Etoile():
                           "Antimatiere":0}
 
         self.vie = 500 # nbr de vie de la planete
+        self.key_en_construction = None
     '''
     Fonction permet de construire ou d'améliorer une installation, elle retire les ressources utilisées et update les installations de l'étoile
     Args:
         installation est un objet Installation représentant l'installation à construire
     '''
-    def construire(self, type):
+    def creer_installation(self, type, cadre):
         if type == "entrepot":
-            installation = Entrepot(self.parent,self.proprietaire,"entrepot",30)
+            installation = Entrepot(self.parent,self.proprietaire,"entrepot", cadre)
         else:
-            installation = Usine(self.parent, self.proprietaire, "usine", 25, 100)
+            installation = Usine(self.parent, self.proprietaire, "usine", 25, cadre)
         if self.is_construisible(installation):
             #TODO POSSIBILITÉ DE CHANGER LA FONCTION EN BOUCLE
             self.inventaire.update({"Fer":          self.inventaire.get("Fer") - installation.cout.get("Fer")})
@@ -89,8 +92,8 @@ class Etoile():
             self.inventaire.update({"Hydrogene":    self.inventaire.get("Hydrogene") - installation.cout.get("Hydrogene")})
             self.inventaire.update({"Plutonium":    self.inventaire.get("Plutonium") - installation.cout.get("Plutonium")})
             self.inventaire.update({"Antimatiere":  self.inventaire.get("Antimatiere") - installation.cout.get("Antimatiere")})
-            self.installations.update({installation.type:installation})
-            print(self.installations)
+            self.en_construction.update({installation.type:installation})
+            print(self.en_construction)
 
     '''
     Permet de déterminer si l'étoile possède les ressources suffisantes pour construire ou améliorer l'installation voulue.
@@ -116,6 +119,28 @@ class Etoile():
             if self.inventaire.get(i) < installation.cout.get(i):
                 return False
         return True
+
+    def verifier_fin_construction(self, cadre):
+        self.key_en_construction = self.en_construction.keys()
+
+        for k in self.key_en_construction:
+            if self.en_construction.get(k) is not None:
+                if self.en_construction.get(k) == "entrepot":
+                    self.verifier_fin_construction_selon_installation(cadre, k, 100) # Temps à changer
+                else:
+                    self.verifier_fin_construction_selon_installation(cadre, k, 200) # Temps à changer
+
+
+    def verifier_fin_construction_selon_installation(self, cadre, k, temps_construction):
+        if cadre == self.en_construction.get(k).cadre_debut_construction + temps_construction:  # Temps à modifier
+            i = self.en_construction.get(k)
+            print("La construction de ", i, "est terminé.")
+            self.fin_construction_installation(i)
+            self.en_construction.update({k: None})
+
+    def fin_construction_installation(self, installation):
+        self.installations.update({installation.type:installation})
+
 
     '''
     Permet de produire dans chaque usine les ressources de l'étoile. La fonction est appelée à chaque tick.
@@ -364,7 +389,7 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
         idEtoile = params[1]
         for e in self.etoilescontrolees:
             if e.id == idEtoile:
-                e.construire(typeInstallation)
+                e.creer_installation(typeInstallation, params[2])
 
     def creervaisseau(self, params): #Fonction qui permet de créer un vaisseau \\\ À DÉPLACER DANS LA CLASSE ENTREPOT : IL FAUT CRÉER UN VAISSEAU DANS UN ENTREPOT, PAS PAR LE JOUEUR
         for e in self.etoilescontrolees:
@@ -466,13 +491,13 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
                         pass
 
 class Installation():
-    def __init__(self, parent, proprietaire, type, temps):
+    def __init__(self, parent, proprietaire, type, cadre_debut_construction):
         self.parent = parent
         self.proprietaire = proprietaire
         self.type = type
         self.niveau = 0
         self.cout = self.cout_selon_niveau()
-        self.temps = temps
+        self.cadre_debut_construction = cadre_debut_construction
 
     def cout_selon_niveau(self):
         if self.type == "entrepot":
@@ -545,17 +570,17 @@ class Installation():
         return self.cout
 
 class Usine(Installation):
-    def __init__(self, parent, proprietaire, type, temps, production):
+    def __init__(self, parent, proprietaire, type, cadre_debut_construction, production):
         self.production = production
-        super().__init__(parent, proprietaire, type, temps)
+        super().__init__(parent, proprietaire, type, cadre_debut_construction)
 
 
 class Entrepot(Installation):
-    def __init__(self, parent, proprietaire, type, temps):
+    def __init__(self, parent, proprietaire, type, cadre_debut_construction):
         self.capacite = {"slot1": None,
                          "slot2": None,
                          "slot3": None}
-        super().__init__( parent, proprietaire, type, temps)
+        super().__init__( parent, proprietaire, type, cadre_debut_construction)
         self.keysSlots = None
 
     '''
@@ -789,9 +814,18 @@ class Modele():
         for i in self.etoiles:
            i.production(cadre)
 
+        # Timers de construction - Gère la construction
+        # Des vaisseaux
         for i in self.etoiles:
             if i.installations.get("entrepot") is not None:
                 i.installations.get("entrepot").constructionVaisseau(cadre)
+
+        # Des installations
+        for i in self.etoiles:
+            if i.installations.get("entrepot") is None:
+                i.verifier_fin_construction(cadre)
+            else:
+                i.verifier_fin_construction(cadre)
 
        # for i in self.etoiles:
          #   self.etoiles[i].jouer_prochain_coup()

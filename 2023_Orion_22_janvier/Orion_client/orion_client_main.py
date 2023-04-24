@@ -250,7 +250,7 @@ class Controleur():
     #    self.actionsrequises.append(self.mon_nom, "transfererRessources",[chargement])#ajoute dans modele
 
     def construireInstallation(self, installation, id):
-        self.actionsrequises.append([self.mon_nom, "construire", [installation, id]])
+        self.actionsrequises.append([self.mon_nom, "construire", [installation, id, self.cadrejeu]])
 
 
     def recupererValeurEstAccoste(self, estAccoste, cargoEstAccoste):#on lappel l.408 dans modele
