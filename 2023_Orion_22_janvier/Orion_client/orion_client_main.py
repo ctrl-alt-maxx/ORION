@@ -242,12 +242,16 @@ class Controleur():
         print("ok")
         return recup
 
+    def recupQuantiteMatiereDeUtilisateur(self, chargement):#dans chargement je met les quantites de matiere presente sur etoile
+     self.actionsrequises.append(self.monrecup_nom, "transfererRessources",[chargement])#chargement est un dictionnaire contenant les quantites de matieres que lutilisateurs souhaite
+
     def recupJoueur(self, nom):
         recup = self.modele.recupererJoueur(nom)
         return recup
 
     # def recupQuantiteMatiereDeUtilisateur(self, chargement):#dans chargement je met les quantites de matiere presente sur etoile
     #    self.actionsrequises.append(self.mon_nom, "transfererRessources",[chargement])#ajoute dans modele
+
 
     def construireInstallation(self, installation, id):
         self.actionsrequises.append([self.mon_nom, "construire", [installation, id, self.cadrejeu]])
