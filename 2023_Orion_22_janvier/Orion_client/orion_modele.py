@@ -460,10 +460,12 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
                         yVaisseau = j.y
 
                         if(abs(xEtoile - xVaisseau) <= 100 and abs(yEtoile - yVaisseau) <= 100): #Création de la hitbox
+                            j.estAccoste = rep[1]
                             print("Hitbox collided")#quand le cargot arrive sur etoile on arrive ICI!!!
                             if(i == "Cargo"):#si je selectionne un cargo
                                 #si le cargot est accoste
-                                 cargoEstAccost = True
+                                cargoEstAccost = True
+                                j.vider_cargo()
                                 #faire boolean cargotEstAccos = true -> mais il faut remettre cette variable a false a la ligne 208. Comment la recuperer la variable de la ligne 208??
                                 #utiliser cette variable avec la fonction recupererValeurEstAccoste dans le main et levoyer dans Vue.
 
