@@ -125,6 +125,8 @@ class Vue():
         self.recup = None
         self.idCargo = None
         self.objet = ""
+        self.etoileSelectionne = None
+        self.etoileOuEstPoseLeCargo = None
 
 
 
@@ -312,6 +314,8 @@ class Vue():
         dictChargement = {"Fer":quantiteFerEntre, "Cuivre":quantiteCuivreEntre, "Or":quantiteOrEntre, "Titane": quantiteTitaneEntre, "Hydrogene":quantiteHydrogeneEntre, "Plutonium":quantitePlutoniumEntre, "Antimatiere":quantiteAntimatiereEntre}
         #appeler transfererRessources qui est dans modele pour soustraction
         self.parent.recupQuantiteMatiereDeUtilisateur(dictChargement, self.idCargo); #la jenvoie les quantites que lutilisateur veut au Controlleur
+        #memoriser letoile ou est pose le cargot
+        self.etoileOuEstPoseLeCargo = self.etoileSelectionne
         self.cadre_choisir_transfere.pack_forget()
 
 
@@ -1202,8 +1206,11 @@ class Vue():
                 self.ma_selection = [self.mon_nom, tags[1], tags[2]]
                 if tags[2] == "Etoile":
                     self.montrer_etoile_selection()
+                    print("nom de letoile = " + tags[1])
+                    self.etoileSelectionne = tags[1]
                     #enlenver menu transferer pour vaisseau cargo
                     self.cadre_choisir_transfere.pack_forget()
+                    
                     if self.shipSelected != []: #TOUT LES VAISSEAUX SELECTIONNE
                         for ship in self.shipSelected:
                             self.parent.cibler_flotte(ship[1], tags[1], tags[2])#cest ca qui envoi le vaisseau a letoile selectionne
@@ -1219,6 +1226,7 @@ class Vue():
                     if self.type_vaisseau_selectionne == "Cargo":
                         self.idCargo = tags[1]
 
+
                     self.cadreinfochoix.pack_forget()# on enleve le menu du haut ici quand on clique sur le vaisseau car on ne veut plus savoir ce quil y a sur l'étoile
                     self.cadre_bouton_transferer.pack_forget()#on enleve le bouton transferer
                     self.cadre_menu_ressource.pack_forget()#on enleve le menu de linventaire
@@ -1229,7 +1237,12 @@ class Vue():
                         if(self.cargoArrive):#si il est accoste
                             print("Val CargoEstAccoste : " + str(self.cargoArrive))
                             #affiche le bouton transferer
-                            self.faireApparaitreBoutonTransfere()
+                            if(self.etoileSelectionne != self.etoileOuEstPoseLeCargo):
+                               print("etoile selectionne = " + self.etoileSelectionne + "  etoile ou est pose le cargot" + self.etoileOuEstPoseLeCargo)
+                               self.faireApparaitreBoutonTransfere()
+                            elif(self.etoileSelectionne == self.etoileOuEstPoseLeCargo):
+                                self.bouton.pack_forget()
+
 
                         elif(self.estAccos == False):#mais quand il reaprt il ne repasse pas a False seul..
                             self.cadre_bouton_transferer.pack_forget()
