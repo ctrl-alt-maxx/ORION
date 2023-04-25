@@ -445,7 +445,7 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
              for j in self.flotte[i]:
                 j = self.flotte[i][j]
                 rep = j.jouer_prochain_coup(chercher_nouveau) #Retourne liste ["TypeObjet", objet]
-                if rep:
+                if rep and j:
                     if rep[0] == "Etoile":
                         xEtoile = rep[1].x
                         yEtoile = rep[1].y
@@ -460,19 +460,13 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
                                 #faire boolean cargotEstAccos = true -> mais il faut remettre cette variable a false a la ligne 208. Comment la recuperer la variable de la ligne 208??
                                 #utiliser cette variable avec la fonction recupererValeurEstAccoste dans le main et levoyer dans Vue.
 
-
-
                             j.estAccoste = rep[1] #dans estAccoste est stocke l<id de letoile ou le cargot est accoste -> donc il a une valeur id donc sera true
                             self.parent.parent.recupererValeurEstAccoste(j.estAccoste, cargoEstAccost)#cette fonction est cree dans le main -> pb: sera toujours true
                             self.etoilescontrolees.append(rep[1])
+
                             if rep[1].proprietaire == 'neutre' or rep[1].vie <= 0:
                                 rep[1].proprietaire = j.proprietaire
                                 self.parent.parent.afficher_etoile(self.nom, rep[1])
-                            print(rep[1].proprietaire, j.proprietaire)
-                            print(j.type_vaisseau)
-                            print(rep[1].nomEtoile)
-                            print(j.vie)
-                            print(rep[1].vie)
 
                             if rep[1].proprietaire != j.proprietaire and rep[1].proprietaire != 'neutre':
                                 if(rep[1].vie > j.vie):
@@ -492,17 +486,10 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
                                         joueur.etoilescontrolees.remove(rep[1])
                                     j.parent.etoilescontrolees.append(rep[1])
                                     rep[1].proprietaire = j.proprietaire
-                                    print(rep[1].installations)
 
                                 if(j.vie == 0):
-                                    print(rep[1].proprietaire, j.proprietaire)
-                                    print(j.type_vaisseau)
-                                    print(rep[1].nomEtoile)
-                                    print(j.vie)
-                                    print(rep[1].vie)
-                                    print(rep[1])
-                                    print(j)
-                                    self.parent.parent.supprimer_vaisseau(j)
+                                    self.parent.parent.supprimer_vaisseau(j.id)
+                                    self.flotte.pop(j) ################################ delete j #########################################
 
                     elif rep[0] == "Porte_de_ver":
                         pass

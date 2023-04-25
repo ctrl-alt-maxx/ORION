@@ -234,14 +234,14 @@ class Controleur():
     def afficher_etoile(self, joueur, cible):
         self.vue.afficher_etoile(joueur, cible)
 
-    def supprimer_vaisseau(self, vaisseau):
-        self.vue.supprimer_vaisseau(vaisseau)
+    def supprimer_vaisseau(self, id):
+        self.vue.supprimer_vaisseau(id)
 
     def lister_objet(self, objet, id, niveau):
         self.vue.lister_objet(objet, id, niveau)
 
-    def recupEtoile(self, id):
-        recup = self.modele.recupererEtoile(id)
+    def recupEtoile(self, vaisseau):
+        recup = self.modele.recupererEtoile(vaisseau)
         print("ok")
         return recup
 
