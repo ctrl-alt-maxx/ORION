@@ -553,6 +553,10 @@ class Vue():
 
 
     def timer_start(self,start_time):
+        """
+        fonction qui demarre le timer
+        :param start_time: le temps de depart
+        """
         self.percentage_label = Label(self.cadre_construire_entrepot, foreground='#FCFCFC', background='#30292F',
                                       font=('Arial', 12))
         self.startTime = start_time
@@ -560,6 +564,9 @@ class Vue():
         self.percentage_label.pack()
 
     def timer_end(self):
+        """
+        fonction qui arrete le timer et le reinitalise
+        """
         self.percentage_label.pack_forget()
         self.started = False
         self.strPourcentage = 0
@@ -569,6 +576,10 @@ class Vue():
 
 
     def refresh(self, cadre):
+        """
+        fonction qui est appeler a chaque tick dans le main
+        :param cadre: le temps actuel
+        """
         if(self.started == True and self.strPourcentage < 100):
             self.strPourcentage = ((cadre - self.startTime) / 100) * 100
             self.percentage_label.config(text=str(self.strPourcentage) + "%")
