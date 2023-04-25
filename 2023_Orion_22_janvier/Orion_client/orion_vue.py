@@ -88,6 +88,7 @@ class Vue():
         self.label_installation = Label()
         self.cadre_bouton = Frame()
         self.boutonConstruireUsine = Button()
+        self.boutonAmeliorerUsine = Button()
         self.cadre_espacement = Frame()
 
         self.cadre_label_entrepot_vaisseau = Frame()
@@ -120,8 +121,10 @@ class Vue():
 
         self.started = False
         self.nbr_entrepot = 0
+        self.nbr_usine = 0
         self.recup = None
         self.idCargo = None
+        self.objet = ""
 
 
 
@@ -310,21 +313,6 @@ class Vue():
         #appeler transfererRessources qui est dans modele pour soustraction
         self.parent.recupQuantiteMatiereDeUtilisateur(dictChargement, self.idCargo); #la jenvoie les quantites que lutilisateur veut au Controlleur
 
-
-    def clock(self):#des que je clique sur le bouton construire entrepot, ca lance cette fonction...
-        self.chiffre += 1
-        self.label_timer.config(text=self.chiffre)
-        if(self.chiffre < 5):
-            #appler fonction pour construire entrepot
-            #augmente de 1 entrepot
-            self.label_timer.after(1000,self.clock)  # appel clock toute les seconde -> donc chiffre augmente de 1 a chaque seconde
-
-        elif(self.chiffre >= 5):
-            #ferme la fenetre
-            #self.nbr_entrepot += 1
-            self.chiffre = 0
-            #self.cadre_menu_installation.pack()
-            self.menu_installation()
 
 
     def chargerimages(self, chemin=None):
@@ -555,13 +543,21 @@ class Vue():
         self.parent.connecter_serveur(url_serveur)
 
 
-    def timer_start(self,start_time):
+    def timer_start(self,start_time,obj):
         """
         fonction qui demarre le timer
         :param start_time: le temps de depart
         """
-        self.percentage_label = Label(self.cadre_construire_entrepot, foreground='#FCFCFC', background='#30292F',
+        if obj == "entrepot":
+            self.percentage_label = Label(self.cadre_construire_entrepot, foreground='#FCFCFC', background='#30292F',
                                       font=('Arial', 12))
+        elif obj == "usine":
+            self.percentage_label = Label(self.cadre_construire_usine, foreground='#FCFCFC', background='#30292F',
+                                      font=('Arial', 12))
+        elif obj == "vaisseau":
+            self.percentage_label = Label(self.cadreoutils, foreground='#FCFCFC', background='#30292F',
+                                      font=('Arial', 12))
+        self.objet = obj
         self.startTime = start_time
         self.started = True
         self.percentage_label.pack()
@@ -570,13 +566,22 @@ class Vue():
         """
         fonction qui arrete le timer et le reinitalise
         """
+
         self.percentage_label.pack_forget()
         self.started = False
         self.strPourcentage = 0
-        if self.nbr_entrepot == 0:
-            self.nbr_entrepot += 1
-        self.menu_installation()
 
+        if self.objet == "entrepot":
+            if self.nbr_entrepot == 0:
+                self.nbr_entrepot += 1
+                self.menu_installation()
+
+        elif self.objet == "usine":
+            if self.nbr_usine == 0:
+                self.nbr_usine += 1
+                self.menu_installation()
+        # elif self.objet == "vaisseau":
+        #     self.menu_installation()
 
     def refresh(self, cadre):
         """
@@ -637,7 +642,14 @@ class Vue():
 
             self.boutonConstruireUsine = Button(self.cadre_bouton, text="Construire Usine",foreground='#F5E15D', background='#242423', font=('Arial', 12))
             self.boutonConstruireUsine.config(command=self.construire_usine)
-            self.boutonConstruireUsine.pack(fill=X)
+            self.boutonAmeliorerUsine = Button(self.cadre_bouton, text="Améliorer Usine",foreground='#CB92CE', background='#242423', font=('Arial', 12))
+
+            if self.nbr_usine == 0:
+                self.boutonConstruireUsine.pack(fill=X)
+            elif self.nbr_usine == 1:
+                self.boutonConstruireUsine.pack_forget()
+                self.boutonAmeliorerUsine.pack(fill=X)
+
 
             #cadre pour creer un espace entre Usine Ressource et Entrepot a vaisseau
             self.cadre_espacement = Frame(self.cadre_menu_installation, height=10, width=200, bg="#FFFFFF")# cadre pour creer un espace entre Usine Ressource et Entrepot a vaisseau
@@ -719,12 +731,10 @@ class Vue():
 
             if recupEtoile.installations.get("entrepot") is not None:  # si il y a un entrepot on affiche pas le bouton construire Entrepot
                 print("il y a un entrepot")
-                self.cadre_bouton2 = Frame(self.cadre_menu_installation, height=200, width=200, bg="#848484")
-                self.cadre_bouton2.pack(fill=X)
-                self.boutonConstruireEntrepot = Button(self.cadre_bouton2, text="Construire Entrepot",
+                self.boutonConstruireEntrepot = Button(self.cadre_bouton_construction_entrepot, text="Construire Entrepot",
                                                        foreground='#F5E15D', background='#242423', font=('Arial', 12))
                 self.boutonConstruireEntrepot.config(command=self.construire_entrepot)
-                self.boutonAmeliorerEntrepot = Button(self.cadre_bouton2, text="Ameliorer Entrepot",
+                self.boutonAmeliorerEntrepot = Button(self.cadre_bouton_construction_entrepot, text="Ameliorer Entrepot",
                                                       foreground='#CB92CE', background='#242423', font=('Arial', 12))
                 self.boutonConstruireEntrepot.pack(fill=X)
 
@@ -752,20 +762,23 @@ class Vue():
         self.cadre_bouton_construction_vaisseau = Frame(self.cadreoutils,height=200,width=200,bg="yellow")
         self.cadre_bouton_construction_vaisseau.pack()
 
-        self.btncreervaisseau = Button(self.cadre_bouton_construction_vaisseau, text="Vaisseau")
+        self.btncreervaisseau = Button(self.cadre_bouton_construction_vaisseau, text="Attack",
+                                                       foreground='#A7FCC2', background='#242423', font=('Arial', 12))
         """pour creer un vaisseau"""
         self.btncreervaisseau.bind("<Button>", self.creer_vaisseau)
 
-        self.btncreercargo = Button(self.cadre_bouton_construction_vaisseau, text="Cargo")
+        self.btncreercargo = Button(self.cadre_bouton_construction_vaisseau, text="Cargo",
+                                                       foreground='#A7FCC2', background='#242423', font=('Arial', 12))
         """pour creer un cargo"""
         self.btncreercargo.bind("<Button>", self.creer_vaisseau)
 
-        self.btncreereclaireur = Button(self.cadre_bouton_construction_vaisseau, text="Eclaireur")
+        self.btncreereclaireur = Button(self.cadre_bouton_construction_vaisseau, text="Eclaireur",
+                                                       foreground='#A7FCC2', background='#242423', font=('Arial', 12))
         """pour creer un éclaireur"""
         self.btncreereclaireur.bind("<Button>", self.creer_vaisseau)
         self.btncreervaisseau.pack(fill=X)
-        self.btncreercargo.pack()
-        self.btncreereclaireur.pack()
+        self.btncreercargo.pack(fill=X)
+        self.btncreereclaireur.pack(fill=X)
 
 
 
@@ -877,16 +890,15 @@ class Vue():
         self.cadre_menu_installation.pack_forget()
         self.cadre_construire_entrepot =  Frame(self.cadreoutils,height=200, width=200, bg="pink")#on creer un cadre que lon met dans cadre_outil
         self.cadre_construire_entrepot.pack(side=LEFT, fill=Y)
-
         self.parent.construireInstallation("entrepot", self.ma_selection[1]) #pour construire entrepot -> la fonction va veifier si on peut construire entrepot
-        self.timer_start(self.parent.cadrejeu)
+        self.timer_start(self.parent.cadrejeu,"entrepot") #on lance le timer pour construire entrepot
 
     def construire_usine(self):# on arrive ici quand on clique sur bouton construire_usine
         self.cadre_menu_installation.pack_forget()
         self.cadre_construire_usine = Frame(self.cadreoutils, height=200, width=200, bg="red")
         self.cadre_construire_usine.pack(side=LEFT, fill=Y)
         self.parent.construireInstallation("usine", self.ma_selection[1])
-
+        self.timer_start(self.parent.cadrejeu,"usine")
 
 
 
@@ -1096,7 +1108,8 @@ class Vue():
         self.parent.creer_vaisseau(type_vaisseau, int(self.selectedTags[3]) + random.choice([i for i in range(-30, 30) if i not in [-10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]]), int(self.selectedTags[4]) + random.choice([i for i in range(-30, 30) if i not in [-10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]]), self.ma_selection[1])
         self.ma_selection = None
         self.canevas.delete("marqueur")
-        #self.cadreinfochoix.pack_forget()
+        self.timer_start(self.parent.cadrejeu,"vaisseau")
+
 
 
 
