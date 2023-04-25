@@ -305,6 +305,7 @@ class Vue():
         dictChargement = {"Fer":quantiteFerEntre, "Cuivre":quantiteCuivreEntre, "Or":quantiteOrEntre, "Titane": quantiteTitaneEntre, "Hydrogene":quantiteHydrogeneEntre, "Plutonium":quantitePlutoniumEntre, "Antimatiere":quantiteAntimatiereEntre}
         #appeler transfererRessources qui est dans modele pour soustraction
         self.parent.recupQuantiteMatiereDeUtilisateur(dictChargement, self.idCargo); #la jenvoie les quantites que lutilisateur veut au Controlleur
+        self.cadre_choisir_transfere.pack_forget()
 
 
     def clock(self):#des que je clique sur le bouton construire entrepot, ca lance cette fonction...
@@ -557,6 +558,7 @@ class Vue():
         self.cadre_construire_entrepot.pack_forget()
         self.cadre_bouton_construction_vaisseau.pack_forget()
         self.cadre_bouton_transferer.pack_forget()
+        self.cadre_choisir_transfere.pack_forget()
 
         #essai
         self.cadre_construire_usine.pack_forget()
@@ -672,12 +674,12 @@ class Vue():
 
             if recupEtoile.installations.get("entrepot") is not None:  # si il y a un entrepot on affiche pas le bouton construire Entrepot
                 print("il y a un entrepot")
-                self.cadre_bouton2 = Frame(self.cadre_menu_installation, height=200, width=200, bg="#848484")
-                self.cadre_bouton2.pack(fill=X)
-                self.boutonConstruireEntrepot = Button(self.cadre_bouton2, text="Construire Entrepot",
+                # self.cadre_bouton2 = Frame(self.cadre_menu_installation, height=200, width=200, bg="#848484")
+                # self.cadre_bouton2.pack(fill=X)
+                self.boutonConstruireEntrepot = Button(self.cadre_bouton_construction_entrepot, text="Construire Entrepot",
                                                        foreground='#F5E15D', background='#242423', font=('Arial', 12))
                 self.boutonConstruireEntrepot.config(command=self.construire_entrepot)
-                self.boutonAmeliorerEntrepot = Button(self.cadre_bouton2, text="Ameliorer Entrepot",
+                self.boutonAmeliorerEntrepot = Button(self.cadre_bouton_construction_entrepot, text="Ameliorer Entrepot",
                                                       foreground='#CB92CE', background='#242423', font=('Arial', 12))
                 self.boutonConstruireEntrepot.pack(fill=X)
 
