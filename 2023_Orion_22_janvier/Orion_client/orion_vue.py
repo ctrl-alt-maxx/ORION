@@ -117,6 +117,7 @@ class Vue():
         self.cargoArrive = False
         self.nbr_entrepot = 0
         self.recup = None
+        self.idCargo = None
 
 
 
@@ -278,6 +279,8 @@ class Vue():
         #mettre les quantite a 0 au cas ou lutilisateur ne rentre rien
         #quantiteFerEntre = 0;
 
+        dict
+
         quantiteFerEntre = self.entree_qtiteFer.get();  # on recupere la valeur que lutilisateur a entre
         if(quantiteFerEntre == ''):
             quantiteFerEntre = '0'
@@ -298,13 +301,10 @@ class Vue():
             quantitePlutoniumEntre = '0'
         quantiteAntimatiereEntre = self.entre_qtiteAntimatiere.get();
         if(quantiteAntimatiereEntre == ''):
-            quantiteAntimatiere = '0'
+            quantiteAntimatiereEntre = '0'
         dictChargement = {"Fer":quantiteFerEntre, "Cuivre":quantiteCuivreEntre, "Or":quantiteOrEntre, "Titane": quantiteTitaneEntre, "Hydrogene":quantiteHydrogeneEntre, "Plutonium":quantitePlutoniumEntre, "Antimatiere":quantiteAntimatiereEntre}
         #appeler transfererRessources qui est dans modele pour soustraction
-        self.parent.recupQuantiteMatiereDeUtilisateur(dictChargement); #la jenvoie les quantites que lutilisateur veut au Controlleur
-
-
-
+        self.parent.recupQuantiteMatiereDeUtilisateur(dictChargement, self.idCargo); #la jenvoie les quantites que lutilisateur veut au Controlleur
 
 
     def clock(self):#des que je clique sur le bouton construire entrepot, ca lance cette fonction...
@@ -1153,6 +1153,11 @@ class Vue():
                 elif tags[2] == "Flotte": #quand je clique sur un vaisseau
                     self.montrer_flotte_selection()
                     self.type_vaisseau_selectionne = tags[3] #je recupere le type de vaisseau selectionne
+                    print("Type vaisseau = " + self.type_vaisseau_selectionne)
+
+                    if self.type_vaisseau_selectionne == "Cargo":
+                        self.idCargo = tags[1]
+
                     self.cadreinfochoix.pack_forget()# on enleve le menu du haut ici quand on clique sur le vaisseau car on ne veut plus savoir ce quil y a sur l'étoile
                     self.cadre_bouton_transferer.pack_forget()#on enleve le bouton transferer
                     self.cadre_menu_ressource.pack_forget()#on enleve le menu de linventaire
