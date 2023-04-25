@@ -462,6 +462,9 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
                         if(abs(xEtoile - xVaisseau) <= 100 and abs(yEtoile - yVaisseau) <= 100): #Création de la hitbox
                             j.estAccoste = rep[1]
                             print("Hitbox collided")#quand le cargot arrive sur etoile on arrive ICI!!!
+                            #si i == "Eclaireur"
+                            #si la planete est neutre
+                            #bool peuConstruireEntrepot = true
                             if(i == "Cargo"):#si je selectionne un cargo
                                 #si le cargot est accoste
                                 cargoEstAccost = True
