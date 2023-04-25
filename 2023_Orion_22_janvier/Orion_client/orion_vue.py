@@ -1147,7 +1147,7 @@ class Vue():
             for k in i.flotte:
                 for j in i.flotte[k]:
                     j = i.flotte[k][j]
-                    recupCouleur = self.parent.recupJoueur(self.mon_nom)
+                    recupCouleur = self.parent.recupJoueur(j.proprietaire)
                     if k == "Vaisseau":  # CREATION DU CARRE ROUGE REPRESENTANT LE VAISSEAU
                         self.canevas.create_image(j.x, j.y, image= self.images["Atck"+ recupCouleur.couleur],
                                                       tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact", "False"))
