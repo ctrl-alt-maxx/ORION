@@ -73,6 +73,62 @@ class Etoile():
 
         self.vie = 500 # nbr de vie de la planete
         self.key_en_construction = None
+        self.cout = self.cout_selon_niveau()
+
+    # Amélioration de l'étoile
+
+    '''
+    Fonction définit les ressources nécessaires pour l'amélioration de l'étoile vers le prochain niveau
+    Args:
+    
+    '''
+    def cout_selon_niveau(self):
+        if self.niveauEtoile == 1:
+            self.cout = {  "Fer": 1000,
+                            "Cuivre": 750,
+                            "Or" : 500,
+                            "Titane": 250,
+                            "Hydrogene": 200,
+                            "Plutonium": 100,
+                            "Antimatiere": 0}
+
+        elif self.niveauEtoile == 2:
+            self.cout = {   "Fer": 2000,
+                            "Cuivre": 2500,
+                            "Or": 1000,
+                            "Titane": 500,
+                            "Hydrogene": 400,
+                            "Plutonium": 200,
+                            "Antimatiere": 50}
+
+    '''
+        Fonction vérifie si l'amélioration de l'étoile est possible et valide
+        Args:
+
+    '''
+    def is_amelioration_possible(self):
+        if self.isRessourcesValides(self):
+            if self.niveauEtoile != 3:
+                return True
+        return False
+
+    '''
+        Fonction exécute l'amélioration de l'étoile et augmente son niveau
+        Args:
+
+    '''
+    def ameliorer_etoile(self):
+        key_ressources = self.inventaire.keys()
+        if self.is_amelioration_possible():
+            for i in key_ressources:
+                self.inventaire.update({i:self.inventaire.get(i) - self.cout.get(i)})
+            self.niveauEtoile += 1
+            self.cout_selon_niveau()
+            print("L'étoile ", self.nomEtoile, " a été amélioré. Elle est maintenant au niveau ", self.niveauEtoile, ".")
+
+
+    # Construction des installations
+
     '''
     Fonction permet de construire ou d'améliorer une installation, elle retire les ressources utilisées et update les installations de l'étoile
     Args:
@@ -141,6 +197,7 @@ class Etoile():
     def fin_construction_installation(self, installation):
         self.installations.update({installation.type:installation})
 
+    # Production des ressources
 
     '''
     Permet de produire dans chaque usine les ressources de l'étoile. La fonction est appelée à chaque tick.
