@@ -147,6 +147,7 @@ class Vue():
         self.cadre_bouton_transferer = Frame(self.cadreoutils ,width=200, height=200)
         self.cadre_bouton_transferer.pack()
         self.bouton = Button(self.cadre_bouton_transferer, text="bouton transfere",command=self.choisir_transfere)
+        print("TA MEREEEEEE")
         self.bouton.pack()
         #creation des labels autres
         self.timer_partie = Label()
@@ -315,7 +316,7 @@ class Vue():
         #appeler transfererRessources qui est dans modele pour soustraction
         self.parent.recupQuantiteMatiereDeUtilisateur(dictChargement, self.idCargo); #la jenvoie les quantites que lutilisateur veut au Controlleur
         #memoriser letoile ou est pose le cargot
-        self.etoileOuEstPoseLeCargo = self.etoileSelectionne
+        #self.etoileOuEstPoseLeCargo = self.etoileSelectionne
         self.cadre_choisir_transfere.pack_forget()
 
 
@@ -1208,9 +1209,26 @@ class Vue():
                     self.montrer_etoile_selection()
                     print("nom de letoile = " + tags[1])
                     self.etoileSelectionne = tags[1]
+                    if (self.cargoArrive):  # si il est accoste
+                        # avoir id de letoile ou il est accoste
+                        self.etoileOuEstPoseLeCargo = tags[1]
+                        print("etoile selectionne = " + self.etoileSelectionne + "  Idetoile ou est pose le cargot : " + self.etoileOuEstPoseLeCargo)
+
+                    elif (self.estAccos == False):
+                        self.cadre_bouton_transferer.pack_forget()
+
                     #enlenver menu transferer pour vaisseau cargo
                     self.cadre_choisir_transfere.pack_forget()
-                    
+                    #pour transferer, on fait apparaitre le bouton transferer quand le cargot arrive sur l'etoile. On doit cliquer sur l'etoile pour voir le bouton
+                    # affiche le bouton transferer
+                    if (self.etoileSelectionne != self.etoileOuEstPoseLeCargo):
+                        print("est rentre!!!")
+                        self.faireApparaitreBoutonTransfere()
+
+                    elif (self.etoileSelectionne == self.etoileOuEstPoseLeCargo):
+                        print("enleve le bouton")
+                        self.cadre_bouton_transferer.pack_forget()
+
                     if self.shipSelected != []: #TOUT LES VAISSEAUX SELECTIONNE
                         for ship in self.shipSelected:
                             self.parent.cibler_flotte(ship[1], tags[1], tags[2])#cest ca qui envoi le vaisseau a letoile selectionne
@@ -1218,6 +1236,7 @@ class Vue():
                         self.ma_selection = []
                     else:
                         self.montrer_etoile_selection()
+
                 elif tags[2] == "Flotte": #quand je clique sur un vaisseau
                     self.montrer_flotte_selection()
                     self.type_vaisseau_selectionne = tags[3] #je recupere le type de vaisseau selectionne
@@ -1233,19 +1252,17 @@ class Vue():
                     self.cadre_menu_ressource_ex.pack_forget()
                     self.forget_all()
                     #si je clique sur le cargot
-                    if(self.type_vaisseau_selectionne == "Cargo"):
-                        if(self.cargoArrive):#si il est accoste
-                            print("Val CargoEstAccoste : " + str(self.cargoArrive))
-                            #affiche le bouton transferer
-                            if(self.etoileSelectionne != self.etoileOuEstPoseLeCargo):
-                               print("etoile selectionne = " + self.etoileSelectionne + "  etoile ou est pose le cargot" + self.etoileOuEstPoseLeCargo)
-                               self.faireApparaitreBoutonTransfere()
-                            elif(self.etoileSelectionne == self.etoileOuEstPoseLeCargo):
-                                self.bouton.pack_forget()
+                    # if(self.type_vaisseau_selectionne == "Cargo"):
+                    #     if(self.cargoArrive):#si il est accoste
+                    #         #avoir id de letoile ou il est accoste
+                    #         self.etoileOuEstPoseLeCargo = tags[1]
+                            # print("Val CargoEstAccoste : " + str(self.cargoArrive))
+                            # print("Cargot est accoste sur letoile : " + self.etoileOuEstPoseLeCargo)
 
 
-                        elif(self.estAccos == False):#mais quand il reaprt il ne repasse pas a False seul..
-                            self.cadre_bouton_transferer.pack_forget()
+
+                        # elif(self.estAccos == False):#mais quand il reaprt il ne repasse pas a False seul..
+                        #     self.cadre_bouton_transferer.pack_forget()
 
                     self.shipSelected.append(tags)
 
