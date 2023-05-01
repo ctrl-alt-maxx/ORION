@@ -10,7 +10,6 @@ import urllib.request
 from orion_modele import *
 from orion_vue import *
 
-
 class Controleur():
     def __init__(self):
         self.mon_nom = self.generer_nom()
@@ -139,8 +138,13 @@ class Controleur():
             self.vue.root.after(50, self.boucler_sur_lobby)
 
     # BOUCLE PRINCIPALE
+
     def boucler_sur_jeu(self):
         self.cadrejeu += 1  # increment du compteur de boucle de jeu
+        # TODO: appeler refresh de la vue
+
+        self.vue.refresh(self.cadrejeu)
+        self.vue.refreshEtoile(self.mon_nom)
 
         if self.cadrejeu % self.moduloappeler_serveur == 0:  # appel périodique au serveur
             if self.actionsrequises:
@@ -247,12 +251,16 @@ class Controleur():
         print("ok")
         return recup
 
+    def recupQuantiteMatiereDeUtilisateur(self, chargement):#dans chargement je met les quantites de matiere presente sur etoile
+     self.actionsrequises.append(self.monrecup_nom, "transfererRessources",[chargement])#chargement est un dictionnaire contenant les quantites de matieres que lutilisateurs souhaite
+
     def recupJoueur(self, nom):
         recup = self.modele.recupererJoueur(nom)
         return recup
 
-    # def recupQuantiteMatiereDeUtilisateur(self, chargement):#dans chargement je met les quantites de matiere presente sur etoile
-    #    self.actionsrequises.append(self.mon_nom, "transfererRessources",[chargement])#ajoute dans modele
+    def recupQuantiteMatiereDeUtilisateur(self, chargement, idcargo):#dans chargement je met les quantites de matiere presente sur etoile
+        self.actionsrequises.append([self.mon_nom, "transfererRessources",[chargement, idcargo]])#ajoute dans modele
+
 
     def construireInstallation(self, installation, id):
         self.actionsrequises.append([self.mon_nom, "construire", [installation, id, self.cadrejeu]])

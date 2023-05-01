@@ -72,6 +72,62 @@ class Etoile():
 
         self.vie = 500 # nbr de vie de la planete
         self.key_en_construction = None
+        self.cout = self.cout_selon_niveau()
+
+    # Amélioration de l'étoile
+
+    '''
+    Fonction définit les ressources nécessaires pour l'amélioration de l'étoile vers le prochain niveau
+    Args:
+    
+    '''
+    def cout_selon_niveau(self):
+        if self.niveauEtoile == 1:
+            self.cout = {  "Fer": 1000,
+                            "Cuivre": 750,
+                            "Or" : 500,
+                            "Titane": 250,
+                            "Hydrogene": 200,
+                            "Plutonium": 100,
+                            "Antimatiere": 0}
+
+        elif self.niveauEtoile == 2:
+            self.cout = {   "Fer": 2000,
+                            "Cuivre": 2500,
+                            "Or": 1000,
+                            "Titane": 500,
+                            "Hydrogene": 400,
+                            "Plutonium": 200,
+                            "Antimatiere": 50}
+
+    '''
+        Fonction vérifie si l'amélioration de l'étoile est possible et valide
+        Args:
+
+    '''
+    def is_amelioration_possible(self):
+        if self.isRessourcesValides(self):
+            if self.niveauEtoile != 3:
+                return True
+        return False
+
+    '''
+        Fonction exécute l'amélioration de l'étoile et augmente son niveau
+        Args:
+
+    '''
+    def ameliorer_etoile(self):
+        key_ressources = self.inventaire.keys()
+        if self.is_amelioration_possible():
+            for i in key_ressources:
+                self.inventaire.update({i:self.inventaire.get(i) - self.cout.get(i)})
+            self.niveauEtoile += 1
+            self.cout_selon_niveau()
+            print("L'étoile ", self.nomEtoile, " a été amélioré. Elle est maintenant au niveau ", self.niveauEtoile, ".")
+
+
+    # Construction des installations
+
     '''
     Fonction permet de construire ou d'améliorer une installation, elle retire les ressources utilisées et update les installations de l'étoile
     Args:
@@ -81,7 +137,7 @@ class Etoile():
         if type == "entrepot":
             installation = Entrepot(self.parent,self.proprietaire,"entrepot", cadre)
         else:
-            installation = Usine(self.parent, self.proprietaire, "usine", 25, cadre)
+            installation = Usine(self.parent, self.proprietaire, "usine", cadre,25)
         if self.is_construisible(installation):
             #TODO POSSIBILITÉ DE CHANGER LA FONCTION EN BOUCLE
             self.inventaire.update({"Fer":          self.inventaire.get("Fer") - installation.cout.get("Fer")})
@@ -140,6 +196,7 @@ class Etoile():
     def fin_construction_installation(self, installation):
         self.installations.update({installation.type:installation})
 
+    # Production des ressources
 
     '''
     Permet de produire dans chaque usine les ressources de l'étoile. La fonction est appelée à chaque tick.
@@ -314,11 +371,11 @@ class Cargo(Vaisseau):  #TODO À CHANGER
         if self.isTransferable(chargement):
             listeRessources = chargement.keys()
             #pour le cargo
-            for i in range (0, len(listeRessources)):
-                self.inventaire.update(listeRessources[i], self.inventaire.get(listeRessources[i]) + chargement.get(listeRessources[i]))
+            for k in listeRessources:
+                self.inventaire.update({k: self.inventaire.get(k) + int(chargement.get(k))})
             #pour l'étoile
-            for i in range (0, len(listeRessources)):
-                self.estAccoste.inventaire.update(listeRessources[i], self.estAccoste.inventaire.get(listeRessources) - chargement.get(listeRessources[i]))
+            for k in listeRessources:
+                self.estAccoste.inventaire.update({k: self.estAccoste.inventaire.get(k) - int(chargement.get(k))})
 
     '''
     Fonction détermine si un transfert de ressources d'étoile -> cargo est possible.
@@ -327,19 +384,18 @@ class Cargo(Vaisseau):  #TODO À CHANGER
     Returns false si le transfert est impossible, true si le transfert est valide
     '''
     def isTransferable(self, chargement):
-        listeQuantites = chargement.values()
         listeRessources = chargement.keys()
-        qtTotale:int = 0
+        qtTotale = 0
 
         #Pour déterminer si la capacité du cargo n'est pas dépassée
-        for i in range (0, len(listeQuantites)):
-            qtTotale += listeQuantites[i]
+        for k in listeRessources:
+            qtTotale += int(chargement.get(k))
         if qtTotale > self.capaciteMax:
             return False
 
         #Pour déterminer si les quantités choisies sont valides
-        for i in range (0, len(listeRessources)):
-            if chargement.get(listeRessources[i]) > self.estAccoste.inventaire.get(listeRessources[i]):
+        for k in listeRessources:
+            if int(chargement.get(k)) > self.estAccoste.inventaire.get(k):
                 return False
         return True
 
@@ -382,7 +438,8 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
                        "Eclaireur": {}}
         self.actions = {"creervaisseau": self.creervaisseau,    #Appel la fonction de création de vaisseau : À DÉPLACER DANS LA CLASS ENTREPOT
                         "ciblerflotte": self.ciblerflotte,
-                        "construire": self.construire}      #Appel la fonction
+                        "construire": self.construire,
+                        "transfererRessources": self.transfert}      #Appel la fonction
 
         self.poubelle = []
 
@@ -392,6 +449,11 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
         for e in self.etoilescontrolees:
             if e.id == idEtoile:
                 e.creer_installation(typeInstallation, params[2])
+
+    def transfert(self, params):
+        dictCargo = self.flotte.get("Cargo")
+        dictCargo.get(params[1]).transfererRessources(params[0])
+
 
     def creervaisseau(self, params): #Fonction qui permet de créer un vaisseau \\\ À DÉPLACER DANS LA CLASSE ENTREPOT : IL FAUT CRÉER UN VAISSEAU DANS UN ENTREPOT, PAS PAR LE JOUEUR
         for e in self.etoilescontrolees:
@@ -462,10 +524,15 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
                         yVaisseau = j.y
 
                         if(abs(xEtoile - xVaisseau) <= 100 and abs(yEtoile - yVaisseau) <= 100): #Création de la hitbox
+                            j.estAccoste = rep[1]
                             print("Hitbox collided")#quand le cargot arrive sur etoile on arrive ICI!!!
+                            #si i == "Eclaireur"
+                            #si la planete est neutre
+                            #bool peuConstruireEntrepot = true
                             if(i == "Cargo"):#si je selectionne un cargo
                                 #si le cargot est accoste
-                                 cargoEstAccost = True
+                                cargoEstAccost = True
+                                j.vider_cargo()
                                 #faire boolean cargotEstAccos = true -> mais il faut remettre cette variable a false a la ligne 208. Comment la recuperer la variable de la ligne 208??
                                 #utiliser cette variable avec la fonction recupererValeurEstAccoste dans le main et levoyer dans Vue.
 
