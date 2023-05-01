@@ -175,6 +175,8 @@ class Controleur():
         self.vue.root.after(self.maindelai,
                             self.boucler_sur_jeu)  # appel ulterieur de la meme fonction jusqu'a l'arret de la partie
 
+        
+
     ##############   FONCTIONS pour serveur #################
     # methode speciale pour remettre les parametres du serveur a leurs valeurs par defaut
     def reset_partie(self):

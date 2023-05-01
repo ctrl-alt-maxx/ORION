@@ -194,6 +194,7 @@ class Vaisseau():
         self.Deplacement = None
         self.cadreDebutConstruction = cadreDebutConstruction
         self.type_vaisseau = type_vaisseau
+        self.deleted = False
 
 
         #HP du vaiseau
@@ -383,6 +384,8 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
                         "ciblerflotte": self.ciblerflotte,
                         "construire": self.construire}      #Appel la fonction
 
+        self.poubelle = []
+
     def construire(self, params):
         typeInstallation = params[0]
         idEtoile = params[1]
@@ -439,11 +442,17 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
     def jouer_prochain_coup(self):
         self.avancer_flotte()
 
+    def deletePoubelle(self):
+        print(self.poubelle, self.flotte)
+        for i in self.poubelle:
+            del self.flotte.get(i.type_vaisseau)[i.id]
+        self.poubelle.clear()
+
     def avancer_flotte(self, chercher_nouveau=0):
         cargoEstAccost = False
         for i in self.flotte: #Chaque type de vaisseau
-             for j in self.flotte[i]:
-                j = self.flotte[i][j]
+             for z in self.flotte[i]:
+                j = self.flotte[i][z]
                 rep = j.jouer_prochain_coup(chercher_nouveau) #Retourne liste ["TypeObjet", objet]
                 if rep and j:
                     if rep[0] == "Etoile":
@@ -487,12 +496,17 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
                                     j.parent.etoilescontrolees.append(rep[1])
                                     rep[1].proprietaire = j.proprietaire
 
-                                if(j.vie == 0):
+                                if(j.vie == 0 and j.proprietaire == self.nom):
                                     self.parent.parent.supprimer_vaisseau(j.id)
-                                    self.flotte.pop(j) ################################ delete j #########################################
+                                    self.poubelle.append(j)
+
+
+
+
 
                     elif rep[0] == "Porte_de_ver":
                         pass
+        self.deletePoubelle()
 
 class Installation():
     def __init__(self, parent, proprietaire, type, cadre_debut_construction):
@@ -630,6 +644,7 @@ class Modele():
         self.creeretoiles(joueurs)
         nb_trou = int((self.hauteur * self.largeur) / 5000000)
         self.creer_troudevers(nb_trou)
+
 
     def recupererEtoile(self, id):
         id_text = str(id)
