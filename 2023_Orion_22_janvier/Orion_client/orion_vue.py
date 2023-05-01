@@ -653,11 +653,12 @@ class Vue():
 
             self.boutonConstruireUsine = Button(self.cadre_bouton, text="Construire Usine",foreground='#F5E15D', background='#242423', font=('Arial', 12))
             self.boutonConstruireUsine.config(command=self.construire_usine)
+
             self.boutonAmeliorerUsine = Button(self.cadre_bouton, text="Améliorer Usine",foreground='#CB92CE', background='#242423', font=('Arial', 12))
 
-            if self.nbr_usine == 0:
+            if self.recup.installations.get("usine") is None:
                 self.boutonConstruireUsine.pack(fill=X)
-            elif self.nbr_usine == 1:
+            else:
                 self.boutonConstruireUsine.pack_forget()
                 self.boutonAmeliorerUsine.pack(fill=X)
 
