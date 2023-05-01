@@ -1127,6 +1127,7 @@ class Vue():
         self.canevas.delete("artefact")
         self.canevas.delete("objet_spatial")
         self.canevas.delete("marqueur")
+        self.listeVaisseau = []
 
         if self.ma_selection != None:  # SI JE NE SELECTIONNE RIEN
             joueur = mod.joueurs[self.ma_selection[0]]  # joueurs[] liste des nom des joueurs
@@ -1158,16 +1159,20 @@ class Vue():
                     j = i.flotte[k][j]
                     recupCouleur = self.parent.recupJoueur(j.proprietaire)
                     if k == "Vaisseau":  # CREATION DU CARRE ROUGE REPRESENTANT LE VAISSEAU
+
                         self.canevas.create_image(j.x, j.y, image= self.images["Atck"+ recupCouleur.couleur],
                                                       tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact", "False"))
                     elif k == "Cargo":  # CREATION DU CARGO
-                        self.canevas.create_image(j.x, j.y, image= self.images["cargo"],
-                                                      tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact", "False"))
+                        x = self.canevas.create_image(j.x, j.y, image=self.images["cargo"],
+                                                      tags=(
+                                                      j.proprietaire, str(j.id), "Flotte", k, "artefact", "False"))
+                        self.listeVaisseau.append(x)
 
                     elif k == "Eclaireur": #CREATION DE L'ÉCLAIREUR
-
-                        self.canevas.create_image(j.x, j.y, image= self.images["Spy"+ recupCouleur.couleur],
-                                                  tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact", "True"))
+                        x = self.canevas.create_image(j.x, j.y, image=self.images["Spy" + recupCouleur.couleur],
+                                                      tags=(
+                                                      j.proprietaire, str(j.id), "Flotte", k, "artefact", "True"))
+                        self.listeVaisseau.append(x)
         for t in self.modele.trou_de_vers:
             i = t.porte_a
             for i in [t.porte_a, t.porte_b]:
@@ -1197,6 +1202,13 @@ class Vue():
         self.canevas.create_oval((j.x - tailleF), (j.y - tailleF),
                                  (j.x + tailleF), (j.y + tailleF), fill=i.couleur,
                                  tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact"))
+
+    def supprimer_vaisseau(self, id):
+        print(id)
+        print(self.canevas.gettags(id))
+        self.canevas.delete(id)
+
+
 
     def cliquer_cosmos(self, evt):  # DES QU'ON CLIQUE QUELQUE PART DANS LE JEU -> travailler avec ca
         self.selectedTags = self.canevas.gettags(CURRENT)

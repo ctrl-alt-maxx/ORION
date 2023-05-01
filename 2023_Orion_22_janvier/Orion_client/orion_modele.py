@@ -49,7 +49,6 @@ class Etoile():
 
         self.id = get_prochain_id()
         self.parent = parent
-        #self.proprietaire = ""
         self.x = x
         self.y = y
         self.taille = random.randrange(4, 8)
@@ -181,7 +180,7 @@ class Etoile():
 
         for k in self.key_en_construction:
             if self.en_construction.get(k) is not None:
-                if k =="entrepot":
+                if k == "entrepot":
                     self.verifier_fin_construction_selon_installation(cadre, k, 100) # Temps à changer
                 else:
                     self.verifier_fin_construction_selon_installation(cadre, k, 200) # Temps à changer
@@ -227,7 +226,7 @@ class Etoile():
             for k in generation:
                 if tick % 75 == 0:
                     qt = valeursRessources.get(k) * (usine.niveau + 1)
-                    newValeur = self.inventaire.get(k) + qt;
+                    newValeur = self.inventaire.get(k) + qt
                     self.inventaire.update({k:newValeur})
 
 class Position():
@@ -252,6 +251,7 @@ class Vaisseau():
         self.Deplacement = None
         self.cadreDebutConstruction = cadreDebutConstruction
         self.type_vaisseau = type_vaisseau
+        self.deleted = False
 
 
         #HP du vaiseau
@@ -263,7 +263,7 @@ class Vaisseau():
         self.espace_cargo = 0
         self.energie = 100
         self.taille = 5
-        self.vitesse = 2
+        self.vitesse = 10
         self.cible = 0
         self.type_cible = None                              # Type de cible (Étoile ou porte de ver)
         self.angle_cible = 0                                # Angle de direction
@@ -277,7 +277,7 @@ class Vaisseau():
             cible = random.choice(self.parent.parent.etoiles)
             self.acquerir_cible(cible, "Etoile")
 
-    def acquerir_cible(self, cible, type_cible):                #Utilisé seulement par l'AI
+    def acquerir_cible(self, cible, type_cible):
         self.type_cible = type_cible
         self.cible = cible
         self.angle_cible = hlp.calcAngle(self.x, self.y, self.cible.x, self.cible.y)
@@ -298,7 +298,7 @@ class Vaisseau():
     def arriver_etoile(self):   #Fonction pour prendre possession d'une étoile
         #self.parent.log.append(                                                                                            journal de débogagge (inutile)
             #["Arrive:", self.parent.parent.cadre_courant, "Etoile", self.id, self.cible.id, self.cible.proprietaire])
-        if not self.cible.proprietaire:
+        if not self.cible.proprietaire and self.cible.proprietaire != "neutre":
             self.cible.proprietaire = self.proprietaire     #Associer un nouveau propriétaire
         cible = self.cible
         self.cible = 0
@@ -441,6 +441,8 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
                         "construire": self.construire,
                         "transfererRessources": self.transfert}      #Appel la fonction
 
+        self.poubelle = []
+
     def construire(self, params):
         typeInstallation = params[0]
         idEtoile = params[1]
@@ -502,14 +504,19 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
     def jouer_prochain_coup(self):
         self.avancer_flotte()
 
+    def deletePoubelle(self):
+        print(self.poubelle, self.flotte)
+        for i in self.poubelle:
+            del self.flotte.get(i.type_vaisseau)[i.id]
+        self.poubelle.clear()
+
     def avancer_flotte(self, chercher_nouveau=0):
         cargoEstAccost = False
         for i in self.flotte: #Chaque type de vaisseau
-
-             for j in self.flotte[i]:
-                j = self.flotte[i][j]
+             for z in self.flotte[i]:
+                j = self.flotte[i][z]
                 rep = j.jouer_prochain_coup(chercher_nouveau) #Retourne liste ["TypeObjet", objet]
-                if rep:
+                if rep and j:
                     if rep[0] == "Etoile":
                         xEtoile = rep[1].x
                         yEtoile = rep[1].y
@@ -529,26 +536,36 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
                                 #faire boolean cargotEstAccos = true -> mais il faut remettre cette variable a false a la ligne 208. Comment la recuperer la variable de la ligne 208??
                                 #utiliser cette variable avec la fonction recupererValeurEstAccoste dans le main et levoyer dans Vue.
 
-
-
                             j.estAccoste = rep[1] #dans estAccoste est stocke l<id de letoile ou le cargot est accoste -> donc il a une valeur id donc sera true
                             self.parent.parent.recupererValeurEstAccoste(j.estAccoste, cargoEstAccost)#cette fonction est cree dans le main -> pb: sera toujours true
                             self.etoilescontrolees.append(rep[1])
+
                             if rep[1].proprietaire == 'neutre' or rep[1].vie <= 0:
                                 rep[1].proprietaire = j.proprietaire
                                 self.parent.parent.afficher_etoile(self.nom, rep[1])
-                            print(rep[1].proprietaire, j.proprietaire)
 
                             if rep[1].proprietaire != j.proprietaire and rep[1].proprietaire != 'neutre':
-                                if( rep[1].vie > j.vie):
+                                if(rep[1].vie > j.vie):
                                     rep[1].vie -= j.vie
+                                    j.vie = 0
+                                elif(rep[1].vie == j.vie):
+                                    rep[1].vie = 0
                                     j.vie = 0
                                 else:
                                     j.vie -= rep[1].vie
                                     rep[1].vie = 0
 
+                                if rep[1].vie <= 0:
+                                    listeCles = rep[1].parent.joueurs
+                                    for k in listeCles:
+                                        joueur = rep[1].parent.joueurs.get(k)
+                                        joueur.etoilescontrolees.remove(rep[1])
+                                    j.parent.etoilescontrolees.append(rep[1])
+                                    rep[1].proprietaire = j.proprietaire
 
-                                print(rep[1].vie, j.vie)
+                                if(j.vie == 0 and j.proprietaire == self.nom):
+                                    self.parent.parent.supprimer_vaisseau(j.id)
+                                    self.poubelle.append(j)
 
 
 
@@ -556,6 +573,7 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
 
                     elif rep[0] == "Porte_de_ver":
                         pass
+        self.deletePoubelle()
 
 class Installation():
     def __init__(self, parent, proprietaire, type, cadre_debut_construction):
@@ -667,7 +685,7 @@ class Entrepot(Installation):
             if self.capacite.get(k) is not None:
                 if cadre == self.capacite.get(k).cadreDebutConstruction + 100:
                     self.v = self.capacite.get(k)
-                    print(self.v)
+                    print (self.v)
                     self.v.parent.finConstructionVaisseau(self.v)
                     self.capacite.update({k:None})
 
@@ -693,6 +711,7 @@ class Modele():
         self.creeretoiles(joueurs)
         nb_trou = int((self.hauteur * self.largeur) / 5000000)
         self.creer_troudevers(nb_trou)
+
 
     def recupererEtoile(self, id):
         id_text = str(id)
