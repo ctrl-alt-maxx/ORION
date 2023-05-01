@@ -104,8 +104,6 @@ class Vue():
         self.cadre_menu_ressource = Frame()
         self.cadre_menu_ressource_ex = Frame()
         self.cadre_bouton_construction_vaisseau = Frame()
-        self.cadre_construire_entrepot = Frame()
-        self.cadre_construire_usine = Frame()
         self.cadre_bouton_transferer = Frame()
         self.cadre_choisir_transfere = Frame()
 
@@ -147,7 +145,6 @@ class Vue():
         self.cadre_bouton_transferer = Frame(self.cadreoutils ,width=200, height=200)
         self.cadre_bouton_transferer.pack()
         self.bouton = Button(self.cadre_bouton_transferer, text="bouton transfere",command=self.choisir_transfere)
-        print("TA MEREEEEEE")
         self.bouton.pack()
         #creation des labels autres
         self.timer_partie = Label()
@@ -474,6 +471,8 @@ class Vue():
         self.btnmini = Button(self.cadreinfogen, text="MINI-MAP", foreground='#FCFCFC', background='#30292F', font=('Arial', 10))
         self.btnmini.bind("<Button>", self.afficher_mini)
         self.btnmini.pack(side="left")
+        self.nbEtoilePossession = Label(self.cadreinfogen, foreground='#FCFCFC', background='#30292F', font=('Arial', 10))
+        self.nbEtoilePossession.pack(side="left")
 
         # PETITE FENETRE POUR LES 2 BOUTONS VAISSEAU ET CARGO-----------------------------------------------------------------------------
         self.cadreinfochoix = Frame(self.cadreinfo, height=200, width=200, bg="light grey")
@@ -555,10 +554,10 @@ class Vue():
         :param start_time: le temps de depart
         """
         if obj == "entrepot":
-            self.percentage_label = Label(self.cadre_construire_entrepot, foreground='#FCFCFC', background='#30292F',
+            self.percentage_label = Label(self.cadreoutils, foreground='#FCFCFC', background='#30292F',
                                       font=('Arial', 12))
         elif obj == "usine":
-            self.percentage_label = Label(self.cadre_construire_usine, foreground='#FCFCFC', background='#30292F',
+            self.percentage_label = Label(self.cadreoutils, foreground='#FCFCFC', background='#30292F',
                                       font=('Arial', 12))
         elif obj == "vaisseau":
             self.percentage_label = Label(self.cadreoutils, foreground='#FCFCFC', background='#30292F',
@@ -566,7 +565,7 @@ class Vue():
         self.objet = obj
         self.startTime = start_time
         self.started = True
-        self.percentage_label.pack()
+        self.percentage_label.pack(fill=X)
 
     def timer_end(self):
         """
@@ -595,7 +594,7 @@ class Vue():
         :param cadre: le temps actuel
         """
         if(self.started == True and self.strPourcentage < 100):
-            self.strPourcentage = ((cadre - self.startTime) / 100) * 100
+            self.strPourcentage = int(((cadre - self.startTime) / 100) * 100)
             self.percentage_label.config(text=str(self.strPourcentage) + "%")
 
             print(self.strPourcentage)
@@ -603,6 +602,14 @@ class Vue():
         elif self.strPourcentage == 100:
             self.timer_end()
 
+    def refreshEtoile(self,mon_nom):
+        """
+        fonction qui retourn le nombre d'etoile que le joueur controle
+        :param mon_nom: 
+        :return:
+        """
+        nbEtoile = len(self.parent.recupJoueur(mon_nom).etoilescontrolees)
+        self.nbEtoilePossession.config(text="Étoiles Contrôlées: " + str(nbEtoile))
 
 
 
@@ -612,13 +619,10 @@ class Vue():
         self.cadre_menu_ressource.pack_forget()
         self.cadre_menu_ressource_ex.pack_forget()
         self.cadre_menu_installation.pack_forget()
-        self.cadre_construire_entrepot.pack_forget()
         self.cadre_bouton_construction_vaisseau.pack_forget()
         self.cadre_bouton_transferer.pack_forget()
         self.cadre_choisir_transfere.pack_forget()
 
-        #essai
-        self.cadre_construire_usine.pack_forget()
 
     def menu_installation(self):#est appele quand je clique sur le bouton "Installation"
             self.recup = self.parent.recupEtoile(self.ma_selection[1])
@@ -895,17 +899,12 @@ class Vue():
         self.label_antimatiere_e.pack(fill=X)
 
     def construire_entrepot(self):#on arrive ici quand on clique sur le bouton "Construire Entrepot"
-        #vider le frame
         self.cadre_menu_installation.pack_forget()
-        self.cadre_construire_entrepot =  Frame(self.cadreoutils,height=200, width=200, bg="pink")#on creer un cadre que lon met dans cadre_outil
-        self.cadre_construire_entrepot.pack(side=LEFT, fill=Y)
         self.parent.construireInstallation("entrepot", self.ma_selection[1]) #pour construire entrepot -> la fonction va veifier si on peut construire entrepot
         self.timer_start(self.parent.cadrejeu,"entrepot") #on lance le timer pour construire entrepot
 
     def construire_usine(self):# on arrive ici quand on clique sur bouton construire_usine
         self.cadre_menu_installation.pack_forget()
-        self.cadre_construire_usine = Frame(self.cadreoutils, height=200, width=200, bg="red")
-        self.cadre_construire_usine.pack(side=LEFT, fill=Y)
         self.parent.construireInstallation("usine", self.ma_selection[1])
         self.timer_start(self.parent.cadrejeu,"usine")
 
