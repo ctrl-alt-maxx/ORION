@@ -138,7 +138,7 @@ class Etoile():
         if type == "entrepot":
             installation = Entrepot(self.parent,self.proprietaire,"entrepot", cadre)
         else:
-            installation = Usine(self.parent, self.proprietaire, "usine", 25, cadre)
+            installation = Usine(self.parent, self.proprietaire, "usine", cadre,25)
         if self.is_construisible(installation):
             #TODO POSSIBILITÉ DE CHANGER LA FONCTION EN BOUCLE
             self.inventaire.update({"Fer":          self.inventaire.get("Fer") - installation.cout.get("Fer")})
