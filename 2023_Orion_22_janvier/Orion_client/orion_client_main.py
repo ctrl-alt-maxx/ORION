@@ -144,6 +144,7 @@ class Controleur():
         # TODO: appeler refresh de la vue
 
         self.vue.refresh(self.cadrejeu)
+        self.vue.refreshEtoile(self.mon_nom)
 
         if self.cadrejeu % self.moduloappeler_serveur == 0:  # appel périodique au serveur
             if self.actionsrequises:
