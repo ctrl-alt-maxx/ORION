@@ -1158,10 +1158,10 @@ class Vue():
                 for j in i.flotte[k]:
                     j = i.flotte[k][j]
                     recupCouleur = self.parent.recupJoueur(j.proprietaire)
-                    if k == "Vaisseau":  # CREATION DU CARRE ROUGE REPRESENTANT LE VAISSEAU
+                    if k == "Attack":  # CREATION DU CARRE ROUGE REPRESENTANT LE VAISSEAU
 
                         self.canevas.create_image(j.x, j.y, image= self.images["Atck"+ recupCouleur.couleur],
-                                                      tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact", "False"))
+                                                      tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact", "True"))
                     elif k == "Cargo":  # CREATION DU CARGO
                         x = self.canevas.create_image(j.x, j.y, image=self.images["cargo"],
                                                       tags=(
@@ -1277,17 +1277,17 @@ class Vue():
                         #     self.cadre_bouton_transferer.pack_forget()
 
                     self.shipSelected.append(tags)
-
-            elif ("Etoile" == tags[2] or "Porte_de_ver" == tags[2]) and self.shipSelected != []:#si je clique sur quelque chose qui nest pas a moi
+            elif ("Etoile" == tags[2] or "Porte_de_ver" == tags[2]) and self.shipSelected != []:
                 for ship in self.shipSelected:
-                    if "Etoile" == tags[2] and ship[5] == "True":#si jai clique sur une etoile et que le vaisseau est un eclaireur
-                        self.peutConstuireEntrpot = True
-                        self.parent.cibler_flotte(ship[1], tags[1], tags[2]) #envoi la flotte sur letoile selectionne
-                        self.shipSelected = []#remettre ce quona vait selectionne a rien
+                    if "Etoile" == tags[2] and ship[5] == "True":
+                        if ("neutre" == tags[0] and ship[3] == "Eclaireur") or (not "neutre" == tags[0] and ship[3] == "Attack"):
+                            self.parent.cibler_flotte(ship[1], tags[1], tags[2])
+                            self.shipSelected = []
                     elif "Porte_de_ver" == tags[2]:
                         self.parent.cibler_flotte(ship[1], tags[1], tags[2])
                         self.shipSelected = []
                     self.ma_selection = None
+
         else:  # aucun tag => On a clické dans le vide donc aucun objet sur la carte
             print("Region inconnue")
             self.forget_all()
@@ -1309,7 +1309,7 @@ class Vue():
     def debuter_multiselection(self, evt):
         self.debutselect = (self.canevas.canvasx(evt.x), self.canevas.canvasy(evt.y))
         x1, y1 = (self.canevas.canvasx(evt.x), self.canevas.canvasy(evt.y))
-        self.selecteur_actif = self.canevas.create_rectangle(x1, y1, x1 + 1, y1 + 1, outline="red", width=2,
+        self.selecteur_actif = self.canevas.create_rectangle(x1, y1, x1 + 1, y1 + 1, outline=self.modele.joueurs[self.mon_nom].couleur, width=2,
                                                              dash=(2, 2), tags=("", "selecteur", "", ""))
 
     def afficher_multiselection(self, evt):

@@ -240,7 +240,7 @@ class Deplacement():
         self.positionDestination = positionDestination
 
 
-class Vaisseau():
+class Attack():
     def __init__(self, parent, nom, x, y, estAccoste, tempsConstruction, cadreDebutConstruction, type_vaisseau):
         self.parent = parent
         self.id = get_prochain_id()
@@ -322,13 +322,13 @@ class Vaisseau():
 
         if(self.type_Vaisseau == "Cargo"):
             self.espace_cargo += 500
-        elif(self.type_Vaisseau == "Vaisseau"):
+        elif(self.type_Vaisseau == "Attack"):
             self.vie += 250
 
 
-class Cargo(Vaisseau):  #TODO À CHANGER
+class Cargo(Attack):  #TODO À CHANGER
     def __init__(self, parent, nom, x, y, estAccoste, tempsConstruction, cadreDebutConstruction, type_vaisseau):
-        Vaisseau.__init__(self, parent, nom, x, y, estAccoste, tempsConstruction, cadreDebutConstruction, type_vaisseau)
+        Attack.__init__(self, parent, nom, x, y, estAccoste, tempsConstruction, cadreDebutConstruction, type_vaisseau)
         self.capaciteMax = 1000
         self.capaciteUtilise = 0
         self.inventaire = {"Fer":0,
@@ -413,9 +413,9 @@ class Cargo(Vaisseau):  #TODO À CHANGER
             qtMax = self.capaciteMax - self.capaciteUtilise
         return qtMax
 
-class Eclaireur(Vaisseau):  #TODO À CHANGER
+class Eclaireur(Attack):  #TODO À CHANGER
     def __init__(self, parent, nom, x, y, estAccoste, tempsConstruction, cadreDebutConstruction, type_vaisseau):
-        Vaisseau.__init__(self, parent, nom, x, y, estAccoste, tempsConstruction, cadreDebutConstruction, type_vaisseau)
+        Attack.__init__(self, parent, nom, x, y, estAccoste, tempsConstruction, cadreDebutConstruction, type_vaisseau)
         self.energie = 500
         self.taille = 4
         self.vitesse = 5
@@ -433,7 +433,7 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
         self.couleur = couleur
         #self.log = []      journal de débogage
         self.etoilescontrolees = [etoilemere]   #tableau de toutes les étoiles de l'empire contenant l'étoile mère par défaut
-        self.flotte = {"Vaisseau": {},  #Dictionnaire contenant un dictionnaire de tous les vaisseaux par type de vaisseau
+        self.flotte = {"Attack": {},  #Dictionnaire contenant un dictionnaire de tous les vaisseaux par type de vaisseau
                        "Cargo": {},
                        "Eclaireur": {}}
         self.actions = {"creervaisseau": self.creervaisseau,    #Appel la fonction de création de vaisseau : À DÉPLACER DANS LA CLASS ENTREPOT
@@ -463,8 +463,8 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
                     cadreDebutConstruction = params[4]
                     if type_vaisseau == "Cargo":
                         v = Cargo(self, self.nom, int(params[1]) + 10, int(params[2]), e.id, 15, cadreDebutConstruction, type_vaisseau)
-                    elif type_vaisseau == "Vaisseau":
-                        v = Vaisseau(self, self.nom, int(params[1]) + 10, int(params[2]), e.id, 15, cadreDebutConstruction, type_vaisseau)
+                    elif type_vaisseau == "Attack":
+                        v = Attack(self, self.nom, int(params[1]) + 10, int(params[2]), e.id, 15, cadreDebutConstruction, type_vaisseau)
                     else:
                         v = Eclaireur(self, self.nom, int(params[1]) + 10, int(params[2]), e.id, 15, cadreDebutConstruction, type_vaisseau)
 
@@ -505,7 +505,6 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
         self.avancer_flotte()
 
     def deletePoubelle(self):
-        print(self.poubelle, self.flotte)
         for i in self.poubelle:
             del self.flotte.get(i.type_vaisseau)[i.id]
         self.poubelle.clear()
