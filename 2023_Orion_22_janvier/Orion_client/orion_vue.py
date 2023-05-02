@@ -861,8 +861,8 @@ class Vue():
         self.recup = self.parent.recupEtoile(self.ma_selection[1])
         self.forget_all()
 
-        self.cadre_menu_ressource_ex = Frame(self.cadreoutils, height=200, width=100, bg="blue")
-        self.cadre_menu_ressource_ex.pack(side=LEFT, fill=Y)
+        self.cadre_menu_ressource_ex = Frame(self.cadreoutils, height=200, width=100, bg="#6F6D6D")
+        self.cadre_menu_ressource_ex.pack(fill=BOTH)
         self.a_clique_sur_installation = 0
 
         self.label_materiaux_e = Label(self.cadre_menu_ressource_ex, text="Matériaux :", anchor=CENTER,width=34, height=1, border=1, borderwidth=1,relief="solid", bg="#e0e0e0")
@@ -1139,6 +1139,7 @@ class Vue():
         self.canevas.delete("artefact")
         self.canevas.delete("objet_spatial")
         self.canevas.delete("marqueur")
+        self.listeVaisseau = []
 
         if self.ma_selection != None:  # SI JE NE SELECTIONNE RIEN
             joueur = mod.joueurs[self.ma_selection[0]]  # joueurs[] liste des nom des joueurs
@@ -1169,17 +1170,21 @@ class Vue():
                 for j in i.flotte[k]:
                     j = i.flotte[k][j]
                     recupCouleur = self.parent.recupJoueur(j.proprietaire)
-                    if k == "Vaisseau":  # CREATION DU CARRE ROUGE REPRESENTANT LE VAISSEAU
+                    if k == "Attack":  # CREATION DU CARRE ROUGE REPRESENTANT LE VAISSEAU
+
                         self.canevas.create_image(j.x, j.y, image= self.images["Atck"+ recupCouleur.couleur],
-                                                      tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact", "False"))
+                                                      tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact", "True"))
                     elif k == "Cargo":  # CREATION DU CARGO
-                        self.canevas.create_image(j.x, j.y, image= self.images["cargo"],
-                                                      tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact", "False"))
+                        x = self.canevas.create_image(j.x, j.y, image=self.images["cargo"],
+                                                      tags=(
+                                                      j.proprietaire, str(j.id), "Flotte", k, "artefact", "False"))
+                        self.listeVaisseau.append(x)
 
                     elif k == "Eclaireur": #CREATION DE L'ÉCLAIREUR
-
-                        self.canevas.create_image(j.x, j.y, image= self.images["Spy"+ recupCouleur.couleur],
-                                                  tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact", "True"))
+                        x = self.canevas.create_image(j.x, j.y, image=self.images["Spy" + recupCouleur.couleur],
+                                                      tags=(
+                                                      j.proprietaire, str(j.id), "Flotte", k, "artefact", "True"))
+                        self.listeVaisseau.append(x)
         for t in self.modele.trou_de_vers:
             i = t.porte_a
             for i in [t.porte_a, t.porte_b]:
@@ -1209,6 +1214,13 @@ class Vue():
         self.canevas.create_oval((j.x - tailleF), (j.y - tailleF),
                                  (j.x + tailleF), (j.y + tailleF), fill=i.couleur,
                                  tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact"))
+
+    def supprimer_vaisseau(self, id):
+        print(id)
+        print(self.canevas.gettags(id))
+        self.canevas.delete(id)
+
+
 
     def cliquer_cosmos(self, evt):  # DES QU'ON CLIQUE QUELQUE PART DANS LE JEU -> travailler avec ca
         self.selectedTags = self.canevas.gettags(CURRENT)
@@ -1277,17 +1289,17 @@ class Vue():
                         #     self.cadre_bouton_transferer.pack_forget()
 
                     self.shipSelected.append(tags)
-
-            elif ("Etoile" == tags[2] or "Porte_de_ver" == tags[2]) and self.shipSelected != []:#si je clique sur quelque chose qui nest pas a moi
+            elif ("Etoile" == tags[2] or "Porte_de_ver" == tags[2]) and self.shipSelected != []:
                 for ship in self.shipSelected:
-                    if "Etoile" == tags[2] and ship[5] == "True":#si jai clique sur une etoile et que le vaisseau est un eclaireur
-                        self.peutConstuireEntrpot = True
-                        self.parent.cibler_flotte(ship[1], tags[1], tags[2]) #envoi la flotte sur letoile selectionne
-                        self.shipSelected = []#remettre ce quona vait selectionne a rien
+                    if "Etoile" == tags[2] and ship[5] == "True":
+                        if ("neutre" == tags[0] and ship[3] == "Eclaireur") or (not "neutre" == tags[0] and ship[3] == "Attack"):
+                            self.parent.cibler_flotte(ship[1], tags[1], tags[2])
+                            self.shipSelected = []
                     elif "Porte_de_ver" == tags[2]:
                         self.parent.cibler_flotte(ship[1], tags[1], tags[2])
                         self.shipSelected = []
                     self.ma_selection = None
+
         else:  # aucun tag => On a clické dans le vide donc aucun objet sur la carte
             print("Region inconnue")
             self.forget_all()
@@ -1309,7 +1321,7 @@ class Vue():
     def debuter_multiselection(self, evt):
         self.debutselect = (self.canevas.canvasx(evt.x), self.canevas.canvasy(evt.y))
         x1, y1 = (self.canevas.canvasx(evt.x), self.canevas.canvasy(evt.y))
-        self.selecteur_actif = self.canevas.create_rectangle(x1, y1, x1 + 1, y1 + 1, outline="red", width=2,
+        self.selecteur_actif = self.canevas.create_rectangle(x1, y1, x1 + 1, y1 + 1, outline=self.modele.joueurs[self.mon_nom].couleur, width=2,
                                                              dash=(2, 2), tags=("", "selecteur", "", ""))
 
     def afficher_multiselection(self, evt):
