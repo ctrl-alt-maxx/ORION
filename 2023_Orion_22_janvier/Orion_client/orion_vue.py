@@ -849,8 +849,8 @@ class Vue():
         self.recup = self.parent.recupEtoile(self.ma_selection[1])
         self.forget_all()
 
-        self.cadre_menu_ressource_ex = Frame(self.cadreoutils, height=200, width=100, bg="blue")
-        self.cadre_menu_ressource_ex.pack(side=LEFT, fill=Y)
+        self.cadre_menu_ressource_ex = Frame(self.cadreoutils, height=200, width=100, bg="#6F6D6D")
+        self.cadre_menu_ressource_ex.pack(fill=BOTH)
         self.a_clique_sur_installation = 0
 
         self.label_materiaux_e = Label(self.cadre_menu_ressource_ex, text="Matériaux :", anchor=CENTER,width=34, height=1, border=1, borderwidth=1,relief="solid", bg="#e0e0e0")
