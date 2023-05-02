@@ -26,6 +26,11 @@ class Vue():
         self.root = Tk()
         self.root.title("Player: " + mon_nom)
 
+
+        self.images= {}
+
+        self.chargerimages()
+
         self.mon_nom = mon_nom
         # attributs
         self.taille_minimap = 240
@@ -54,9 +59,6 @@ class Vue():
         #self.img = None
         #self.pathImgEclaireur = Image.open('C:/Users/2077407/Documents/GitHub/C41/2023_Orion_22_janvier/img/eclaireur.png')
 
-        self.images= {}
-
-        self.chargerimages()
 
 
         #creation label Frame pour méthode methode_installation et methode_ressource
@@ -109,6 +111,7 @@ class Vue():
 
         #notification
         self.cadre_notification = Frame()
+        self.label_officier_img = Label()
         self.label_notification = Label()
 
         self.startTime = 0
@@ -428,8 +431,9 @@ class Vue():
                               yscrollcommand=self.scrollY.set, bg="grey11")
 
         #self.timer_partie = Label(self.cadrejeu, text="Temps écoulé: ", textvariable=self.ticks, width=10, height=1)
-        self.cadre_notification = Frame(self.cadrejeu, width=50, height=10, bg="grey11")
-        self.label_notification = Label(self.cadre_notification, text="c'est un label", width=50, height=10)
+        self.cadre_notification = Frame(self.cadrejeu, width=50, height=2, bg=None)
+        self.label_officier_img = Label(self.cadre_notification, image=self.images["officier"])
+        self.label_notification = Label(self.cadre_notification, text="...", width=50, height=2,bg="#606060", fg="#c4c4c4")
 
         self.scrollX.config(command=self.canevas.xview)
         self.scrollY.config(command=self.canevas.yview)
@@ -440,9 +444,13 @@ class Vue():
         self.canevas.grid(column=0, row=0, sticky=W + E + N + S)
         self.scrollX.grid(column=0, row=1, sticky=W + E)
         self.scrollY.grid(column=1, row=0, sticky=N + S)
+
         #self.timer_partie.grid(column=0, row=0, sticky=E + N, padx=20, pady=20)
-        self.cadre_notification.grid(column=0, row=0, sticky= E + N , padx=20, pady=20)
-        self.label_notification.pack(fill=X)
+
+
+        self.cadre_notification.grid(column=0, row=0, sticky= E + N )
+        self.label_officier_img.pack(side=LEFT, fill=Y)
+        self.label_notification.pack(side=LEFT)
 
         self.cadrejeu.columnconfigure(0, weight=1)
         self.cadrejeu.rowconfigure(0, weight=1)
