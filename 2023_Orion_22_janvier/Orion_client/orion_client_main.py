@@ -12,6 +12,8 @@ from orion_vue import *
 
 class Controleur():
     def __init__(self):
+        self.notificationListe = []
+        """Liste qui représente les notifications de l'état du jeu à afficher"""
         self.mon_nom = self.generer_nom()
         """nom de joueur, sert d'identifiant dans le jeu - ici, avec auto-generation"""
         self.joueur_createur = 0
@@ -47,6 +49,8 @@ class Controleur():
 
         self.vue.root.mainloop()
         """la boucle des evenements (souris, click, clavier)"""
+
+
 
     ######################################################################################################
     ### FONCTIONS RESERVEES - INTERDICTION DE MODIFIER SANS AUTORISATION PREALABLE SAUF CHOIX DE RANDOM SEED LIGNE 94-95
@@ -145,6 +149,10 @@ class Controleur():
 
         self.vue.refresh(self.cadrejeu)
         self.vue.refreshEtoile(self.mon_nom)
+
+        if len(self.notificationListe) > 0:
+            self.vue.afficherNotification(self.notificationListe)
+            self.notificationListe = []
 
         if self.cadrejeu % self.moduloappeler_serveur == 0:  # appel périodique au serveur
             if self.actionsrequises:

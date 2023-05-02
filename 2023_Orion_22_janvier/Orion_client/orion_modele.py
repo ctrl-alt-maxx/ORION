@@ -109,7 +109,11 @@ class Etoile():
     def is_amelioration_possible(self):
         if self.isRessourcesValides(self):
             if self.niveauEtoile != 3:
+                self.parent.parent.notificationListe.append("Amélioration de l'étoile " + self.nomEtoile + " réussie.")
                 return True
+            else:
+                self.parent.parent.notificationListe.append("L'étoile " + self.nomEtoile + " est déjà au niveau maximum.")
+        self.parent.parent.notificationListe.append("Amélioration de l'étoile " + self.nomEtoile + " impossible.")
         return False
 
     '''
@@ -161,6 +165,7 @@ class Etoile():
         if self.isRessourcesValides(installation):
             if self.installations.get(installation.type) is None:
                 return True
+        self.parent.parent.notificationListe.append("L'étoile" + self.nomEtoile + " possède déjà une installation de type " + installation.type)
         return False
 
     '''
@@ -174,6 +179,7 @@ class Etoile():
         for i in listeRessources:
             if self.inventaire.get(i) < installation.cout.get(i):
                 return False
+                self.parent.parent.notificationListe.append("L'étoile " + self.nomEtoile + " n'a pas assez de ressources pour construire l'installation " + installation.type)
         return True
 
     def verifier_fin_construction(self, cadre):

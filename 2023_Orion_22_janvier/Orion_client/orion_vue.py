@@ -107,6 +107,10 @@ class Vue():
         self.cadre_bouton_transferer = Frame()
         self.cadre_choisir_transfere = Frame()
 
+        #notification
+        self.cadre_notification = Frame()
+        self.label_notification = Label()
+
         self.startTime = 0
         self.strPourcentage = 0
         self.chiffre = 0
@@ -422,8 +426,10 @@ class Vue():
                               xscrollcommand=self.scrollX.set,
 
                               yscrollcommand=self.scrollY.set, bg="grey11")
-        self.timer_partie = Label(self.cadrejeu, text="Temps écoulé: ", textvariable=self.ticks, width=10, height=1)
 
+        #self.timer_partie = Label(self.cadrejeu, text="Temps écoulé: ", textvariable=self.ticks, width=10, height=1)
+        self.frame_notification_notification = Frame(self.cadrejeu, width=50, height=10, bg="grey11")
+        self.label_notification = Label(self.frame_notification, text="c'est un label", width=50, height=10)
 
         self.scrollX.config(command=self.canevas.xview)
         self.scrollY.config(command=self.canevas.yview)
@@ -434,7 +440,9 @@ class Vue():
         self.canevas.grid(column=0, row=0, sticky=W + E + N + S)
         self.scrollX.grid(column=0, row=1, sticky=W + E)
         self.scrollY.grid(column=1, row=0, sticky=N + S)
-        self.timer_partie.grid(column=0, row=0, sticky=E + N, padx=20, pady=20)
+        #self.timer_partie.grid(column=0, row=0, sticky=E + N, padx=20, pady=20)
+        self.frame_notification.grid(column=0, row=0, sticky= E + N , padx=20, pady=20)
+        self.label_notification.pack(fill=X)
 
         self.cadrejeu.columnconfigure(0, weight=1)
         self.cadrejeu.rowconfigure(0, weight=1)
@@ -794,7 +802,11 @@ class Vue():
         self.btncreercargo.pack(fill=X)
         self.btncreereclaireur.pack(fill=X)
 
+    def afficherNotification(self, notificationListe):
 
+
+        self.label_notification.config(text=notificationListe)
+        self.label_notification.pack()
 
     def menu_ressource(self):# on arrive ici quand on clique sur le bouton "Inventaire" -> inventaire de ce que possede le joueur
         #raffraichir valeur self.recup.inventaire.get("Fer)
