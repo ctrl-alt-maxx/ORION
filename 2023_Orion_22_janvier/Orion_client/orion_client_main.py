@@ -263,7 +263,8 @@ class Controleur():
     def to_secondes(self, nb_ticks):
         return nb_ticks // 16
 
-
+    def ameliorer_etoile(self, etoile):
+        print(etoile)
 
 if __name__ == "__main__":
     c = Controleur()

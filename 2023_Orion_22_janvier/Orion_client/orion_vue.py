@@ -503,6 +503,7 @@ class Vue():
         self.btnInventaire.pack(fill=X)
 
         self.boutonAmeliorerEtoile = Button(self.cadreinfochoix, text="Ameliorer Etoile",foreground='#FCFCFC', background='#B462C2', font=('Arial', 12))
+        self.boutonAmeliorerEtoile.config(command=self.ameliorer_etoile())
         self.boutonAmeliorerEtoile.pack(fill=X)
         self.eteAfficher = False
 
@@ -694,10 +695,6 @@ class Vue():
                 # afficher menu creation entrepot (entrepot existe pas)
                 self.boutonConstruireEntrepot.pack(fill=X)
 
-
-
-
-
     def construction_vaisseau(self):# on arrive ici quand on clique sur le bouton "construire Vaisseau"
         #on affiche les boutons
         self.cadre_menu_installation.pack_forget()
@@ -720,7 +717,10 @@ class Vue():
         self.btncreercargo.pack()
         self.btncreereclaireur.pack()
 
+    def ameliorer_etoile(self): # Quand on clique sur le bouton ameliorer etoile. A faire: Faire disparaitre le UI pour indiquer l'amelioration
+        self.recup = self.parent.recupEtoile(self.ma_selection[1])
 
+        self.parent.ameliorer_etoile(self.recup.id)
 
 
     def menu_ressource(self):# on arrive ici quand on clique sur le bouton "Inventaire" -> inventaire de ce que possede le joueur
