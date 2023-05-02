@@ -428,8 +428,8 @@ class Vue():
                               yscrollcommand=self.scrollY.set, bg="grey11")
 
         #self.timer_partie = Label(self.cadrejeu, text="Temps écoulé: ", textvariable=self.ticks, width=10, height=1)
-        self.frame_notification_notification = Frame(self.cadrejeu, width=50, height=10, bg="grey11")
-        self.label_notification = Label(self.frame_notification, text="c'est un label", width=50, height=10)
+        self.cadre_notification = Frame(self.cadrejeu, width=50, height=10, bg="grey11")
+        self.label_notification = Label(self.cadre_notification, text="c'est un label", width=50, height=10)
 
         self.scrollX.config(command=self.canevas.xview)
         self.scrollY.config(command=self.canevas.yview)
@@ -441,7 +441,7 @@ class Vue():
         self.scrollX.grid(column=0, row=1, sticky=W + E)
         self.scrollY.grid(column=1, row=0, sticky=N + S)
         #self.timer_partie.grid(column=0, row=0, sticky=E + N, padx=20, pady=20)
-        self.frame_notification.grid(column=0, row=0, sticky= E + N , padx=20, pady=20)
+        self.cadre_notification.grid(column=0, row=0, sticky= E + N , padx=20, pady=20)
         self.label_notification.pack(fill=X)
 
         self.cadrejeu.columnconfigure(0, weight=1)
