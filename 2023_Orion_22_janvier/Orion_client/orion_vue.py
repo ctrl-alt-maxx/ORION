@@ -125,6 +125,7 @@ class Vue():
         self.objet = ""
         self.etoileSelectionne = None
         self.etoileOuEstPoseLeCargo = None
+        self.accelerer_timer = False
 
 
 
@@ -598,6 +599,7 @@ class Vue():
             self.percentage_label.config(text=str(self.strPourcentage) + "%")
 
             print(self.strPourcentage)
+
             self.percentage_label.pack()
         elif self.strPourcentage == 100:
             self.timer_end()
@@ -714,8 +716,10 @@ class Vue():
                                                    background='#242423', font=('Arial', 12))
             self.boutonConstruireEntrepot.config(command=self.construire_entrepot)
 
-            self.boutonAmeliorerEntrepot = Button(self.cadre_bouton_construction_entrepot, text="Ameliorer Entrepot", foreground='#CB92CE',
-                                                  background='#242423', font=('Arial', 12))
+            #self.boutonAmeliorerEntrepot = Button(self.cadre_bouton_construction_entrepot, text="Ameliorer Entrepot", foreground='#CB92CE',
+                                                  #background='#242423', font=('Arial', 12))
+
+
 
             self.cadre_nbr_installation_entrepot_present = Frame(self.cadre_menu_installation, height=200, width=200)#cadre
             self.cadre_nbr_installation_entrepot_present.pack(fill=X)
@@ -750,6 +754,7 @@ class Vue():
                 self.boutonConstruireEntrepot.config(command=self.construire_entrepot)
                 self.boutonAmeliorerEntrepot = Button(self.cadre_bouton_construction_entrepot, text="Ameliorer Entrepot",
                                                       foreground='#CB92CE', background='#242423', font=('Arial', 12))
+                self.boutonAmeliorerEntrepot.config(command=self.amelioration_entrepot)
                 self.boutonConstruireEntrepot.pack(fill=X)
 
                 # afficher menu creation vaisseau (entrepot existe)
@@ -765,6 +770,14 @@ class Vue():
                 # afficher menu creation entrepot (entrepot existe pas)
                 self.boutonConstruireEntrepot.pack(fill=X)
 
+
+
+
+    def amelioration_entrepot(self):
+        #accelerer le timer pour construire un vaisseau plus vite
+        #possibilite de construire plusieurs vaisseaux a la fois
+        #chaque etoile a un entrepot donc recuperer id de letoile...
+        self.accelerer_timer = True
 
 
 

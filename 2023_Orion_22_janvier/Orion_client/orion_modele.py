@@ -660,7 +660,7 @@ class Usine(Installation):
 
 
 class Entrepot(Installation):
-    def __init__(self, parent, proprietaire, type, cadre_debut_construction):
+    def __init__(self, parent, proprietaire, type, cadre_debut_construction):#pour linstant on peut construire 3 vaisseaux...a augmnter si ameliorer entrpot est clique...
         self.capacite = {"slot1": None,
                          "slot2": None,
                          "slot3": None}
