@@ -539,11 +539,41 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
                             self.parent.parent.recupererValeurEstAccoste(j.estAccoste, cargoEstAccost)#cette fonction est cree dans le main -> pb: sera toujours true
                             self.etoilescontrolees.append(rep[1])
 
+                            #Acquisition sans combats
                             if rep[1].proprietaire == 'neutre' or rep[1].vie <= 0:
                                 rep[1].proprietaire = j.proprietaire
                                 self.parent.parent.afficher_etoile(self.nom, rep[1])
 
+                            #Acquisition avec combats
                             if rep[1].proprietaire != j.proprietaire and rep[1].proprietaire != 'neutre':
+                                #Création de la liste de vaisseaux de défense à attaquer en premier:
+                                listeDefense = []
+                                joueurEnnemi = self.parent.parent.recupJoueur(rep[1].proprietaire)
+                                vaisseauxNomsKeys = joueurEnnemi.flotte.keys()
+                                for vnk in vaisseauxNomsKeys:
+                                    vaisseauxKeys = joueurEnnemi.flotte.get(vnk)
+                                    for k in vaisseauxKeys:
+                                        if joueurEnnemi.flotte.get(k).estAccoste == rep[1]:
+                                            listeDefense.append(joueurEnnemi.flotte.get(k))
+
+                                #Combats avec les vaisseaux de défense
+                                for v in listeDefense:
+                                    if v.vie > j.vie:
+                                        v.vie -= j.vie
+                                        j.vie = 0
+                                    elif v.vie == j.vie:
+                                        v.vie = 0
+                                        j.vie = 0
+                                    else:
+                                        j.vie -= v.vie
+                                        v.vie = 0
+                                    if v.vie <= 0:
+                                        self.parent.parent.supprimer_vaisseau(v.id)
+                                        self.poubelle.append(v)
+
+
+
+                                #Combats avec étoiles
                                 if(rep[1].vie > j.vie):
                                     rep[1].vie -= j.vie
                                     j.vie = 0
@@ -554,6 +584,7 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
                                     j.vie -= rep[1].vie
                                     rep[1].vie = 0
 
+                                #Acquisition de l'étoile ennemie
                                 if rep[1].vie <= 0:
                                     listeCles = rep[1].parent.joueurs
                                     for k in listeCles:
