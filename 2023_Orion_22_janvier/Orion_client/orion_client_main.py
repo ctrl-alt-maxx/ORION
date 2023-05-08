@@ -10,7 +10,6 @@ import urllib.request
 from orion_modele import *
 from orion_vue import *
 
-
 class Controleur():
     def __init__(self):
         self.mon_nom = self.generer_nom()
@@ -139,8 +138,13 @@ class Controleur():
             self.vue.root.after(50, self.boucler_sur_lobby)
 
     # BOUCLE PRINCIPALE
+
     def boucler_sur_jeu(self):
         self.cadrejeu += 1  # increment du compteur de boucle de jeu
+        # TODO: appeler refresh de la vue
+
+        self.vue.refresh(self.cadrejeu)
+        self.vue.refreshEtoile(self.mon_nom)
 
         if self.cadrejeu % self.moduloappeler_serveur == 0:  # appel périodique au serveur
             if self.actionsrequises:
@@ -174,6 +178,8 @@ class Controleur():
 
         self.vue.root.after(self.maindelai,
                             self.boucler_sur_jeu)  # appel ulterieur de la meme fonction jusqu'a l'arret de la partie
+
+        
 
     ##############   FONCTIONS pour serveur #################
     # methode speciale pour remettre les parametres du serveur a leurs valeurs par defaut
@@ -234,11 +240,14 @@ class Controleur():
     def afficher_etoile(self, joueur, cible):
         self.vue.afficher_etoile(joueur, cible)
 
+    def supprimer_vaisseau(self, id):
+        self.vue.supprimer_vaisseau(id)
+
     def lister_objet(self, objet, id, niveau):
         self.vue.lister_objet(objet, id, niveau)
 
-    def recupEtoile(self, id):
-        recup = self.modele.recupererEtoile(id)
+    def recupEtoile(self, vaisseau):
+        recup = self.modele.recupererEtoile(vaisseau)
         print("ok")
         return recup
 
@@ -249,13 +258,12 @@ class Controleur():
         recup = self.modele.recupererJoueur(nom)
         return recup
 
-    # def recupQuantiteMatiereDeUtilisateur(self, chargement):#dans chargement je met les quantites de matiere presente sur etoile
-    #    self.actionsrequises.append(self.mon_nom, "transfererRessources",[chargement])#ajoute dans modele
+    def recupQuantiteMatiereDeUtilisateur(self, chargement, idcargo):#dans chargement je met les quantites de matiere presente sur etoile
+        self.actionsrequises.append([self.mon_nom, "transfererRessources",[chargement, idcargo]])#ajoute dans modele
 
 
     def construireInstallation(self, installation, id):
         self.actionsrequises.append([self.mon_nom, "construire", [installation, id, self.cadrejeu]])
-
 
     def recupererValeurEstAccoste(self, estAccoste, cargoEstAccoste):#on lappel l.408 dans modele
          self.vue.savoirSiAccoste(estAccoste, cargoEstAccoste)
@@ -266,6 +274,7 @@ class Controleur():
     def ameliorer_etoile(self, id_etoile):
         etoile = self.recupEtoile(id_etoile)
         etoile.ameliorer_etoile()
+
 
 if __name__ == "__main__":
     c = Controleur()

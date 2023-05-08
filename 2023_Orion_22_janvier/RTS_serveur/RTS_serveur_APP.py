@@ -1,19 +1,70 @@
-# -*- coding: utf-8 -*-
-
+import sqlite3
+import os.path
+import random
+from functools import wraps
 
 from flask import Flask, request, json
 from werkzeug.wrappers import Response
-import random
-import sqlite3
 
 app = Flask(__name__)
 
 app.secret_key = "qwerasdf1234"
 
 class Dbman():
+    """Gère la communication avec la base de données."""
+
+    database: str = os.path.join(
+        os.path.dirname(__file__),
+        "RTS_serveur_DB.db",
+    )
+
     def __init__(self):
-        self.conn = sqlite3.connect("RTS_serveur_DB.db")
+        self.conn = sqlite3.connect(Dbman.database)
         self.curs = self.conn.cursor()
+        self.createdb()
+
+    def createdb(self):
+        """Crée la base de données si elle n'existe pas."""
+        self.curs.execute("""
+            CREATE TABLE IF NOT EXISTS actionsenattente (
+                nom TEXT,
+                cadrejeu INTEGER,
+                "action" TEXT
+            )
+        """)
+
+        self.curs.execute("""
+            CREATE TABLE IF NOT EXISTS cadrecourant (
+                cadrecourant INTEGER
+            )
+        """)
+
+        self.curs.execute("""
+            CREATE TABLE IF NOT EXISTS initaleatoire (
+                initaleatoire DEFAULT (2020)
+            )
+        """)
+
+        self.curs.execute("""
+            CREATE TABLE IF NOT EXISTS joueurs (
+                nom TEXT PRIMARY KEY UNIQUE,
+                derniercadrejeu NUMERIC DEFAULT (0)
+            )
+        """)
+
+        self.curs.execute("""
+            CREATE TABLE IF NOT EXISTS nbrIA (
+                nbrIA INT DEFAULT (0)
+            )
+        """)
+
+        self.curs.execute("""
+            CREATE TABLE IF NOT EXISTS partiecourante (
+                etat TEXT DEFAULT dispo
+            )
+        """)
+
+        self.conn.commit()
 
     def setpartiecourante(self, chose):
         self.vidertable("partiecourante")
@@ -60,6 +111,8 @@ class Dbman():
         for i in tables:
             self.vidertable(i)
 
+        # Maybe drop and call createdb() instead?
+
         self.curs.execute("Insert into partiecourante (etat) VALUES(?);", ("dispo",))
         self.curs.execute("Insert into cadrecourant (cadrecourant) VALUES(?);", (0,))
         self.curs.execute("Insert into initaleatoire (initaleatoire) VALUES(?);", (2020,))
@@ -84,26 +137,38 @@ class Dbman():
 
 #################################################################################################
 
+def with_db(func):
+    """Décorateur qui gère la connection à la base de données."""
+
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        db = Dbman()
+        result = func(db, *args, **kwargs)
+        db.fermerdb()
+        return result
+
+    return wrapper
+
 
 @app.route("/tester_jeu", methods=["GET", "POST"])
-def tester_jeu():
-    db = Dbman()
+@with_db
+def tester_jeu(db: Dbman):
     info = db.getinfo("partiecourante")
 
     return Response(json.dumps(info), mimetype='application/json')
 
 
 @app.route("/reset_jeu", methods=["GET", "POST"])
-def reset_jeu():
-    db = Dbman()
+@with_db
+def reset_jeu(db: Dbman):
     db.resetdb()
     info = db.getinfo("partiecourante")
 
     return Response(json.dumps(info), mimetype='application/json')
 
 @app.route("/creer_partie", methods=["GET", "POST"])
-def creer_partie():
-    db = Dbman()
+@with_db
+def creer_partie(db: Dbman):
     info = db.getinfo("partiecourante")
     if "dispo" in info[0]:
         if request.method == "POST":
@@ -119,8 +184,8 @@ def creer_partie():
         return str("banane")
 
 @app.route("/inscrire_joueur", methods=["GET", "POST"])
-def inscrire_joueur():
-    db = Dbman()
+@with_db
+def inscrire_joueur(db: Dbman):
     info = db.getinfo("partiecourante")
     if "attente" in info[0]:
         if request.method == "POST":
@@ -136,8 +201,15 @@ def inscrire_joueur():
 
 
 @app.route("/boucler_sur_lobby", methods=["POST"])
-def boucler_sur_lobby():
-    db = Dbman()
+@with_db
+def boucler_sur_lobby(db: Dbman):
+    """Boucle sur le lobby
+
+    :return: Si la partie est débutée:
+            La constante "courante" et la seed de random
+        Sinon:
+            Une liste des joueurs et de leurs dernier cadre de jeu
+    """
     info = db.getinfo("partiecourante")
     if "courante" in info[0]:
         # nbrIA=db.getinfo("nbrIA")
@@ -155,8 +227,8 @@ def boucler_sur_lobby():
         # return repr(info)
 
 @app.route("/lancer_partie", methods=["GET", "POST"])
-def lancer_partie():
-    db = Dbman()
+@with_db
+def lancer_partie(db: Dbman):
     if request.method == "POST":
         nom = request.form["nom"]
 
@@ -170,8 +242,8 @@ def lancer_partie():
 
 
 @app.route("/boucler_sur_jeu", methods=["POST"])
-def boucler_sur_jeu():
-    db = Dbman()
+@with_db
+def boucler_sur_jeu(db: Dbman):
     # cadreactuel=db.getinfo("cadrecourant")[0]
     nom = request.form["nom"]
     cadrejeu = int(request.form["cadrejeu"])
@@ -205,7 +277,6 @@ def boucler_sur_jeu():
             if i[0] == nom:
                 maliste.append([i[1], i[2]])
         db.effaceractionsjoueur(nom)
-    db.fermerdb()
 
     return Response(json.dumps(maliste), mimetype='application/json')
 

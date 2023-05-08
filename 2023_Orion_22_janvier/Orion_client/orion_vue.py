@@ -79,7 +79,7 @@ class Vue():
         self.clickUneFoisSurInsta = 0 #pour que le frame ne reaparaisse pas si je clique 2 fois de suite sur le meme bouton
         self.clickUneFoisSurRessource = 0
         self.clickUneFoisSurVaiss = 0
-
+        self.percentage_label = Label()
         # var global methode installation()
         self.cadre_label_ressource = Frame()
         self.label_titre = Label()
@@ -88,6 +88,7 @@ class Vue():
         self.label_installation = Label()
         self.cadre_bouton = Frame()
         self.boutonConstruireUsine = Button()
+        self.boutonAmeliorerUsine = Button()
         self.cadre_espacement = Frame()
 
         self.cadre_label_entrepot_vaisseau = Frame()
@@ -103,11 +104,11 @@ class Vue():
         self.cadre_menu_ressource = Frame()
         self.cadre_menu_ressource_ex = Frame()
         self.cadre_bouton_construction_vaisseau = Frame()
-        self.cadre_construire_entrepot = Frame()
-        self.cadre_construire_usine = Frame()
         self.cadre_bouton_transferer = Frame()
         self.cadre_choisir_transfere = Frame()
 
+        self.startTime = 0
+        self.strPourcentage = 0
         self.chiffre = 0
 
         self.selectedTags = None
@@ -115,8 +116,15 @@ class Vue():
         self.peutAfficherBouton = True
         self.type_vaisseau_selectionne = ""
         self.cargoArrive = False
+
+        self.started = False
         self.nbr_entrepot = 0
+        self.nbr_usine = 0
         self.recup = None
+        self.idCargo = None
+        self.objet = ""
+        self.etoileSelectionne = None
+        self.etoileOuEstPoseLeCargo = None
 
 
 
@@ -278,6 +286,8 @@ class Vue():
         #mettre les quantite a 0 au cas ou lutilisateur ne rentre rien
         #quantiteFerEntre = 0;
 
+        dict
+
         quantiteFerEntre = self.entree_qtiteFer.get();  # on recupere la valeur que lutilisateur a entre
         if(quantiteFerEntre == ''):
             quantiteFerEntre = '0'
@@ -298,29 +308,14 @@ class Vue():
             quantitePlutoniumEntre = '0'
         quantiteAntimatiereEntre = self.entre_qtiteAntimatiere.get();
         if(quantiteAntimatiereEntre == ''):
-            quantiteAntimatiere = '0'
+            quantiteAntimatiereEntre = '0'
         dictChargement = {"Fer":quantiteFerEntre, "Cuivre":quantiteCuivreEntre, "Or":quantiteOrEntre, "Titane": quantiteTitaneEntre, "Hydrogene":quantiteHydrogeneEntre, "Plutonium":quantitePlutoniumEntre, "Antimatiere":quantiteAntimatiereEntre}
         #appeler transfererRessources qui est dans modele pour soustraction
-        self.parent.recupQuantiteMatiereDeUtilisateur(dictChargement); #la jenvoie les quantites que lutilisateur veut au Controlleur
+        self.parent.recupQuantiteMatiereDeUtilisateur(dictChargement, self.idCargo); #la jenvoie les quantites que lutilisateur veut au Controlleur
+        #memoriser letoile ou est pose le cargot
+        #self.etoileOuEstPoseLeCargo = self.etoileSelectionne
+        self.cadre_choisir_transfere.pack_forget()
 
-
-
-
-
-    def clock(self):#des que je clique sur le bouton construire entrepot, ca lance cette fonction...
-        self.chiffre += 1
-        self.label_timer.config(text=self.chiffre)
-        if(self.chiffre < 5):
-            #appler fonction pour construire entrepot
-            #augmente de 1 entrepot
-            self.label_timer.after(1000,self.clock)  # appel clock toute les seconde -> donc chiffre augmente de 1 a chaque seconde
-
-        elif(self.chiffre >= 5):
-            #ferme la fenetre
-            #self.nbr_entrepot += 1
-            self.chiffre = 0
-            #self.cadre_menu_installation.pack()
-            self.menu_installation()
 
 
     def chargerimages(self, chemin=None):
@@ -476,6 +471,8 @@ class Vue():
         self.btnmini = Button(self.cadreinfogen, text="MINI-MAP", foreground='#FCFCFC', background='#30292F', font=('Arial', 10))
         self.btnmini.bind("<Button>", self.afficher_mini)
         self.btnmini.pack(side="left")
+        self.nbEtoilePossession = Label(self.cadreinfogen, foreground='#FCFCFC', background='#30292F', font=('Arial', 10))
+        self.nbEtoilePossession.pack(side="left")
 
         # PETITE FENETRE POUR LES 2 BOUTONS VAISSEAU ET CARGO-----------------------------------------------------------------------------
         self.cadreinfochoix = Frame(self.cadreinfo, height=200, width=200, bg="light grey")
@@ -551,16 +548,82 @@ class Vue():
         url_serveur = self.urlsplash.get()
         self.parent.connecter_serveur(url_serveur)
 
+
+    def timer_start(self,start_time,obj):
+        """
+        fonction qui demarre le timer
+        :param start_time: le temps de depart
+        """
+        if obj == "entrepot":
+            self.percentage_label = Label(self.cadreoutils, foreground='#FCFCFC', background='#30292F',
+                                      font=('Arial', 12))
+        elif obj == "usine":
+            self.percentage_label = Label(self.cadreoutils, foreground='#FCFCFC', background='#30292F',
+                                      font=('Arial', 12))
+        elif obj == "vaisseau":
+            self.percentage_label = Label(self.cadreoutils, foreground='#FCFCFC', background='#30292F',
+                                      font=('Arial', 12))
+        self.objet = obj
+        self.startTime = start_time
+        self.started = True
+        self.percentage_label.pack(fill=X)
+
+    def timer_end(self):
+        """
+        fonction qui arrete le timer et le reinitalise
+        """
+
+        self.percentage_label.pack_forget()
+        self.started = False
+        self.strPourcentage = 0
+
+        if self.objet == "entrepot":
+            if self.nbr_entrepot == 0:
+                self.nbr_entrepot += 1
+                self.menu_installation()
+
+        elif self.objet == "usine":
+            if self.nbr_usine == 0:
+                self.nbr_usine += 1
+                self.menu_installation()
+        # elif self.objet == "vaisseau":
+        #     self.menu_installation()
+
+    def refresh(self, cadre):
+        """
+        fonction qui est appeler a chaque tick dans le main
+        :param cadre: le temps actuel
+        """
+        if(self.started == True and self.strPourcentage < 100):
+            self.strPourcentage = int(((cadre - self.startTime) / 100) * 100)
+            self.percentage_label.config(text=str(self.strPourcentage) + "%")
+
+            print(self.strPourcentage)
+            self.percentage_label.pack()
+        elif self.strPourcentage == 100:
+            self.timer_end()
+
+    def refreshEtoile(self,mon_nom):
+        """
+        fonction qui retourn le nombre d'etoile que le joueur controle
+        :param mon_nom: 
+        :return:
+        """
+        nbEtoile = len(self.parent.recupJoueur(mon_nom).etoilescontrolees)
+        self.nbEtoilePossession.config(text="Étoiles Contrôlées: " + str(nbEtoile))
+
+
+
+
+
     def forget_all(self):
         self.cadre_menu_ressource.pack_forget()
         self.cadre_menu_ressource_ex.pack_forget()
         self.cadre_menu_installation.pack_forget()
-        self.cadre_construire_entrepot.pack_forget()
         self.cadre_bouton_construction_vaisseau.pack_forget()
         self.cadre_bouton_transferer.pack_forget()
+        self.cadre_choisir_transfere.pack_forget()
 
-        #essai
-        self.cadre_construire_usine.pack_forget()
 
     def menu_installation(self):#est appele quand je clique sur le bouton "Installation"
             self.recup = self.parent.recupEtoile(self.ma_selection[1])
@@ -591,7 +654,15 @@ class Vue():
 
             self.boutonConstruireUsine = Button(self.cadre_bouton, text="Construire Usine",foreground='#F5E15D', background='#242423', font=('Arial', 12))
             self.boutonConstruireUsine.config(command=self.construire_usine)
-            self.boutonConstruireUsine.pack(fill=X)
+
+            self.boutonAmeliorerUsine = Button(self.cadre_bouton, text="Améliorer Usine",foreground='#CB92CE', background='#242423', font=('Arial', 12))
+
+            if self.recup.installations.get("usine") is None:
+                self.boutonConstruireUsine.pack(fill=X)
+            else:
+                self.boutonConstruireUsine.pack_forget()
+                self.boutonAmeliorerUsine.pack(fill=X)
+
 
             #cadre pour creer un espace entre Usine Ressource et Entrepot a vaisseau
             self.cadre_espacement = Frame(self.cadre_menu_installation, height=10, width=200, bg="#FFFFFF")# cadre pour creer un espace entre Usine Ressource et Entrepot a vaisseau
@@ -673,12 +744,12 @@ class Vue():
 
             if recupEtoile.installations.get("entrepot") is not None:  # si il y a un entrepot on affiche pas le bouton construire Entrepot
                 print("il y a un entrepot")
-                self.cadre_bouton2 = Frame(self.cadre_menu_installation, height=200, width=200, bg="#848484")
-                self.cadre_bouton2.pack(fill=X)
-                self.boutonConstruireEntrepot = Button(self.cadre_bouton2, text="Construire Entrepot",
+
+
+                self.boutonConstruireEntrepot = Button(self.cadre_bouton_construction_entrepot, text="Construire Entrepot",
                                                        foreground='#F5E15D', background='#242423', font=('Arial', 12))
                 self.boutonConstruireEntrepot.config(command=self.construire_entrepot)
-                self.boutonAmeliorerEntrepot = Button(self.cadre_bouton2, text="Ameliorer Entrepot",
+                self.boutonAmeliorerEntrepot = Button(self.cadre_bouton_construction_entrepot, text="Ameliorer Entrepot",
                                                       foreground='#CB92CE', background='#242423', font=('Arial', 12))
                 self.boutonConstruireEntrepot.pack(fill=X)
 
@@ -702,26 +773,28 @@ class Vue():
         self.cadre_bouton_construction_vaisseau = Frame(self.cadreoutils,height=200,width=200,bg="yellow")
         self.cadre_bouton_construction_vaisseau.pack()
 
-        self.btncreervaisseau = Button(self.cadre_bouton_construction_vaisseau, text="Vaisseau")
+        self.btncreervaisseau = Button(self.cadre_bouton_construction_vaisseau, text="Attack",
+                                                       foreground='#A7FCC2', background='#242423', font=('Arial', 12))
         """pour creer un vaisseau"""
         self.btncreervaisseau.bind("<Button>", self.creer_vaisseau)
 
-        self.btncreercargo = Button(self.cadre_bouton_construction_vaisseau, text="Cargo")
+        self.btncreercargo = Button(self.cadre_bouton_construction_vaisseau, text="Cargo",
+                                                       foreground='#A7FCC2', background='#242423', font=('Arial', 12))
         """pour creer un cargo"""
         self.btncreercargo.bind("<Button>", self.creer_vaisseau)
 
-        self.btncreereclaireur = Button(self.cadre_bouton_construction_vaisseau, text="Eclaireur")
+        self.btncreereclaireur = Button(self.cadre_bouton_construction_vaisseau, text="Eclaireur",
+                                                       foreground='#A7FCC2', background='#242423', font=('Arial', 12))
         """pour creer un éclaireur"""
         self.btncreereclaireur.bind("<Button>", self.creer_vaisseau)
         self.btncreervaisseau.pack(fill=X)
-        self.btncreercargo.pack()
-        self.btncreereclaireur.pack()
+        self.btncreercargo.pack(fill=X)
+        self.btncreereclaireur.pack(fill=X)
 
     def ameliorer_etoile(self): # Quand on clique sur le bouton ameliorer etoile. A faire: Faire disparaitre le UI pour indiquer l'amelioration
         self.recup = self.parent.recupEtoile(self.ma_selection[1])
 
         self.parent.ameliorer_etoile(self.recup.id)
-
 
     def menu_ressource(self):# on arrive ici quand on clique sur le bouton "Inventaire" -> inventaire de ce que possede le joueur
         #raffraichir valeur self.recup.inventaire.get("Fer)
@@ -776,8 +849,8 @@ class Vue():
         self.recup = self.parent.recupEtoile(self.ma_selection[1])
         self.forget_all()
 
-        self.cadre_menu_ressource_ex = Frame(self.cadreoutils, height=200, width=100, bg="blue")
-        self.cadre_menu_ressource_ex.pack(side=LEFT, fill=Y)
+        self.cadre_menu_ressource_ex = Frame(self.cadreoutils, height=200, width=100, bg="#6F6D6D")
+        self.cadre_menu_ressource_ex.pack(fill=BOTH)
         self.a_clique_sur_installation = 0
 
         self.label_materiaux_e = Label(self.cadre_menu_ressource_ex, text="Matériaux :", anchor=CENTER,width=34, height=1, border=1, borderwidth=1,relief="solid", bg="#e0e0e0")
@@ -827,22 +900,14 @@ class Vue():
         self.label_antimatiere_e.pack(fill=X)
 
     def construire_entrepot(self):#on arrive ici quand on clique sur le bouton "Construire Entrepot"
-        #vider le frame
         self.cadre_menu_installation.pack_forget()
-        self.cadre_construire_entrepot =  Frame(self.cadreoutils,height=200, width=200, bg="pink")#on creer un cadre que lon met dans cadre_outil
-        self.cadre_construire_entrepot.pack(side=LEFT, fill=Y)
-        #mettre le timer ici
-        self.label_timer = Label(self.cadre_construire_entrepot, font=('Arial, 20'), bg="yellow")#Affichage du timer ici
-        self.label_timer.pack()
         self.parent.construireInstallation("entrepot", self.ma_selection[1]) #pour construire entrepot -> la fonction va veifier si on peut construire entrepot
-        print("appel clock")
-        self.clock()#appel de la fonction clock pour demarrer le timer
+        self.timer_start(self.parent.cadrejeu,"entrepot") #on lance le timer pour construire entrepot
+
     def construire_usine(self):# on arrive ici quand on clique sur bouton construire_usine
         self.cadre_menu_installation.pack_forget()
-        self.cadre_construire_usine = Frame(self.cadreoutils, height=200, width=200, bg="red")
-        self.cadre_construire_usine.pack(side=LEFT, fill=Y)
         self.parent.construireInstallation("usine", self.ma_selection[1])
-
+        self.timer_start(self.parent.cadrejeu,"usine")
 
 
 
@@ -1052,7 +1117,8 @@ class Vue():
         self.parent.creer_vaisseau(type_vaisseau, int(self.selectedTags[3]) + random.choice([i for i in range(-30, 30) if i not in [-10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]]), int(self.selectedTags[4]) + random.choice([i for i in range(-30, 30) if i not in [-10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]]), self.ma_selection[1])
         self.ma_selection = None
         self.canevas.delete("marqueur")
-        #self.cadreinfochoix.pack_forget()
+        self.timer_start(self.parent.cadrejeu,"vaisseau")
+
 
 
 
@@ -1061,6 +1127,7 @@ class Vue():
         self.canevas.delete("artefact")
         self.canevas.delete("objet_spatial")
         self.canevas.delete("marqueur")
+        self.listeVaisseau = []
 
         if self.ma_selection != None:  # SI JE NE SELECTIONNE RIEN
             joueur = mod.joueurs[self.ma_selection[0]]  # joueurs[] liste des nom des joueurs
@@ -1090,18 +1157,22 @@ class Vue():
             for k in i.flotte:
                 for j in i.flotte[k]:
                     j = i.flotte[k][j]
-                    recupCouleur = self.parent.recupJoueur(self.mon_nom)
-                    if k == "Vaisseau":  # CREATION DU CARRE ROUGE REPRESENTANT LE VAISSEAU
+                    recupCouleur = self.parent.recupJoueur(j.proprietaire)
+                    if k == "Attack":  # CREATION DU CARRE ROUGE REPRESENTANT LE VAISSEAU
+
                         self.canevas.create_image(j.x, j.y, image= self.images["Atck"+ recupCouleur.couleur],
-                                                      tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact", "False"))
+                                                      tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact", "True"))
                     elif k == "Cargo":  # CREATION DU CARGO
-                        self.canevas.create_image(j.x, j.y, image= self.images["cargo"],
-                                                      tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact", "False"))
+                        x = self.canevas.create_image(j.x, j.y, image=self.images["cargo"],
+                                                      tags=(
+                                                      j.proprietaire, str(j.id), "Flotte", k, "artefact", "False"))
+                        self.listeVaisseau.append(x)
 
                     elif k == "Eclaireur": #CREATION DE L'ÉCLAIREUR
-
-                        self.canevas.create_image(j.x, j.y, image= self.images["Spy"+ recupCouleur.couleur],
-                                                  tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact", "True"))
+                        x = self.canevas.create_image(j.x, j.y, image=self.images["Spy" + recupCouleur.couleur],
+                                                      tags=(
+                                                      j.proprietaire, str(j.id), "Flotte", k, "artefact", "True"))
+                        self.listeVaisseau.append(x)
         for t in self.modele.trou_de_vers:
             i = t.porte_a
             for i in [t.porte_a, t.porte_b]:
@@ -1132,6 +1203,13 @@ class Vue():
                                  (j.x + tailleF), (j.y + tailleF), fill=i.couleur,
                                  tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact"))
 
+    def supprimer_vaisseau(self, id):
+        print(id)
+        print(self.canevas.gettags(id))
+        self.canevas.delete(id)
+
+
+
     def cliquer_cosmos(self, evt):  # DES QU'ON CLIQUE QUELQUE PART DANS LE JEU -> travailler avec ca
         self.selectedTags = self.canevas.gettags(CURRENT)
         tags = self.selectedTags #contient
@@ -1141,8 +1219,28 @@ class Vue():
                 self.ma_selection = [self.mon_nom, tags[1], tags[2]]
                 if tags[2] == "Etoile":
                     self.montrer_etoile_selection()
+                    print("nom de letoile = " + tags[1])
+                    self.etoileSelectionne = tags[1]
+                    if (self.cargoArrive):  # si il est accoste
+                        # avoir id de letoile ou il est accoste
+                        self.etoileOuEstPoseLeCargo = tags[1]
+                        print("etoile selectionne = " + self.etoileSelectionne + "  Idetoile ou est pose le cargot : " + self.etoileOuEstPoseLeCargo)
+
+                    elif (self.estAccos == False):
+                        self.cadre_bouton_transferer.pack_forget()
+
                     #enlenver menu transferer pour vaisseau cargo
                     self.cadre_choisir_transfere.pack_forget()
+                    #pour transferer, on fait apparaitre le bouton transferer quand le cargot arrive sur l'etoile. On doit cliquer sur l'etoile pour voir le bouton
+                    # affiche le bouton transferer
+                    if (self.etoileSelectionne != self.etoileOuEstPoseLeCargo):
+                        print("est rentre!!!")
+                        self.faireApparaitreBoutonTransfere()
+
+                    elif (self.etoileSelectionne == self.etoileOuEstPoseLeCargo):
+                        print("enleve le bouton")
+                        self.cadre_bouton_transferer.pack_forget()
+
                     if self.shipSelected != []: #TOUT LES VAISSEAUX SELECTIONNE
                         for ship in self.shipSelected:
                             self.parent.cibler_flotte(ship[1], tags[1], tags[2])#cest ca qui envoi le vaisseau a letoile selectionne
@@ -1150,36 +1248,46 @@ class Vue():
                         self.ma_selection = []
                     else:
                         self.montrer_etoile_selection()
+
                 elif tags[2] == "Flotte": #quand je clique sur un vaisseau
                     self.montrer_flotte_selection()
                     self.type_vaisseau_selectionne = tags[3] #je recupere le type de vaisseau selectionne
+                    print("Type vaisseau = " + self.type_vaisseau_selectionne)
+
+                    if self.type_vaisseau_selectionne == "Cargo":
+                        self.idCargo = tags[1]
+
+
                     self.cadreinfochoix.pack_forget()# on enleve le menu du haut ici quand on clique sur le vaisseau car on ne veut plus savoir ce quil y a sur l'étoile
                     self.cadre_bouton_transferer.pack_forget()#on enleve le bouton transferer
                     self.cadre_menu_ressource.pack_forget()#on enleve le menu de linventaire
                     self.cadre_menu_ressource_ex.pack_forget()
                     self.forget_all()
                     #si je clique sur le cargot
-                    if(self.type_vaisseau_selectionne == "Cargo"):
-                        if(self.cargoArrive):#si il est accoste
-                            print("Val CargoEstAccoste : " + str(self.cargoArrive))
-                            #affiche le bouton transferer
-                            self.faireApparaitreBoutonTransfere()
+                    # if(self.type_vaisseau_selectionne == "Cargo"):
+                    #     if(self.cargoArrive):#si il est accoste
+                    #         #avoir id de letoile ou il est accoste
+                    #         self.etoileOuEstPoseLeCargo = tags[1]
+                            # print("Val CargoEstAccoste : " + str(self.cargoArrive))
+                            # print("Cargot est accoste sur letoile : " + self.etoileOuEstPoseLeCargo)
 
-                        elif(self.estAccos == False):#mais quand il reaprt il ne repasse pas a False seul..
-                            self.cadre_bouton_transferer.pack_forget()
+
+
+                        # elif(self.estAccos == False):#mais quand il reaprt il ne repasse pas a False seul..
+                        #     self.cadre_bouton_transferer.pack_forget()
 
                     self.shipSelected.append(tags)
-
-            elif ("Etoile" == tags[2] or "Porte_de_ver" == tags[2]) and self.shipSelected != []:#si je clique sur quelque chose qui nest pas a moi
+            elif ("Etoile" == tags[2] or "Porte_de_ver" == tags[2]) and self.shipSelected != []:
                 for ship in self.shipSelected:
-                    if "Etoile" == tags[2] and ship[5] == "True":#si jai clique sur une etoile et que le vaisseau est un eclaireur
-                        self.peutConstuireEntrpot = True
-                        self.parent.cibler_flotte(ship[1], tags[1], tags[2]) #envoi la flotte sur letoile selectionne
-                        self.shipSelected = []#remettre ce quona vait selectionne a rien
+                    if "Etoile" == tags[2] and ship[5] == "True":
+                        if ("neutre" == tags[0] and ship[3] == "Eclaireur") or (not "neutre" == tags[0] and ship[3] == "Attack"):
+                            self.parent.cibler_flotte(ship[1], tags[1], tags[2])
+                            self.shipSelected = []
                     elif "Porte_de_ver" == tags[2]:
                         self.parent.cibler_flotte(ship[1], tags[1], tags[2])
                         self.shipSelected = []
                     self.ma_selection = None
+
         else:  # aucun tag => On a clické dans le vide donc aucun objet sur la carte
             print("Region inconnue")
             self.forget_all()
@@ -1201,7 +1309,7 @@ class Vue():
     def debuter_multiselection(self, evt):
         self.debutselect = (self.canevas.canvasx(evt.x), self.canevas.canvasy(evt.y))
         x1, y1 = (self.canevas.canvasx(evt.x), self.canevas.canvasy(evt.y))
-        self.selecteur_actif = self.canevas.create_rectangle(x1, y1, x1 + 1, y1 + 1, outline="red", width=2,
+        self.selecteur_actif = self.canevas.create_rectangle(x1, y1, x1 + 1, y1 + 1, outline=self.modele.joueurs[self.mon_nom].couleur, width=2,
                                                              dash=(2, 2), tags=("", "selecteur", "", ""))
 
     def afficher_multiselection(self, evt):
