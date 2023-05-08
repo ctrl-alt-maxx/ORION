@@ -503,7 +503,7 @@ class Vue():
         self.btnInventaire.pack(fill=X)
 
         self.boutonAmeliorerEtoile = Button(self.cadreinfochoix, text="Ameliorer Etoile",foreground='#FCFCFC', background='#B462C2', font=('Arial', 12))
-        self.boutonAmeliorerEtoile.config(command=self.ameliorer_etoile())
+        self.boutonAmeliorerEtoile.config(command=self.ameliorer_etoile)
         self.boutonAmeliorerEtoile.pack(fill=X)
         self.eteAfficher = False
 

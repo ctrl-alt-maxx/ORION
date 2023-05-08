@@ -83,7 +83,7 @@ class Etoile():
     '''
     def cout_selon_niveau(self):
         if self.niveauEtoile == 1:
-            self.cout = {"Fer": 1000,
+            temp_cout = {"Fer": 1000,
                          "Cuivre": 750,
                          "Or": 500,
                          "Titane": 250,
@@ -92,13 +92,14 @@ class Etoile():
                          "Antimatiere": 0}
 
         elif self.niveauEtoile == 2:
-            self.cout = {"Fer": 2000,
+            temp_cout = {"Fer": 2000,
                          "Cuivre": 2500,
                          "Or": 1000,
                          "Titane": 500,
                          "Hydrogene": 400,
                          "Plutonium": 200,
                          "Antimatiere": 50}
+        return temp_cout
 
     '''
         Fonction vérifie si l'amélioration de l'étoile est possible et valide
@@ -123,6 +124,8 @@ class Etoile():
             self.cout_selon_niveau()
             print("L'étoile ", self.nomEtoile, " a été amélioré. Elle est maintenant au niveau ", self.niveauEtoile,
                   ".")
+        else:
+            print("L'étoile ", self.nomEtoile, " ne peux pas être améliorée.")
 
     # Construction des installations
     '''
