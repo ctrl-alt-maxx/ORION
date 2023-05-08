@@ -70,7 +70,7 @@ class Etoile():
                           "Plutonium":0,
                           "Antimatiere":0}
 
-        self.vie = 500 # nbr de vie de la planete
+        self.vie = 10 # nbr de vie de la planete
         self.key_en_construction = None
         self.cout = self.cout_selon_niveau()
 
@@ -263,7 +263,7 @@ class Attack():
         self.espace_cargo = 0
         self.energie = 100
         self.taille = 5
-        self.vitesse = 10
+        self.vitesse = 35
         self.cible = 0
         self.type_cible = None                              # Type de cible (Étoile ou porte de ver)
         self.angle_cible = 0                                # Angle de direction
@@ -506,7 +506,8 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
 
     def deletePoubelle(self):
         for i in self.poubelle:
-            del self.flotte.get(i.type_vaisseau)[i.id]
+            joueur = self.parent.parent.recupJoueur(i.proprietaire)
+            del joueur.flotte.get(i.type_vaisseau)[i.id]
         self.poubelle.clear()
 
     def avancer_flotte(self, chercher_nouveau=0):
@@ -551,10 +552,11 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
                                 joueurEnnemi = self.parent.parent.recupJoueur(rep[1].proprietaire)
                                 vaisseauxNomsKeys = joueurEnnemi.flotte.keys()
                                 for vnk in vaisseauxNomsKeys:
-                                    vaisseauxKeys = joueurEnnemi.flotte.get(vnk)
-                                    for k in vaisseauxKeys:
-                                        if joueurEnnemi.flotte.get(k).estAccoste == rep[1]:
-                                            listeDefense.append(joueurEnnemi.flotte.get(k))
+                                    vaisseauxDict = joueurEnnemi.flotte.get(vnk)
+                                    vaisseauxIdkeys = vaisseauxDict.keys()
+                                    for k in vaisseauxIdkeys:
+                                        if joueurEnnemi.flotte.get(vnk).get(k).estAccoste == rep[1]:
+                                            listeDefense.append(joueurEnnemi.flotte.get(vnk).get(k))
 
                                 #Combats avec les vaisseaux de défense
                                 for v in listeDefense:
@@ -568,8 +570,9 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
                                         j.vie -= v.vie
                                         v.vie = 0
                                     if v.vie <= 0:
-                                        self.parent.parent.supprimer_vaisseau(v.id)
-                                        self.poubelle.append(v)
+                                        if (v.proprietaire == joueurEnnemi.nom):
+                                            self.parent.parent.supprimer_vaisseau(v.id)
+                                            self.poubelle.append(v)
 
 
 
@@ -586,14 +589,21 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
 
                                 #Acquisition de l'étoile ennemie
                                 if rep[1].vie <= 0:
-                                    listeCles = rep[1].parent.joueurs
+                                    listeCles = rep[1].parent.joueurs.keys()
                                     for k in listeCles:
                                         joueur = rep[1].parent.joueurs.get(k)
-                                        joueur.etoilescontrolees.remove(rep[1])
-                                    j.parent.etoilescontrolees.append(rep[1])
+                                        if joueur.nom == rep[1].proprietaire:
+                                            joueur.etoilescontrolees.remove(rep[1])
                                     rep[1].proprietaire = j.proprietaire
+                                    for i in len(j.parent.etoilescontrolees):
+                                        if i.id == rep[1].id:
+                                            self.isExistante = True
 
-                                if(j.vie == 0 and j.proprietaire == self.nom):
+                                    if self.isExistante == False:
+                                        j.parent.etoilescontrolees.append(rep[1])
+
+
+                                if(j.vie <= 0 and j.proprietaire == self.nom):
                                     self.parent.parent.supprimer_vaisseau(j.id)
                                     self.poubelle.append(j)
 
