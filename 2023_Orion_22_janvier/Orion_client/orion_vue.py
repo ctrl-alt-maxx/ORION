@@ -813,9 +813,16 @@ class Vue():
         self.btncreereclaireur.pack(fill=X)
 
     def afficherNotification(self, notificationListe):
+        if len(notificationListe) > 0:
+            for n in notificationListe:
+                #afficher n pendant un délaie de 5 secondes
+                for i in range(5):
+                    self.label_notification.config(text=n)
+                #retier n de la liste
+                notificationListe.remove(n)
 
 
-        self.label_notification.config(text=notificationListe)
+
         self.label_notification.pack()
         self.cadre_notification.pack(side=LEFT)
 
