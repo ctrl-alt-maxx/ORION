@@ -74,8 +74,6 @@ class Etoile():
         self.key_en_construction = None
         self.cout = self.cout_selon_niveau()
 
-    # Amélioration de l'étoile
-
     '''
     Fonction définit les ressources nécessaires pour l'amélioration de l'étoile vers le prochain niveau
     Args:
@@ -120,14 +118,15 @@ class Etoile():
         key_ressources = self.inventaire.keys()
         if self.is_amelioration_possible():
             for i in key_ressources:
-                self.inventaire.update({i:self.inventaire.get(i) - self.cout.get(i)})
+                self.inventaire.update({i: self.inventaire.get(i) - self.cout.get(i)})
             self.niveauEtoile += 1
             self.cout_selon_niveau()
-            print("L'étoile ", self.nomEtoile, " a été amélioré. Elle est maintenant au niveau ", self.niveauEtoile, ".")
-
+            print("L'étoile ", self.nomEtoile, " a été amélioré. Elle est maintenant au niveau ", self.niveauEtoile,
+                  ".")
+        else:
+            print("L'étoile ", self.nomEtoile, " ne peux pas être améliorée.")
 
     # Construction des installations
-
     '''
     Fonction permet de construire ou d'améliorer une installation, elle retire les ressources utilisées et update les installations de l'étoile
     Args:
