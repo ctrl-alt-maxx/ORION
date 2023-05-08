@@ -229,7 +229,7 @@ class Controleur():
     ############            OUTILS           ###################
     # generateur de nouveau nom, peut y avoir collision
     def generer_nom(self):
-        mon_nom = "JAJA_" + str(random.randrange(100, 1000))
+        mon_nom = "PLAYER_" + str(random.randrange(100, 1000))
         return mon_nom
 
     def abandonner(self):
@@ -269,7 +269,8 @@ class Controleur():
     def recupQuantiteMatiereDeUtilisateur(self, chargement, idcargo):#dans chargement je met les quantites de matiere presente sur etoile
         self.actionsrequises.append([self.mon_nom, "transfererRessources",[chargement, idcargo]])#ajoute dans modele
 
-
+    def constructionStart(self):
+        self.vue.timer_start(self.cadrejeu,self.vue.laConstruction)
     def construireInstallation(self, installation, id):
         self.actionsrequises.append([self.mon_nom, "construire", [installation, id, self.cadrejeu]])
 

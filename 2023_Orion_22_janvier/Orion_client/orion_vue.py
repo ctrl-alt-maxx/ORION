@@ -111,11 +111,12 @@ class Vue():
 
         #notification
         self.cadre_notification = Frame()
-        self.label_officier_img = Label()
         self.label_notification = Label()
 
         self.startTime = 0
         self.strPourcentage = 0
+        self.laConstruction = ""
+        self.strName = ""
         self.chiffre = 0
 
         self.selectedTags = None
@@ -431,9 +432,7 @@ class Vue():
                               yscrollcommand=self.scrollY.set, bg="grey11")
 
         #self.timer_partie = Label(self.cadrejeu, text="Temps écoulé: ", textvariable=self.ticks, width=10, height=1)
-        self.cadre_notification = Frame(self.cadrejeu, width=50, height=2, bg=None)
-        self.label_officier_img = Label(self.cadre_notification, image=self.images["officier"])
-        self.label_notification = Label(self.cadre_notification, text="...", width=50, height=2,bg="#606060", fg="#c4c4c4")
+
 
         self.scrollX.config(command=self.canevas.xview)
         self.scrollY.config(command=self.canevas.yview)
@@ -446,11 +445,6 @@ class Vue():
         self.scrollY.grid(column=1, row=0, sticky=N + S)
 
         #self.timer_partie.grid(column=0, row=0, sticky=E + N, padx=20, pady=20)
-
-
-        self.cadre_notification.grid(column=0, row=0, sticky= E + N )
-        self.label_officier_img.pack(side=LEFT, fill=Y)
-        self.label_notification.pack(side=LEFT)
 
         self.cadrejeu.columnconfigure(0, weight=1)
         self.cadrejeu.rowconfigure(0, weight=1)
@@ -494,6 +488,10 @@ class Vue():
         self.cadreinfochoix = Frame(self.cadreinfo, height=200, width=200, bg="light grey")
         """fenetre ou il y a bouton vaisseau, cargo et eclaireur"""
 
+        self.cadre_notification = Frame(self.cadreoutils, width=50, height=50, bg=None)
+        self.label_notification = Label(self.cadre_notification, bg="#606060", fg="#c4c4c4")
+        self.cadre_notification.pack(side=LEFT)
+        self.label_notification.pack()
 
         #BOUTONS DU MENU
 
@@ -569,15 +567,19 @@ class Vue():
         fonction qui demarre le timer
         :param start_time: le temps de depart
         """
+
         if obj == "entrepot":
+            self.strName = "entrepot :"
             self.percentage_label = Label(self.cadreoutils, foreground='#FCFCFC', background='#30292F',
                                       font=('Arial', 12))
         elif obj == "usine":
+            self.strName = "usine :"
             self.percentage_label = Label(self.cadreoutils, foreground='#FCFCFC', background='#30292F',
                                       font=('Arial', 12))
         elif obj == "vaisseau":
+            self.strName = "vaisseau :"
             self.percentage_label = Label(self.cadreoutils, foreground='#FCFCFC', background='#30292F',
-                                      font=('Arial', 12))
+                                          font=('Arial', 12))
         self.objet = obj
         self.startTime = start_time
         self.started = True
@@ -601,8 +603,8 @@ class Vue():
             if self.nbr_usine == 0:
                 self.nbr_usine += 1
                 self.menu_installation()
-        # elif self.objet == "vaisseau":
-        #     self.menu_installation()
+        elif self.objet == "vaisseau":
+            self.cadre_bouton_construction_vaisseau()
 
     def refresh(self, cadre):
         """
@@ -611,10 +613,11 @@ class Vue():
         """
         if(self.started == True and self.strPourcentage < 100):
             self.strPourcentage = int(((cadre - self.startTime) / 100) * 100)
-            self.percentage_label.config(text=str(self.strPourcentage) + "%")
+            self.percentage_label.config(text=self.strName + str(self.strPourcentage) + "%")
 
             print(self.strPourcentage)
             self.percentage_label.pack()
+
         elif self.strPourcentage == 100:
             self.timer_end()
 
@@ -698,7 +701,6 @@ class Vue():
                         self.afficher_cout += ke + " : " + str(self.recup.installations.get("entrepot").cout.get(ke)) + "  "
                         self.afficher_possession += ke + " : " + str(self.recup.inventaire.get(ke)) + "  "
             else:
-                # faire cette merde la ;)
                 i = Installation(None, None, "entrepot", 30)
                 keys = i.cout.keys()
                 for k in keys:
@@ -815,6 +817,7 @@ class Vue():
 
         self.label_notification.config(text=notificationListe)
         self.label_notification.pack()
+        self.cadre_notification.pack(side=LEFT)
 
     def menu_ressource(self):# on arrive ici quand on clique sur le bouton "Inventaire" -> inventaire de ce que possede le joueur
         #raffraichir valeur self.recup.inventaire.get("Fer)
@@ -922,12 +925,14 @@ class Vue():
     def construire_entrepot(self):#on arrive ici quand on clique sur le bouton "Construire Entrepot"
         self.cadre_menu_installation.pack_forget()
         self.parent.construireInstallation("entrepot", self.ma_selection[1]) #pour construire entrepot -> la fonction va veifier si on peut construire entrepot
-        self.timer_start(self.parent.cadrejeu,"entrepot") #on lance le timer pour construire entrepot
+        self.laConstruction = "entrepot"
+        #self.timer_start(self.parent.cadrejeu,"entrepot") #on lance le timer pour construire entrepot
 
     def construire_usine(self):# on arrive ici quand on clique sur bouton construire_usine
         self.cadre_menu_installation.pack_forget()
         self.parent.construireInstallation("usine", self.ma_selection[1])
-        self.timer_start(self.parent.cadrejeu,"usine")
+        self.laConstruction = "usine"
+        #self.timer_start(self.parent.cadrejeu,"usine")
 
 
 

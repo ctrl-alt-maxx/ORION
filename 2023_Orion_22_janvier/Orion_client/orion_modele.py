@@ -143,7 +143,10 @@ class Etoile():
         else:
             installation = Usine(self.parent, self.proprietaire, "usine", cadre,25)
         if self.is_construisible(installation):
+
             #TODO POSSIBILITÉ DE CHANGER LA FONCTION EN BOUCLE
+            self.parent.parent.constructionStart()
+
             self.inventaire.update({"Fer":          self.inventaire.get("Fer") - installation.cout.get("Fer")})
             self.inventaire.update({"Cuivre":       self.inventaire.get("Cuivre") - installation.cout.get("Cuivre")})
             self.inventaire.update({"Or":           self.inventaire.get("Or") - installation.cout.get("Or")})
@@ -153,6 +156,11 @@ class Etoile():
             self.inventaire.update({"Antimatiere":  self.inventaire.get("Antimatiere") - installation.cout.get("Antimatiere")})
             self.en_construction.update({installation.type:installation})
             print(self.en_construction)
+        else :
+            print("L'étoile " + self.nomEtoile + " ne possède pas les ressources nécessaires pour construire une installation de type " + installation.type)
+
+
+
 
     '''
     Permet de déterminer si l'étoile possède les ressources suffisantes pour construire ou améliorer l'installation voulue.
