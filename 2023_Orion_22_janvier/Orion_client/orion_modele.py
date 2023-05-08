@@ -460,7 +460,7 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
             if e.id == params[3]:
                 if e.installations.get("entrepot").isLibre() is not None:
                     type_vaisseau = params[0]
-                    cadreDebutConstruction = params[4]
+                    cadreDebutConstruction = params[4]#contient int 405
                     if type_vaisseau == "Cargo":
                         v = Cargo(self, self.nom, int(params[1]) + 10, int(params[2]), e.id, 15, cadreDebutConstruction, type_vaisseau)
                     elif type_vaisseau == "Attack":
@@ -586,7 +586,8 @@ class Installation():
     def cout_selon_niveau(self):
         if self.type == "entrepot":
             if self.niveau == 0: #niveau 0 = entrepôt à construire
-                self.cout = {"Fer":50,
+
+                temp = {"Fer":50,
                              "Cuivre":15,
                              "Or":0,
                              "Titane":0,
@@ -594,7 +595,7 @@ class Installation():
                              "Plutonium":0,
                              "Antimatiere":0}
             elif self.niveau == 1:
-                self.cout = {"Fer":75,
+                temp = {"Fer":75,
                              "Cuivre":25,
                              "Or":5,
                              "Titane": 0,
@@ -602,7 +603,7 @@ class Installation():
                              "Plutonium":0,
                              "Antimatiere":0}
             elif self.niveau == 2:
-                self.cout = {"Fer":100,
+                temp = {"Fer":100,
                              "Cuivre":35,
                              "Or":15,
                              "Titane": 0,
@@ -610,7 +611,7 @@ class Installation():
                              "Plutonium": 5,
                              "Antimatiere":0}
             elif self.niveau == 3:
-                self.cout = {"Fer": 150,
+                temp = {"Fer": 150,
                              "Cuivre": 55,
                              "Or": 25,
                              "Titane": 15,
@@ -620,7 +621,7 @@ class Installation():
 
         elif self.type == "usine":
             if self.niveau == 0: #niveau 0 = usine à construire
-                self.cout = {"Fer":35,
+                temp = {"Fer":35,
                              "Cuivre":5,
                              "Or": 0,
                              "Titane": 0,
@@ -628,7 +629,7 @@ class Installation():
                              "Plutonium":0,
                              "Antimatiere":0}
             elif self.niveau == 1:
-                self.cout = {"Fer":50,
+                temp = {"Fer":50,
                              "Cuivre":15,
                              "Or":5,
                              "Titane": 0,
@@ -636,7 +637,7 @@ class Installation():
                              "Plutonium":0,
                              "Antimatiere":0}
             elif self.niveau == 2:
-                self.cout = {"Fer":80,
+                temp = {"Fer":80,
                              "Cuivre":30,
                              "Or":15,
                              "Titane": 0,
@@ -644,14 +645,14 @@ class Installation():
                              "Plutonium": 5,
                              "Antimatiere":0}
             elif self.niveau == 3:
-                self.cout = {"Fer": 125,
+                temp = {"Fer": 125,
                              "Cuivre": 55,
                              "Or": 20,
                              "Titane": 25,
                              "Hydrogene": 85,
                              "Plutonium": 45,
                              "Antimatiere":3}
-        return self.cout
+        return temp
 
 class Usine(Installation):
     def __init__(self, parent, proprietaire, type, cadre_debut_construction, production):
@@ -664,6 +665,7 @@ class Entrepot(Installation):
         self.capacite = {"slot1": None,
                          "slot2": None,
                          "slot3": None}
+        self.tps_constructionVaisseau = 100;
         super().__init__( parent, proprietaire, type, cadre_debut_construction)
         self.keysSlots = None
 
@@ -682,7 +684,7 @@ class Entrepot(Installation):
         self.keysSlots = self.capacite.keys()
         for k in self.keysSlots:
             if self.capacite.get(k) is not None:
-                if cadre == self.capacite.get(k).cadreDebutConstruction + 100:
+                if cadre == self.capacite.get(k).cadreDebutConstruction + self.tps_constructionVaisseau:
                     self.v = self.capacite.get(k)
                     print (self.v)
                     self.v.parent.finConstructionVaisseau(self.v)

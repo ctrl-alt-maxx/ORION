@@ -106,9 +106,11 @@ class Vue():
         self.cadre_bouton_construction_vaisseau = Frame()
         self.cadre_bouton_transferer = Frame()
         self.cadre_choisir_transfere = Frame()
+        self.cadre_ameliorer_entrepot = Frame()
 
         self.startTime = 0
         self.strPourcentage = 0
+        self.test = 0
         self.chiffre = 0
 
         self.selectedTags = None
@@ -594,12 +596,14 @@ class Vue():
         fonction qui est appeler a chaque tick dans le main
         :param cadre: le temps actuel
         """
+        vitesse = 0
+        if(self.accelerer_timer): vitesse = 500
+        else:vitesse = 100
         if(self.started == True and self.strPourcentage < 100):
-            self.strPourcentage = int(((cadre - self.startTime) / 100) * 100)
+        #if(self.started == True and self.test < 100):
+            self.strPourcentage = int(((cadre - self.startTime) / 100) * vitesse)#*100
             self.percentage_label.config(text=str(self.strPourcentage) + "%")
-
-            print(self.strPourcentage)
-
+            print("xxx" + str(self.strPourcentage))
             self.percentage_label.pack()
         elif self.strPourcentage == 100:
             self.timer_end()
@@ -774,13 +778,39 @@ class Vue():
 
 
     def amelioration_entrepot(self):
-        #accelerer le timer pour construire un vaisseau plus vite
-        #possibilite de construire plusieurs vaisseaux a la fois
-        #chaque etoile a un entrepot donc recuperer id de letoile...
+        self.cadre_menu_installation.pack_forget()
+        #faire un cadre dans cadre_outil
+        self.cadre_ameliorer_entrepot = Frame(self.cadreoutils, height=200,width=200,bg="#DCE0D9")
+        self.cadre_ameliorer_entrepot.pack(fill=X)
+        self.cadre_description_amelioEntrepot = Frame(self.cadre_ameliorer_entrepot, height=200,width=200,bg="#DCE0D9")
+        self.label_descritpion_ameliorer_entrepot = Label(self.cadre_description_amelioEntrepot, text="Permet d'acceler la vitesse de construction d'un vaisseau " ,bg="#DCE0D9")
+        self.cadre_description_amelioEntrepot.pack(fill = X)
+        self.label_descritpion_ameliorer_entrepot.pack(fill=X)
+        #ressource demande
+        #faire cadre ressource deande
+        self.cadre_ressource_demade = Frame(self.cadre_ameliorer_entrepot, height=200, width=200, bg="#DCE0D9")
+        self.label_ressource_demande_pour_ameliorer = Label(self.cadre_ressource_demade, text="50 fer, 100 or ect...")
+        self.cadre_ressource_demade.pack(fill=X)
+        self.label_ressource_demande_pour_ameliorer.pack(fill=X)
+
+        #faire bouton ameliorer entrepot
+        self.cadre_bouton_confirm_ameliore = Frame(self.cadre_ameliorer_entrepot, height=200, width=200, bg="#DCE0D9")
+        self.bouton_confir_ameliorer_entrepot = Button(self.cadre_bouton_confirm_ameliore, text="confirmer ameliorer entrepot")
+        self.bouton_confir_ameliorer_entrepot.config(command=self.ameliorer_entrepot)
+        self.cadre_bouton_confirm_ameliore.pack(fill=X)
+        self.bouton_confir_ameliorer_entrepot.pack(fill=X)
+
+
+
+
+
+
+    def ameliorer_entrepot(self):
+        # accelerer le timer pour construire un vaisseau plus vite
+        # possibilite de construire plusieurs vaisseaux a la fois
+        # chaque etoile a un entrepot donc recuperer id de letoile...
+        # enlever ce quil y a dans
         self.accelerer_timer = True
-
-
-
 
     def construction_vaisseau(self):# on arrive ici quand on clique sur le bouton "construire Vaisseau"
         #on affiche les boutons
