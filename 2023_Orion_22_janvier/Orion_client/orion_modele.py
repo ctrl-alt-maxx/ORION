@@ -139,7 +139,7 @@ class Etoile():
         if type == "entrepot":
             installation = Entrepot(self.parent,self.proprietaire,"entrepot", cadre)
         else:
-            installation = Usine(self.parent, self.proprietaire, "usine", cadre,25)
+            installation = Usine(self.parent, self.proprietaire, "usine", cadre, 25)
         if self.is_construisible(installation):
             #TODO POSSIBILITÉ DE CHANGER LA FONCTION EN BOUCLE
             self.inventaire.update({"Fer":          self.inventaire.get("Fer") - installation.cout.get("Fer")})
@@ -655,11 +655,26 @@ class Installation():
                              "Antimatiere":3}
         return self.cout
 
+    # Ne pas utiliser; utiliser les méthodes des sous-classes à la place
+    def ameliorer_installation(self):
+        key_ressources = self.parent.inventaire.keys()
+        if self.niveau != 3 and self.parent.isRessourcesValides(self):
+            for i in key_ressources:
+                self.parent.inventaire.update({i: self.parent.inventaire.get(i) - self.cout.get(i)})
+            print("L'installation", self.type, "de l'étoile", self.parent.id, "a été améliorée.")
+            return True
+        else:
+            print("L'installation", self.type, "de l'étoile", self.parent.id, "n'a pas pu être améliorée.")
+            return False
+
 class Usine(Installation):
     def __init__(self, parent, proprietaire, type, cadre_debut_construction, production):
         self.production = production
         super().__init__(parent, proprietaire, type, cadre_debut_construction)
 
+    def ameliorer_usine(self):
+        if super().ameliorer_installation():
+            self.production += 50
 
 class Entrepot(Installation):
     def __init__(self, parent, proprietaire, type, cadre_debut_construction):
@@ -689,6 +704,10 @@ class Entrepot(Installation):
                     print (self.v)
                     self.v.parent.finConstructionVaisseau(self.v)
                     self.capacite.update({k:None})
+
+    def ameliorer_entrepot(self):
+        if super().ameliorer_installation():
+            pass # Changer pour effectuer les changements souhaité pour l'entrepot
 
 
 class Modele():
