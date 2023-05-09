@@ -503,6 +503,7 @@ class Vue():
         self.btnInventaire.pack(fill=X)
 
         self.boutonAmeliorerEtoile = Button(self.cadreinfochoix, text="Ameliorer Etoile",foreground='#FCFCFC', background='#B462C2', font=('Arial', 12))
+        self.boutonAmeliorerEtoile.config(command=self.ameliorer_etoile)
         self.boutonAmeliorerEtoile.pack(fill=X)
         self.eteAfficher = False
 
@@ -776,7 +777,6 @@ class Vue():
 
 
 
-
     def amelioration_entrepot(self):
         self.cadre_menu_installation.pack_forget()
         #faire un cadre dans cadre_outil
@@ -800,11 +800,6 @@ class Vue():
         self.cadre_bouton_confirm_ameliore.pack(fill=X)
         self.bouton_confir_ameliorer_entrepot.pack(fill=X)
 
-
-
-
-
-
     def ameliorer_entrepot(self):
         # accelerer le timer pour construire un vaisseau plus vite
         # possibilite de construire plusieurs vaisseaux a la fois
@@ -812,6 +807,7 @@ class Vue():
         # enlever ce quil y a dans
         self.accelerer_timer = True
         self.parent.recupValeurAmeliorerEntrepot(self.accelerer_timer)
+
 
     def construction_vaisseau(self):# on arrive ici quand on clique sur le bouton "construire Vaisseau"
         #on affiche les boutons
@@ -838,7 +834,10 @@ class Vue():
         self.btncreercargo.pack(fill=X)
         self.btncreereclaireur.pack(fill=X)
 
+    def ameliorer_etoile(self): # Quand on clique sur le bouton ameliorer etoile. A faire: Faire disparaitre le UI pour indiquer l'amelioration
+        self.recup = self.parent.recupEtoile(self.ma_selection[1])
 
+        self.parent.ameliorer_etoile(self.recup.id)
 
     def menu_ressource(self):# on arrive ici quand on clique sur le bouton "Inventaire" -> inventaire de ce que possede le joueur
         #raffraichir valeur self.recup.inventaire.get("Fer)
@@ -893,8 +892,8 @@ class Vue():
         self.recup = self.parent.recupEtoile(self.ma_selection[1])
         self.forget_all()
 
-        self.cadre_menu_ressource_ex = Frame(self.cadreoutils, height=200, width=100, bg="blue")
-        self.cadre_menu_ressource_ex.pack(side=LEFT, fill=Y)
+        self.cadre_menu_ressource_ex = Frame(self.cadreoutils, height=200, width=100, bg="#6F6D6D")
+        self.cadre_menu_ressource_ex.pack(fill=BOTH)
         self.a_clique_sur_installation = 0
 
         self.label_materiaux_e = Label(self.cadre_menu_ressource_ex, text="Matériaux :", anchor=CENTER,width=34, height=1, border=1, borderwidth=1,relief="solid", bg="#e0e0e0")
