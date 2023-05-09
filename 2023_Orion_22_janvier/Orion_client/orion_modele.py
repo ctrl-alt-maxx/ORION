@@ -73,7 +73,7 @@ class Etoile():
                           "Plutonium":0,
                           "Antimatiere":0}
 
-        self.vie = 500 # nbr de vie de la planete
+        self.vie = 200 # nbr de vie de la planete
         self.key_en_construction = None
         self.cout = self.cout_selon_niveau()
 
@@ -526,15 +526,18 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
         self.avancer_flotte()
 
     def deletePoubelle(self):
-        for i in self.poubelle:
-            del self.flotte.get(i.type_vaisseau)[i.id]
+        for p in self.poubelle:
+            del self.flotte.get(p.type_vaisseau)[p.id]
         self.poubelle.clear()
 
     def avancer_flotte(self, chercher_nouveau=0):
         cargoEstAccost = False
-        for i in self.flotte: #Chaque type de vaisseau
-             for z in self.flotte[i]:
-                j = self.flotte[i][z]
+        flotteKeys = self.flotte.keys()
+        for i in flotteKeys: #Chaque type de vaisseau
+            dictIdVaisseau = self.flotte.get(i)
+            vaisseauKeys = dictIdVaisseau.keys()
+            for z in vaisseauKeys:
+                j = dictIdVaisseau.get(z)
                 rep = j.jouer_prochain_coup(chercher_nouveau) #Retourne liste ["TypeObjet", objet]
                 if rep and j:
                     if rep[0] == "Etoile":
@@ -558,14 +561,46 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
 
                             j.estAccoste = rep[1] #dans estAccoste est stocke l<id de letoile ou le cargot est accoste -> donc il a une valeur id donc sera true
                             self.parent.parent.recupererValeurEstAccoste(j.estAccoste, cargoEstAccost)#cette fonction est cree dans le main -> pb: sera toujours true
-                            self.etoilescontrolees.append(rep[1])
 
-                            if rep[1].proprietaire == 'neutre' or rep[1].vie <= 0:
+
+                            if rep[1].proprietaire == 'neutre':
                                 rep[1].proprietaire = j.proprietaire
-                                self.parent.parent.afficher_etoile(self.nom, rep[1])
+                                self.etoilescontrolees.append(rep[1])
+                                self.parent.parent.afficher_etoile(self.nom, rep[1]) #####
 
-                            if rep[1].proprietaire != j.proprietaire and rep[1].proprietaire != 'neutre':
-                                if(rep[1].vie > j.vie):
+                            elif rep[1].proprietaire != j.proprietaire and rep[1].proprietaire != 'neutre':
+                                listeVaisseau = []
+                                joueurEnnemi = self.parent.joueurs.get(rep[1].proprietaire)
+                                print(joueurEnnemi, "Joueur ennemi")
+                                keysFlotte = joueurEnnemi.flotte.keys()
+                                print(keysFlotte, "Keys flotte")
+                                for k in keysFlotte:
+                                    dictclassvaisseau = joueurEnnemi.flotte.get(k)
+                                    print(dictclassvaisseau, "dict vaisseau")
+                                    keys = dictclassvaisseau.keys()
+                                    print(keys, "dict keys petit vaisseaux")
+                                    for t in keys:
+                                        if dictclassvaisseau.get(t).estAccoste == rep[1]:
+                                            listeVaisseau.append(dictclassvaisseau.get(t))
+
+                                for v in listeVaisseau:
+                                    if v.vie > j.vie:
+                                        v.vie -= j.vie
+                                        j.vie = 0
+                                    elif v.vie == j.vie:
+                                        v.vie = 0
+                                        j.vie = 0
+                                    else:
+                                        j.vie -= v.vie
+                                        v.vie = 0
+
+                                    if v.vie <= 0:
+                                        self.parent.parent.supprimer_vaisseau(v.id)
+                                        joueurEnnemi.poubelle.append(v)
+                                        listeVaisseau.remove(v)
+
+
+                                if rep[1].vie > j.vie :
                                     rep[1].vie -= j.vie
                                     j.vie = 0
                                 elif(rep[1].vie == j.vie):
@@ -576,24 +611,25 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
                                     rep[1].vie = 0
 
                                 if rep[1].vie <= 0:
-                                    listeCles = rep[1].parent.joueurs
+                                    listeCles = self.parent.joueurs
                                     for k in listeCles:
-                                        joueur = rep[1].parent.joueurs.get(k)
-                                        joueur.etoilescontrolees.remove(rep[1])
-                                    j.parent.etoilescontrolees.append(rep[1])
+                                        joueur = self.parent.joueurs.get(k)
+                                        if joueur.nom == rep[1].proprietaire:
+                                            joueur.etoilescontrolees.remove(rep[1])
                                     rep[1].proprietaire = j.proprietaire
+                                    self.etoilescontrolees.append(rep[1])
+                                    self.parent.parent.afficher_etoile(self.nom, rep[1])
 
                                 if(j.vie == 0 and j.proprietaire == self.nom):
                                     self.parent.parent.supprimer_vaisseau(j.id)
                                     self.poubelle.append(j)
 
-
-
-
-
                     elif rep[0] == "Porte_de_ver":
                         pass
-        self.deletePoubelle()
+
+        listeCles = self.parent.joueurs
+        for k in listeCles:
+            self.parent.joueurs.get(k).deletePoubelle()
 
 class Installation():
     def __init__(self, parent, proprietaire, type, cadre_debut_construction):
