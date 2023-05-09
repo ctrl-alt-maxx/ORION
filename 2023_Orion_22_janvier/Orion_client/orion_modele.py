@@ -9,6 +9,9 @@ from id import *
 from helper import Helper as hlp
 
 cadreActuel = None
+tempConstructionUsine = 100
+tempConstructionEntrepot = 200
+tempConstructionVaisseau = 50
 
 class Porte_de_vers(): #Porte dans laquelle on rentre dans le trou de ver
     def __init__(self, parent, x, y, couleur, taille):
@@ -109,7 +112,11 @@ class Etoile():
     def is_amelioration_possible(self):
         if self.isRessourcesValides(self):
             if self.niveauEtoile != 3:
+                self.parent.parent.notification = ("Amélioration de l'étoile " + self.nomEtoile + " réussie.")
                 return True
+            else:
+                self.parent.parent.notification = ("L'étoile " + self.nomEtoile + " est déjà au niveau maximum.")
+        self.parent.parent.notification = ("Amélioration de l'étoile " + self.nomEtoile + " impossible.")
         return False
 
     '''
@@ -141,7 +148,10 @@ class Etoile():
         else:
             installation = Usine(self.parent, self.proprietaire, "usine", cadre, 25)
         if self.is_construisible(installation):
+
             #TODO POSSIBILITÉ DE CHANGER LA FONCTION EN BOUCLE
+            self.parent.parent.constructionStart()
+
             self.inventaire.update({"Fer":          self.inventaire.get("Fer") - installation.cout.get("Fer")})
             self.inventaire.update({"Cuivre":       self.inventaire.get("Cuivre") - installation.cout.get("Cuivre")})
             self.inventaire.update({"Or":           self.inventaire.get("Or") - installation.cout.get("Or")})
@@ -151,6 +161,11 @@ class Etoile():
             self.inventaire.update({"Antimatiere":  self.inventaire.get("Antimatiere") - installation.cout.get("Antimatiere")})
             self.en_construction.update({installation.type:installation})
             print(self.en_construction)
+        else :
+            print("L'étoile " + self.nomEtoile + " ne possède pas les ressources nécessaires pour construire une installation de type " + installation.type)
+
+
+
 
     '''
     Permet de déterminer si l'étoile possède les ressources suffisantes pour construire ou améliorer l'installation voulue.
@@ -162,6 +177,7 @@ class Etoile():
         if self.isRessourcesValides(installation):
             if self.installations.get(installation.type) is None:
                 return True
+        self.parent.parent.notification = ("L'étoile" + self.nomEtoile + " possède déjà une installation de type " + installation.type)
         return False
 
     '''
@@ -175,6 +191,7 @@ class Etoile():
         for i in listeRessources:
             if self.inventaire.get(i) < installation.cout.get(i):
                 return False
+                self.parent.parent.notification = ("L'étoile " + self.nomEtoile + " n'a pas assez de ressources pour construire l'installation " + installation.type)
         return True
 
     def verifier_fin_construction(self, cadre):
@@ -183,9 +200,11 @@ class Etoile():
         for k in self.key_en_construction:
             if self.en_construction.get(k) is not None:
                 if k == "entrepot":
-                    self.verifier_fin_construction_selon_installation(cadre, k, 100) # Temps à changer
+                    self.verifier_fin_construction_selon_installation(cadre, k, tempConstructionEntrepot)
+                elif k == "usine":
+                    self.verifier_fin_construction_selon_installation(cadre, k, tempConstructionUsine)
                 else:
-                    self.verifier_fin_construction_selon_installation(cadre, k, 200) # Temps à changer
+                    self.verifier_fin_construction_selon_installation(cadre, k, 200)
 
 
     def verifier_fin_construction_selon_installation(self, cadre, k, temps_construction):
@@ -684,6 +703,7 @@ class Entrepot(Installation):
         super().__init__( parent, proprietaire, type, cadre_debut_construction)
         self.keysSlots = None
 
+
     '''
         La fonction détermine si un emplacement dans l'entrepot est libre pour y construire un vaisseau. 
         Returns le slot libre ou false si aucun slot n'est disponible.
@@ -707,11 +727,19 @@ class Entrepot(Installation):
 
     def ameliorer_entrepot(self):
         if super().ameliorer_installation():
-            pass # Changer pour effectuer les changements souhaité pour l'entrepot
+            pass # Changer pour effectuer les changements souhaités pour l'entrepot
 
+class Timer(): #TODO: à compléter
+    def __init__(self, parent, temps):
+        self.parent = parent
+        self.temps = temps
+        self.cadre_debut = self.parent.cadre
+        self.cadre_fin = self.cadre_debut + self.temps
 
 class Modele():
     def __init__(self, parent, joueurs):
+
+        self.dicConstruction = {"usine": tempConstructionUsine, "entrepot": tempConstructionEntrepot, "vaisseau": tempConstructionVaisseau}
         self.parent = parent
         self.largeur = 9000
         self.hauteur = 9000
