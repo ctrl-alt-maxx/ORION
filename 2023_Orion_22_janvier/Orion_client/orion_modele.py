@@ -512,8 +512,10 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
         cargoEstAccost = False
         flotteKeys = self.flotte.keys()
         for i in flotteKeys: #Chaque type de vaisseau
-             for z in self.flotte[i]:
-                j = self.flotte[i][z]
+            dictIdVaisseau = self.flotte.get(i)
+            vaisseauKeys = dictIdVaisseau.keys()
+            for z in vaisseauKeys:
+                j = dictIdVaisseau.get(z)
                 rep = j.jouer_prochain_coup(chercher_nouveau) #Retourne liste ["TypeObjet", objet]
                 if rep and j:
                     if rep[0] == "Etoile":
