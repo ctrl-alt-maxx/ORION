@@ -280,8 +280,14 @@ class Controleur():
     def to_secondes(self, nb_ticks):
         return nb_ticks // 16
 
+
     def tempConstruction(self, installation):
         return self.modele.dicConstruction[installation]
+      
+    def ameliorer_etoile(self, id_etoile):
+        etoile = self.recupEtoile(id_etoile)
+        etoile.ameliorer_etoile()
+
 
 
 if __name__ == "__main__":

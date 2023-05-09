@@ -77,8 +77,6 @@ class Etoile():
         self.key_en_construction = None
         self.cout = self.cout_selon_niveau()
 
-    # Amélioration de l'étoile
-
     '''
     Fonction définit les ressources nécessaires pour l'amélioration de l'étoile vers le prochain niveau
     Args:
@@ -86,22 +84,25 @@ class Etoile():
     '''
     def cout_selon_niveau(self):
         if self.niveauEtoile == 1:
-            self.cout = {  "Fer": 1000,
+            temp_cout = {  "Fer": 1000,
                             "Cuivre": 750,
                             "Or" : 500,
                             "Titane": 250,
                             "Hydrogene": 200,
                             "Plutonium": 100,
                             "Antimatiere": 0}
+            self.vie += 500
 
         elif self.niveauEtoile == 2:
-            self.cout = {   "Fer": 2000,
+            temp_cout = {   "Fer": 2000,
                             "Cuivre": 2500,
                             "Or": 1000,
                             "Titane": 500,
                             "Hydrogene": 400,
                             "Plutonium": 200,
                             "Antimatiere": 50}
+            self.vie += 500
+        return temp_cout
 
     '''
         Fonction vérifie si l'amélioration de l'étoile est possible et valide
@@ -127,14 +128,15 @@ class Etoile():
         key_ressources = self.inventaire.keys()
         if self.is_amelioration_possible():
             for i in key_ressources:
-                self.inventaire.update({i:self.inventaire.get(i) - self.cout.get(i)})
+                self.inventaire.update({i: self.inventaire.get(i) - self.cout.get(i)})
             self.niveauEtoile += 1
             self.cout_selon_niveau()
-            print("L'étoile ", self.nomEtoile, " a été amélioré. Elle est maintenant au niveau ", self.niveauEtoile, ".")
-
+            print("L'étoile ", self.nomEtoile, " a été amélioré. Elle est maintenant au niveau ", self.niveauEtoile,
+                  ".")
+        else:
+            print("L'étoile ", self.nomEtoile, " ne peux pas être améliorée.")
 
     # Construction des installations
-
     '''
     Fonction permet de construire ou d'améliorer une installation, elle retire les ressources utilisées et update les installations de l'étoile
     Args:
