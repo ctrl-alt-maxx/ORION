@@ -631,7 +631,7 @@ class Vue():
 
 
     def menu_installation(self):#est appele quand je clique sur le bouton "Installation"
-            self.recup = self.parent.recupEtoile(self.ma_selection[1])
+            self.recup = self.parent.recupEtoile(self.ma_selection[1])#self.ma_selection[1] -> la jai lid de letoile que jai selectione
             self.forget_all() #on oublie tout les cadres
 
             #on creer un cadre
@@ -811,6 +811,7 @@ class Vue():
         # chaque etoile a un entrepot donc recuperer id de letoile...
         # enlever ce quil y a dans
         self.accelerer_timer = True
+        self.parent.recupValeurAmeliorerEntrepot(self.accelerer_timer)
 
     def construction_vaisseau(self):# on arrive ici quand on clique sur le bouton "construire Vaisseau"
         #on affiche les boutons
@@ -1156,7 +1157,7 @@ class Vue():
 
     def creer_vaisseau(self, evt):
         self.forget_all()
-        type_vaisseau = evt.widget.cget("text")
+        type_vaisseau = evt.widget.cget("text")#on recupere le type de vaisseau que lon veut creer
         self.parent.creer_vaisseau(type_vaisseau, int(self.selectedTags[3]) + random.choice([i for i in range(-30, 30) if i not in [-10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]]), int(self.selectedTags[4]) + random.choice([i for i in range(-30, 30) if i not in [-10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]]), self.ma_selection[1])
         self.ma_selection = None
         self.canevas.delete("marqueur")

@@ -125,6 +125,10 @@ class Etoile():
             self.cout_selon_niveau()
             print("L'étoile ", self.nomEtoile, " a été amélioré. Elle est maintenant au niveau ", self.niveauEtoile, ".")
 
+   # def ameliorer_entrepot(self):
+
+
+
 
     # Construction des installations
 
@@ -716,10 +720,10 @@ class Modele():
 
     def recupererEtoile(self, id):
         id_text = str(id)
-        for e in self.etoiles:
+        for e in self.etoiles:#etoiles represente toutes les etoiles du jeu (neutre ou pas)
             if e.id == id_text:
                 recup = e
-        return recup
+        return recup #recup a letoile trouve avec tout ce qui a dedans (ou pas)
 
     def recupererJoueur(self, id):
         keys = self.joueurs.keys()
