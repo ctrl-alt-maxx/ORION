@@ -12,7 +12,7 @@ from orion_vue import *
 
 class Controleur():
     def __init__(self):
-        self.notificationListe = []
+        self.notification =""
         """Liste qui représente les notifications de l'état du jeu à afficher"""
         self.mon_nom = self.generer_nom()
         """nom de joueur, sert d'identifiant dans le jeu - ici, avec auto-generation"""
@@ -150,9 +150,9 @@ class Controleur():
         self.vue.refresh(self.cadrejeu)
         self.vue.refreshEtoile(self.mon_nom)
 
-        if len(self.notificationListe) > 0:
-            self.vue.afficherNotification(self.notificationListe)
-            self.notificationListe = []
+        if self.notification != "":
+            self.vue.afficherNotification(self.notification)
+            self.notification = ""
 
         if self.cadrejeu % self.moduloappeler_serveur == 0:  # appel périodique au serveur
             if self.actionsrequises:
@@ -280,7 +280,8 @@ class Controleur():
     def to_secondes(self, nb_ticks):
         return nb_ticks // 16
 
-
+    def tempConstruction(self, installation):
+        return self.modele.dicConstruction[installation]
 
 
 if __name__ == "__main__":

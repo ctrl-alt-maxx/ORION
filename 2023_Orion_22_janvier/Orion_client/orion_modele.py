@@ -9,6 +9,9 @@ from id import *
 from helper import Helper as hlp
 
 cadreActuel = None
+tempConstructionUsine = 100
+tempConstructionEntrepot = 200
+tempConstructionVaisseau = 50
 
 class Porte_de_vers(): #Porte dans laquelle on rentre dans le trou de ver
     def __init__(self, parent, x, y, couleur, taille):
@@ -108,11 +111,11 @@ class Etoile():
     def is_amelioration_possible(self):
         if self.isRessourcesValides(self):
             if self.niveauEtoile != 3:
-                self.parent.parent.notificationListe.append("Amélioration de l'étoile " + self.nomEtoile + " réussie.")
+                self.parent.parent.notification = ("Amélioration de l'étoile " + self.nomEtoile + " réussie.")
                 return True
             else:
-                self.parent.parent.notificationListe.append("L'étoile " + self.nomEtoile + " est déjà au niveau maximum.")
-        self.parent.parent.notificationListe.append("Amélioration de l'étoile " + self.nomEtoile + " impossible.")
+                self.parent.parent.notification = ("L'étoile " + self.nomEtoile + " est déjà au niveau maximum.")
+        self.parent.parent.notification = ("Amélioration de l'étoile " + self.nomEtoile + " impossible.")
         return False
 
     '''
@@ -172,7 +175,7 @@ class Etoile():
         if self.isRessourcesValides(installation):
             if self.installations.get(installation.type) is None:
                 return True
-        self.parent.parent.notificationListe.append("L'étoile" + self.nomEtoile + " possède déjà une installation de type " + installation.type)
+        self.parent.parent.notification = ("L'étoile" + self.nomEtoile + " possède déjà une installation de type " + installation.type)
         return False
 
     '''
@@ -186,7 +189,7 @@ class Etoile():
         for i in listeRessources:
             if self.inventaire.get(i) < installation.cout.get(i):
                 return False
-                self.parent.parent.notificationListe.append("L'étoile " + self.nomEtoile + " n'a pas assez de ressources pour construire l'installation " + installation.type)
+                self.parent.parent.notification = ("L'étoile " + self.nomEtoile + " n'a pas assez de ressources pour construire l'installation " + installation.type)
         return True
 
     def verifier_fin_construction(self, cadre):
@@ -195,9 +198,11 @@ class Etoile():
         for k in self.key_en_construction:
             if self.en_construction.get(k) is not None:
                 if k == "entrepot":
-                    self.verifier_fin_construction_selon_installation(cadre, k, 100) # Temps à changer
+                    self.verifier_fin_construction_selon_installation(cadre, k, tempConstructionEntrepot)
+                elif k == "usine":
+                    self.verifier_fin_construction_selon_installation(cadre, k, tempConstructionUsine)
                 else:
-                    self.verifier_fin_construction_selon_installation(cadre, k, 200) # Temps à changer
+                    self.verifier_fin_construction_selon_installation(cadre, k, 200)
 
 
     def verifier_fin_construction_selon_installation(self, cadre, k, temps_construction):
@@ -681,6 +686,7 @@ class Entrepot(Installation):
         super().__init__( parent, proprietaire, type, cadre_debut_construction)
         self.keysSlots = None
 
+
     '''
         La fonction détermine si un emplacement dans l'entrepot est libre pour y construire un vaisseau. 
         Returns le slot libre ou false si aucun slot n'est disponible.
@@ -702,9 +708,16 @@ class Entrepot(Installation):
                     self.v.parent.finConstructionVaisseau(self.v)
                     self.capacite.update({k:None})
 
-
+class Timer(): #TODO: à compléter
+    def __init__(self, parent, temps):
+        self.parent = parent
+        self.temps = temps
+        self.cadre_debut = self.parent.cadre
+        self.cadre_fin = self.cadre_debut + self.temps
 class Modele():
     def __init__(self, parent, joueurs):
+
+        self.dicConstruction = {"usine": tempConstructionUsine, "entrepot": tempConstructionEntrepot, "vaisseau": tempConstructionVaisseau}
         self.parent = parent
         self.largeur = 9000
         self.hauteur = 9000

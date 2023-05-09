@@ -108,6 +108,7 @@ class Vue():
         self.cadre_bouton_construction_vaisseau = Frame()
         self.cadre_bouton_transferer = Frame()
         self.cadre_choisir_transfere = Frame()
+        self.cadre_option = Frame()
 
         #notification
         self.cadre_notification = Frame()
@@ -471,6 +472,9 @@ class Vue():
 
         self.cadreoutils = Frame(self.cadrepartie, width=200, height=200, bg="#3E363D")  #petite fenetre sur la gauche (celle juste au dessus de la mini map)->ici que l<on affiche le menu
         self.cadreoutils.pack(side=LEFT, fill=Y)
+
+        self.cadre_option = Frame(self.cadrejeu, width=200, height=200, bg="#3E363D") # petite fenetre sur la droite / en construction
+
         self.cadreinfo = Frame(self.cadreoutils, width=200, height=200, bg="darkgrey")#??????????
         self.cadreinfo.pack(fill=BOTH)
         self.cadreinfogen = Frame(self.cadreinfo, width=200, height=200, bg="#3E363D")#petite fenetre en haut a gauche (JAJA et bouton MINI)
@@ -488,10 +492,7 @@ class Vue():
         self.cadreinfochoix = Frame(self.cadreinfo, height=200, width=200, bg="light grey")
         """fenetre ou il y a bouton vaisseau, cargo et eclaireur"""
 
-        self.cadre_notification = Frame(self.cadreoutils, width=50, height=50, bg=None)
-        self.label_notification = Label(self.cadre_notification, bg="#606060", fg="#c4c4c4")
-        self.cadre_notification.pack(side=LEFT)
-        self.label_notification.pack()
+
 
         #BOUTONS DU MENU
 
@@ -604,15 +605,17 @@ class Vue():
                 self.nbr_usine += 1
                 self.menu_installation()
         elif self.objet == "vaisseau":
-            self.cadre_bouton_construction_vaisseau()
+            self.menu_installation()
 
-    def refresh(self, cadre):
+    def refresh(self,cadre):
         """
         fonction qui est appeler a chaque tick dans le main
         :param cadre: le temps actuel
         """
+
+        tempC = cadre - self.startTime
         if(self.started == True and self.strPourcentage < 100):
-            self.strPourcentage = int(((cadre - self.startTime) / 100) * 100)
+            self.strPourcentage = int((tempC / self.parent.tempConstruction(self.objet)) * 100)
             self.percentage_label.config(text=self.strName + str(self.strPourcentage) + "%")
 
             print(self.strPourcentage)
@@ -812,19 +815,19 @@ class Vue():
         self.btncreercargo.pack(fill=X)
         self.btncreereclaireur.pack(fill=X)
 
-    def afficherNotification(self, notificationListe):
-        if len(notificationListe) > 0:
-            for n in notificationListe:
-                #afficher n pendant un délaie de 5 secondes
-                for i in range(5):
-                    self.label_notification.config(text=n)
-                #retier n de la liste
-                notificationListe.remove(n)
+    def afficherNotification(self, notification):
 
 
+        if notification is not None:
+            self.cadre_notification = Frame(self.cadrejeu, bg=None)
+            self.label_notification = Label(self.cadre_notification, bg="#606060", fg="#c4c4c4")
+            #afficher n pendant un délaie de 5 secondes
+            self.label_notification.config(text=notification)
+            #retier n de la liste
 
+        self.cadre_notification.grid(column=0, row=0, sticky=E + N, padx=10, pady=10)
         self.label_notification.pack()
-        self.cadre_notification.pack(side=LEFT)
+
 
     def menu_ressource(self):# on arrive ici quand on clique sur le bouton "Inventaire" -> inventaire de ce que possede le joueur
         #raffraichir valeur self.recup.inventaire.get("Fer)
@@ -1147,7 +1150,6 @@ class Vue():
         self.forget_all()
         type_vaisseau = evt.widget.cget("text")
         self.parent.creer_vaisseau(type_vaisseau, int(self.selectedTags[3]) + random.choice([i for i in range(-30, 30) if i not in [-10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]]), int(self.selectedTags[4]) + random.choice([i for i in range(-30, 30) if i not in [-10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]]), self.ma_selection[1])
-        self.ma_selection = None
         self.canevas.delete("marqueur")
         self.timer_start(self.parent.cadrejeu,"vaisseau")
 
