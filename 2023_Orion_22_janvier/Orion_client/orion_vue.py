@@ -552,7 +552,7 @@ class Vue():
         self.parent.connecter_serveur(url_serveur)
 
 
-    def timer_start(self,start_time,obj):
+    def timer_start(self,start_time,obj):#start_time contient un int (ex:118)
         """
         fonction qui demarre le timer
         :param start_time: le temps de depart
@@ -598,15 +598,16 @@ class Vue():
         :param cadre: le temps actuel
         """
         vitesse = 0
-        if(self.accelerer_timer): vitesse = 500
+        if(self.accelerer_timer):
+            vitesse = 500
         else:vitesse = 100
-        if(self.started == True and self.strPourcentage < 100):
+        if(self.started == True and self.strPourcentage < 100):#strPourcentage augmente de 1 grace a refresh() ||STARTED PASSE A FALSE DANS TIMER_END
         #if(self.started == True and self.test < 100):
-            self.strPourcentage = int(((cadre - self.startTime) / 100) * vitesse)#*100
+            self.strPourcentage = int(((cadre - self.startTime) / 100) * vitesse)#cadre = nbrDeTick || tout augmente de 1 grace au refresh
             self.percentage_label.config(text=str(self.strPourcentage) + "%")
             print("xxx" + str(self.strPourcentage))
             self.percentage_label.pack()
-        elif self.strPourcentage == 100:
+        elif self.strPourcentage == 100:#des que strPourcentage == 100 on arrete le timer
             self.timer_end()
 
     def refreshEtoile(self,mon_nom):
@@ -807,6 +808,8 @@ class Vue():
         # enlever ce quil y a dans
         self.accelerer_timer = True
         self.parent.recupValeurAmeliorerEntrepot(self.accelerer_timer)
+        #revenir au menu
+        self.cadre_ameliorer_entrepot.pack_forget()
 
 
     def construction_vaisseau(self):# on arrive ici quand on clique sur le bouton "construire Vaisseau"
@@ -945,7 +948,7 @@ class Vue():
     def construire_entrepot(self):#on arrive ici quand on clique sur le bouton "Construire Entrepot"
         self.cadre_menu_installation.pack_forget()
         self.parent.construireInstallation("entrepot", self.ma_selection[1]) #pour construire entrepot -> la fonction va veifier si on peut construire entrepot
-        self.timer_start(self.parent.cadrejeu,"entrepot") #on lance le timer pour construire entrepot
+        self.timer_start(self.parent.cadrejeu,"entrepot") #on lance le timer pour construire entrepot 110/335 -> cadreJeu a le nbr de tick du jeu...
 
     def construire_usine(self):# on arrive ici quand on clique sur bouton construire_usine
         self.cadre_menu_installation.pack_forget()
@@ -1255,7 +1258,7 @@ class Vue():
 
     def cliquer_cosmos(self, evt):  # DES QU'ON CLIQUE QUELQUE PART DANS LE JEU -> travailler avec ca
         self.selectedTags = self.canevas.gettags(CURRENT)
-        tags = self.selectedTags #contient
+        tags = self.selectedTags #contient: 'JAJA_106','id_151', 'Etoile'...
         if tags:  # Il y a des tags => On a cliqué sur un objet de la carte (Vaisseau, Étoile, ...)
 
             if tags[0] == self.mon_nom:#si je clique sur quelque chose qui mappartient
@@ -1306,18 +1309,6 @@ class Vue():
                     self.cadre_menu_ressource.pack_forget()#on enleve le menu de linventaire
                     self.cadre_menu_ressource_ex.pack_forget()
                     self.forget_all()
-                    #si je clique sur le cargot
-                    # if(self.type_vaisseau_selectionne == "Cargo"):
-                    #     if(self.cargoArrive):#si il est accoste
-                    #         #avoir id de letoile ou il est accoste
-                    #         self.etoileOuEstPoseLeCargo = tags[1]
-                            # print("Val CargoEstAccoste : " + str(self.cargoArrive))
-                            # print("Cargot est accoste sur letoile : " + self.etoileOuEstPoseLeCargo)
-
-
-
-                        # elif(self.estAccos == False):#mais quand il reaprt il ne repasse pas a False seul..
-                        #     self.cadre_bouton_transferer.pack_forget()
 
                     self.shipSelected.append(tags)
             elif ("Etoile" == tags[2] or "Porte_de_ver" == tags[2]) and self.shipSelected != []:

@@ -152,7 +152,7 @@ class Etoile():
             self.inventaire.update({"Plutonium":    self.inventaire.get("Plutonium") - installation.cout.get("Plutonium")})
             self.inventaire.update({"Antimatiere":  self.inventaire.get("Antimatiere") - installation.cout.get("Antimatiere")})
             self.en_construction.update({installation.type:installation})
-            print(self.en_construction)
+            print("dddd" + str(self.en_construction))
 
     '''
     Permet de déterminer si l'étoile possède les ressources suffisantes pour construire ou améliorer l'installation voulue.
@@ -187,7 +187,7 @@ class Etoile():
                 if k == "entrepot":
                     self.verifier_fin_construction_selon_installation(cadre, k, 100) # Temps à changer
                 else:
-                    self.verifier_fin_construction_selon_installation(cadre, k, 200) # Temps à changer
+                    self.verifier_fin_construction_selon_installation(cadre, k, 200) # Temps à changer || pour vaisseaux
 
 
     def verifier_fin_construction_selon_installation(self, cadre, k, temps_construction):
@@ -470,7 +470,7 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
                     elif type_vaisseau == "Attack":
                         v = Attack(self, self.nom, int(params[1]) + 10, int(params[2]), e.id, 15, cadreDebutConstruction, type_vaisseau)
                     else:
-                        v = Eclaireur(self, self.nom, int(params[1]) + 10, int(params[2]), e.id, 15, cadreDebutConstruction, type_vaisseau)
+                        v = Eclaireur(self, self.nom, int(params[1]) + 10, int(params[2]), e.id, 15, cadreDebutConstruction, type_vaisseau)#cadreDebutConstruction = tick au moment ou jai cliquer sur consrtuire le vaisseau
 
                     slot = e.installations.get("entrepot").isLibre()
                     e.installations.get("entrepot").capacite.update({slot:v}) #Attribue le vaisseau en construction dans le premier slot de l'entrepot
