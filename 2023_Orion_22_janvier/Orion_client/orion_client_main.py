@@ -254,8 +254,8 @@ class Controleur():
     def recupQuantiteMatiereDeUtilisateur(self, chargement):#dans chargement je met les quantites de matiere presente sur etoile
      self.actionsrequises.append(self.monrecup_nom, "transfererRessources",[chargement])#chargement est un dictionnaire contenant les quantites de matieres que lutilisateurs souhaite
 
-    def recupValeurAmeliorerEntrepot(self,ameliorer):
-        self.ameliorer = ameliorer
+    def ameliorerEntrepot(self, id):
+        self.actionsrequises.append([self.mon_nom, "ameliorerEntrepot", [id]])
     def recupJoueur(self, nom):
         recup = self.modele.recupererJoueur(nom)
         return recup

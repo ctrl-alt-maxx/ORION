@@ -173,7 +173,7 @@ class Etoile():
     Returns true si l'étoile possède toutes les ressources nécéssaires, false si l'étoile ne possède pas toutes les ressources nécéssaires
     '''
     def isRessourcesValides(self, installation):
-        listeRessources = self.inventaire.keys()
+        listeRessources = self.inventaire.keys()#va chercher les cle de linventaire de letoile
         for i in listeRessources:
             if self.inventaire.get(i) < installation.cout.get(i):
                 return False
@@ -232,6 +232,13 @@ class Etoile():
                     qt = valeursRessources.get(k) * (usine.niveau + 1)
                     newValeur = self.inventaire.get(k) + qt
                     self.inventaire.update({k:newValeur})
+
+    def ameliorerEntrepot(self):
+        keysInstallation = self.installations.keys()
+        for k in keysInstallation:
+            if k == "entrepot":
+                self.installations.get(k).upgradeTempsConstructionEtNiveau()  # fonction appele depuis la class Entrepot du fichier modele
+
 
 class Position():
     def __init__(self, x, y):
@@ -443,7 +450,8 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
         self.actions = {"creervaisseau": self.creervaisseau,    #Appel la fonction de création de vaisseau : À DÉPLACER DANS LA CLASS ENTREPOT
                         "ciblerflotte": self.ciblerflotte,
                         "construire": self.construire,
-                        "transfererRessources": self.transfert}      #Appel la fonction
+                        "transfererRessources": self.transfert,
+                        "ameliorerEntrepot": self.ameliorerEntrepot}      #Appel la fonction #Ameilorer entrepot et dans modele
 
         self.poubelle = []
 
@@ -458,6 +466,11 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
         dictCargo = self.flotte.get("Cargo")
         dictCargo.get(params[1]).transfererRessources(params[0])
 
+    def ameliorerEntrepot(self, params):#params = id etoile cest un tab
+        idEtoile = params[0]
+        for e in self.etoilescontrolees:# etoile controle est definie dans class Joueur
+            if e.id == idEtoile: #etoilecontrole contient toutes les etoiles du joueur
+                e.ameliorerEntrepot()#fonction dans class Etoile du fichier modele
 
     def creervaisseau(self, params): #Fonction qui permet de créer un vaisseau \\\ À DÉPLACER DANS LA CLASSE ENTREPOT : IL FAUT CRÉER UN VAISSEAU DANS UN ENTREPOT, PAS PAR LE JOUEUR
         for e in self.etoilescontrolees:
@@ -590,7 +603,6 @@ class Installation():
     def cout_selon_niveau(self):
         if self.type == "entrepot":
             if self.niveau == 0: #niveau 0 = entrepôt à construire
-
                 temp = {"Fer":50,
                              "Cuivre":15,
                              "Or":0,
@@ -693,6 +705,11 @@ class Entrepot(Installation):
                     print (self.v)
                     self.v.parent.finConstructionVaisseau(self.v)
                     self.capacite.update({k:None})
+
+    def upgradeTempsConstructionEtNiveau(self):
+        if self.ameliorer_installation():
+            self.tps_constructionVaisseau -= 25
+            self.niveau += 1
 
 
 class Modele():

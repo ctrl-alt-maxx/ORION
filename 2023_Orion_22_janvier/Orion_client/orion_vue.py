@@ -128,6 +128,7 @@ class Vue():
         self.etoileSelectionne = None
         self.etoileOuEstPoseLeCargo = None
         self.accelerer_timer = False
+        self.nbUpgrade = 0
 
 
 
@@ -806,8 +807,10 @@ class Vue():
         # possibilite de construire plusieurs vaisseaux a la fois
         # chaque etoile a un entrepot donc recuperer id de letoile...
         # enlever ce quil y a dans
-        self.accelerer_timer = True
-        self.parent.recupValeurAmeliorerEntrepot(self.accelerer_timer)
+
+        self.nbUpgrade += 1
+        if self.nbUpgrade <= 3:
+            self.parent.ameliorerEntrepot(self.ma_selection[1])
         #revenir au menu
         self.cadre_ameliorer_entrepot.pack_forget()
 
