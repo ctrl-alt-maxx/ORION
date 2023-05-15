@@ -679,6 +679,7 @@ class Vue():
             self.boutonConstruireUsine.config(command=self.construire_usine)
 
             self.boutonAmeliorerUsine = Button(self.cadre_bouton, text="Améliorer Usine",foreground='#CB92CE', background='#242423', font=('Arial', 12))
+            self.boutonAmeliorerUsine.config(command=self.ameliorer_usine)
 
             if self.recup.installations.get("usine") is None:
                 self.boutonConstruireUsine.pack(fill=X)
@@ -706,7 +707,7 @@ class Vue():
                         self.afficher_cout += ke + " : " + str(self.recup.installations.get("entrepot").cout.get(ke)) + "  "
                         self.afficher_possession += ke + " : " + str(self.recup.inventaire.get(ke)) + "  "
             else:
-                i = Installation(None, None, "entrepot", 30)
+                i = Installation(None, None, None, "entrepot", 30)
                 keys = i.cout.keys()
                 for k in keys:
                     if i.cout.get(k) > 0:
@@ -946,6 +947,9 @@ class Vue():
         self.laConstruction = "usine"
         #self.timer_start(self.parent.cadrejeu,"usine")
 
+    def ameliorer_usine(self): #on arrive ici quand on clique sur le bouton ameliorer_usine
+        self.cadre_menu_installation.pack_forget()
+        self.parent.ameliorer_installation("usine", self.ma_selection[1])
 
 
 
