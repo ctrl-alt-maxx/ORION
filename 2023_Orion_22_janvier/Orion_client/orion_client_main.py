@@ -149,6 +149,9 @@ class Controleur():
 
         self.vue.refresh(self.cadrejeu)
         self.vue.refreshEtoile(self.mon_nom)
+        if self.modele.verifierFin():
+            self.vue.root.destroy()
+            self.vue.fin()
 
         if self.notification != "":
             self.vue.afficherNotification(self.notification)
@@ -269,8 +272,8 @@ class Controleur():
     def recupQuantiteMatiereDeUtilisateur(self, chargement, idcargo):#dans chargement je met les quantites de matiere presente sur etoile
         self.actionsrequises.append([self.mon_nom, "transfererRessources",[chargement, idcargo]])#ajoute dans modele
 
-    def constructionStart(self):
-        self.vue.timer_start(self.cadrejeu,self.vue.laConstruction)
+    def constructionStart(self, type):
+        self.vue.timer_start(self.cadrejeu,type)
     def construireInstallation(self, installation, id):
         self.actionsrequises.append([self.mon_nom, "construire", [installation, id, self.cadrejeu]])
 

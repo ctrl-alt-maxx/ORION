@@ -13,6 +13,7 @@ tempConstructionUsine = 100
 tempConstructionEntrepot = 200
 tempConstructionVaisseau = 50
 
+
 class Porte_de_vers(): #Porte dans laquelle on rentre dans le trou de ver
     def __init__(self, parent, x, y, couleur, taille):
         self.parent = parent
@@ -150,7 +151,7 @@ class Etoile():
         if self.is_construisible(installation):
 
             #TODO POSSIBILITÉ DE CHANGER LA FONCTION EN BOUCLE
-            self.parent.parent.constructionStart()
+            self.parent.parent.constructionStart(type)
 
             self.inventaire.update({"Fer":          self.inventaire.get("Fer") - installation.cout.get("Fer")})
             self.inventaire.update({"Cuivre":       self.inventaire.get("Cuivre") - installation.cout.get("Cuivre")})
@@ -461,7 +462,6 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
                         "ciblerflotte": self.ciblerflotte,
                         "construire": self.construire,
                         "transfererRessources": self.transfert}      #Appel la fonction
-
         self.poubelle = []
 
     def construire(self, params):
@@ -982,6 +982,17 @@ class Modele():
 
     def creer_bibittes_spatiales(self, nb_biittes=0):
         pass
+
+    def verifierFin(self):
+        listeJoueursElimines = []
+        keysJoueurs = self.joueurs.keys()
+        for k in keysJoueurs:
+            j = self.joueurs.get(k)
+            if len(j.etoilescontrolees) == 0:
+                listeJoueursElimines.append(j)
+
+        return len(listeJoueursElimines) / len(self.joueurs) >= 0.5
+
 
     #############################################################################
     # ATTENTION : NE PAS TOUCHER

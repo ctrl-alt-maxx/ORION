@@ -38,7 +38,7 @@ class Vue():
         self.ma_selection = None
         self.cadre_actif = None
         # cadre principal de l'application
-        self.cadre_app = Frame(self.root, width=500, height=400, bg="red")
+        self.cadre_app = Frame(self.root, width=500, height=400, bg="black")
         self.cadre_app.pack(expand=1, fill=BOTH)
         # # un dictionnaire pour conserver les divers cadres du jeu, creer plus bas
         self.cadres = {}
@@ -648,6 +648,7 @@ class Vue():
 
 
     def menu_installation(self):#est appele quand je clique sur le bouton "Installation"
+            print(self.ma_selection)
             self.recup = self.parent.recupEtoile(self.ma_selection[1])
             self.forget_all() #on oublie tout les cadres
 
@@ -1364,5 +1365,12 @@ class Vue():
                     self.shipSelected.append(self.canevas.gettags(i))
 
             self.canevas.delete("selecteur")
+
+    def fin(self):
+        self.root = Tk()
+        self.cadre_fin = Frame(self.root, width=500, height=400, bg="red")
+        self.label_fin = Label(self.cadre_fin, text="Fin", anchor=CENTER, width=25, height=2, border=2, borderwidth=1,
+                                  relief="solid", bg="green")
+
 
     ### FIN du multiselect
