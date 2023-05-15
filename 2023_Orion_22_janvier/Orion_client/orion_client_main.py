@@ -274,6 +274,9 @@ class Controleur():
     def construireInstallation(self, installation, id):
         self.actionsrequises.append([self.mon_nom, "construire", [installation, id, self.cadrejeu]])
 
+    def ameliorer_installation(self, installation, id):
+        self.actionsrequises.append([self.mon_nom, "ameliorer", [installation, id]])
+
     def recupererValeurEstAccoste(self, estAccoste, cargoEstAccoste):#on lappel l.408 dans modele
          self.vue.savoirSiAccoste(estAccoste, cargoEstAccoste)
 
