@@ -65,13 +65,13 @@ class Etoile():
         self.vaisseaux = None # [] de vaisseaux pose sur letoile
         self.estEclaire = False #etoile selectionne ou pas True ou False = False au debut du jeu
         self.niveauEtoile = 1 #niveau de l'étoile = 1/2/3 = toutes les étoiles seront de niveau 1 au debut du jeu
-        self.inventaire ={"Fer":100,
-                          "Cuivre":35,
-                          "Or":5,
-                          "Titane":0,
-                          "Hydrogene":30,
-                          "Plutonium":0,
-                          "Antimatiere":0}
+        self.inventaire ={"Fer":10000,
+                          "Cuivre":3500,
+                          "Or":5000,
+                          "Titane":10000,
+                          "Hydrogene":3000,
+                          "Plutonium":10000,
+                          "Antimatiere":100000}
 
         self.vie = 200 # nbr de vie de la planete
         self.key_en_construction = None
@@ -763,6 +763,7 @@ class Entrepot(Installation):
                          "slot3": None}
         super().__init__( parent, etoile, proprietaire, type, cadre_debut_construction)
         self.keysSlots = None
+        self.tps_constructionVaisseau = 100
 
 
     '''
