@@ -144,9 +144,9 @@ class Etoile():
     '''
     def creer_installation(self, type, cadre):
         if type == "entrepot":
-            installation = Entrepot(self.parent,self.proprietaire,"entrepot", cadre)
+            installation = Entrepot(self.parent, self.id, self.proprietaire, "entrepot", cadre)
         else:
-            installation = Usine(self.parent, self.proprietaire, "usine", cadre, 25)
+            installation = Usine(self.parent, self.id, self.proprietaire, "usine", cadre, 25)
         if self.is_construisible(installation):
 
             #TODO POSSIBILITÉ DE CHANGER LA FONCTION EN BOUCLE
@@ -460,7 +460,8 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
         self.actions = {"creervaisseau": self.creervaisseau,    #Appel la fonction de création de vaisseau : À DÉPLACER DANS LA CLASS ENTREPOT
                         "ciblerflotte": self.ciblerflotte,
                         "construire": self.construire,
-                        "transfererRessources": self.transfert}      #Appel la fonction
+                        "transfererRessources": self.transfert,
+                        "ameliorer": self.ameliorer}      #Appel la fonction
 
         self.poubelle = []
 
@@ -474,6 +475,17 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
     def transfert(self, params):
         dictCargo = self.flotte.get("Cargo")
         dictCargo.get(params[1]).transfererRessources(params[0])
+
+    def ameliorer(self, params):
+        type_installation = params[0]
+        id_etoile = params[1]
+        for e in self.etoilescontrolees:
+            if e.id == id_etoile and e.installations.get(type_installation) is not None:
+                if type_installation == "usine":
+                    e.installations.get(type_installation).ameliorer_usine()
+                else:
+                    e.installations.get(type_installation).ameliorer_entrepot()
+
 
 
     def creervaisseau(self, params): #Fonction qui permet de créer un vaisseau \\\ À DÉPLACER DANS LA CLASSE ENTREPOT : IL FAUT CRÉER UN VAISSEAU DANS UN ENTREPOT, PAS PAR LE JOUEUR
@@ -596,8 +608,9 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
         self.deletePoubelle()
 
 class Installation():
-    def __init__(self, parent, proprietaire, type, cadre_debut_construction):
-        self.parent = parent
+    def __init__(self, parent, etoile, proprietaire, type, cadre_debut_construction):
+        self.parent_modele = parent
+        self.parent_etoile = etoile
         self.proprietaire = proprietaire
         self.type = type
         self.niveau = 0
@@ -676,31 +689,32 @@ class Installation():
 
     # Ne pas utiliser; utiliser les méthodes des sous-classes à la place
     def ameliorer_installation(self):
-        key_ressources = self.parent.inventaire.keys()
-        if self.niveau != 3 and self.parent.isRessourcesValides(self):
+        etoile = self.parent_modele.recupererEtoile(self.parent_etoile)
+        key_ressources = etoile.inventaire.keys()
+        if self.niveau != 3 and etoile.isRessourcesValides(self):
             for i in key_ressources:
-                self.parent.inventaire.update({i: self.parent.inventaire.get(i) - self.cout.get(i)})
-            print("L'installation", self.type, "de l'étoile", self.parent.id, "a été améliorée.")
+                etoile.inventaire.update({i: etoile.inventaire.get(i) - self.cout.get(i)})
+            print("L'installation", self.type, "de l'étoile", etoile.id, "a été améliorée.")
             return True
         else:
-            print("L'installation", self.type, "de l'étoile", self.parent.id, "n'a pas pu être améliorée.")
+            print("L'installation", self.type, "de l'étoile", etoile.id, "n'a pas pu être améliorée.")
             return False
 
 class Usine(Installation):
-    def __init__(self, parent, proprietaire, type, cadre_debut_construction, production):
+    def __init__(self, parent, etoile, proprietaire, type, cadre_debut_construction, production):
         self.production = production
-        super().__init__(parent, proprietaire, type, cadre_debut_construction)
+        super().__init__(parent, etoile, proprietaire, type, cadre_debut_construction)
 
     def ameliorer_usine(self):
         if super().ameliorer_installation():
             self.production += 50
 
 class Entrepot(Installation):
-    def __init__(self, parent, proprietaire, type, cadre_debut_construction):
+    def __init__(self, parent, etoile, proprietaire, type, cadre_debut_construction):
         self.capacite = {"slot1": None,
                          "slot2": None,
                          "slot3": None}
-        super().__init__( parent, proprietaire, type, cadre_debut_construction)
+        super().__init__( parent, etoile, proprietaire, type, cadre_debut_construction)
         self.keysSlots = None
 
 
