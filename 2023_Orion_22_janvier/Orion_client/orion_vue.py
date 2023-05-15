@@ -26,6 +26,11 @@ class Vue():
         self.root = Tk()
         self.root.title("Player: " + mon_nom)
 
+
+        self.images= {}
+
+        self.chargerimages()
+
         self.mon_nom = mon_nom
         # attributs
         self.taille_minimap = 240
@@ -54,9 +59,6 @@ class Vue():
         #self.img = None
         #self.pathImgEclaireur = Image.open('C:/Users/2077407/Documents/GitHub/C41/2023_Orion_22_janvier/img/eclaireur.png')
 
-        self.images= {}
-
-        self.chargerimages()
 
 
         #creation label Frame pour méthode methode_installation et methode_ressource
@@ -106,11 +108,16 @@ class Vue():
         self.cadre_bouton_construction_vaisseau = Frame()
         self.cadre_bouton_transferer = Frame()
         self.cadre_choisir_transfere = Frame()
-        self.cadre_ameliorer_entrepot = Frame()
+        self.cadre_option = Frame()
+
+        #notification
+        self.cadre_notification = Frame()
+        self.label_notification = Label()
 
         self.startTime = 0
         self.strPourcentage = 0
-        self.test = 0
+        self.laConstruction = ""
+        self.strName = ""
         self.chiffre = 0
 
         self.selectedTags = None
@@ -426,7 +433,8 @@ class Vue():
                               xscrollcommand=self.scrollX.set,
 
                               yscrollcommand=self.scrollY.set, bg="grey11")
-        self.timer_partie = Label(self.cadrejeu, text="Temps écoulé: ", textvariable=self.ticks, width=10, height=1)
+
+        #self.timer_partie = Label(self.cadrejeu, text="Temps écoulé: ", textvariable=self.ticks, width=10, height=1)
 
 
         self.scrollX.config(command=self.canevas.xview)
@@ -438,7 +446,8 @@ class Vue():
         self.canevas.grid(column=0, row=0, sticky=W + E + N + S)
         self.scrollX.grid(column=0, row=1, sticky=W + E)
         self.scrollY.grid(column=1, row=0, sticky=N + S)
-        self.timer_partie.grid(column=0, row=0, sticky=E + N, padx=20, pady=20)
+
+        #self.timer_partie.grid(column=0, row=0, sticky=E + N, padx=20, pady=20)
 
         self.cadrejeu.columnconfigure(0, weight=1)
         self.cadrejeu.rowconfigure(0, weight=1)
@@ -465,6 +474,9 @@ class Vue():
 
         self.cadreoutils = Frame(self.cadrepartie, width=200, height=200, bg="#3E363D")  #petite fenetre sur la gauche (celle juste au dessus de la mini map)->ici que l<on affiche le menu
         self.cadreoutils.pack(side=LEFT, fill=Y)
+
+        self.cadre_option = Frame(self.cadrejeu, width=200, height=200, bg="#3E363D") # petite fenetre sur la droite / en construction
+
         self.cadreinfo = Frame(self.cadreoutils, width=200, height=200, bg="darkgrey")#??????????
         self.cadreinfo.pack(fill=BOTH)
         self.cadreinfogen = Frame(self.cadreinfo, width=200, height=200, bg="#3E363D")#petite fenetre en haut a gauche (JAJA et bouton MINI)
@@ -481,6 +493,7 @@ class Vue():
         # PETITE FENETRE POUR LES 2 BOUTONS VAISSEAU ET CARGO-----------------------------------------------------------------------------
         self.cadreinfochoix = Frame(self.cadreinfo, height=200, width=200, bg="light grey")
         """fenetre ou il y a bouton vaisseau, cargo et eclaireur"""
+
 
 
         #BOUTONS DU MENU
@@ -558,15 +571,19 @@ class Vue():
         fonction qui demarre le timer
         :param start_time: le temps de depart
         """
+
         if obj == "entrepot":
+            self.strName = "entrepot :"
             self.percentage_label = Label(self.cadreoutils, foreground='#FCFCFC', background='#30292F',
                                       font=('Arial', 12))
         elif obj == "usine":
+            self.strName = "usine :"
             self.percentage_label = Label(self.cadreoutils, foreground='#FCFCFC', background='#30292F',
                                       font=('Arial', 12))
         elif obj == "vaisseau":
+            self.strName = "vaisseau :"
             self.percentage_label = Label(self.cadreoutils, foreground='#FCFCFC', background='#30292F',
-                                      font=('Arial', 12))
+                                          font=('Arial', 12))
         self.objet = obj
         self.startTime = start_time
         self.started = True
@@ -590,25 +607,23 @@ class Vue():
             if self.nbr_usine == 0:
                 self.nbr_usine += 1
                 self.menu_installation()
-        # elif self.objet == "vaisseau":
-        #     self.menu_installation()
+        elif self.objet == "vaisseau":
+            self.menu_installation()
 
-    def refresh(self, cadre):
+    def refresh(self,cadre):
         """
         fonction qui est appeler a chaque tick dans le main
         :param cadre: le temps actuel
         """
-        vitesse = 0
-        if(self.accelerer_timer):
-            vitesse = 500
-        else:vitesse = 100
-        if(self.started == True and self.strPourcentage < 100):#strPourcentage augmente de 1 grace a refresh() ||STARTED PASSE A FALSE DANS TIMER_END
-        #if(self.started == True and self.test < 100):
-            self.strPourcentage = int(((cadre - self.startTime) / 100) * vitesse)#cadre = nbrDeTick || tout augmente de 1 grace au refresh
-            self.percentage_label.config(text=str(self.strPourcentage) + "%")
-            print("xxx" + str(self.strPourcentage))
+        tempC = cadre - self.startTime
+        if(self.started == True and self.strPourcentage < 100):
+            self.strPourcentage = int((tempC / self.parent.tempConstruction(self.objet)) * 100)
+            self.percentage_label.config(text=self.strName + str(self.strPourcentage) + "%")
+
+            print(self.strPourcentage)
             self.percentage_label.pack()
-        elif self.strPourcentage == 100:#des que strPourcentage == 100 on arrete le timer
+
+        elif self.strPourcentage == 100:
             self.timer_end()
 
     def refreshEtoile(self,mon_nom):
@@ -664,6 +679,7 @@ class Vue():
             self.boutonConstruireUsine.config(command=self.construire_usine)
 
             self.boutonAmeliorerUsine = Button(self.cadre_bouton, text="Améliorer Usine",foreground='#CB92CE', background='#242423', font=('Arial', 12))
+            self.boutonAmeliorerUsine.config(command=self.ameliorer_usine)
 
             if self.recup.installations.get("usine") is None:
                 self.boutonConstruireUsine.pack(fill=X)
@@ -691,8 +707,7 @@ class Vue():
                         self.afficher_cout += ke + " : " + str(self.recup.installations.get("entrepot").cout.get(ke)) + "  "
                         self.afficher_possession += ke + " : " + str(self.recup.inventaire.get(ke)) + "  "
             else:
-                # faire cette merde la ;)
-                i = Installation(None, None, "entrepot", 30)
+                i = Installation(None, None, None, "entrepot", 30)
                 keys = i.cout.keys()
                 for k in keys:
                     if i.cout.get(k) > 0:
@@ -709,7 +724,7 @@ class Vue():
             #Cadre et Label entrepot
             self.cadre_img2 = Frame(self.cadre_menu_installation, height=200, width=200,background="#DCE0D9")#dans cadre img2 je met image + descritpion
             self.cadre_img2.pack(fill=X)
-            self.label_img2 = Label(self.cadre_img2, image=self.images["entrepot3"],bg="#DCE0D9")
+            self.label_img2 = Label(self.cadre_img2, image=self.images["entrepot"],bg="#DCE0D9")
             self.label_img2.pack(side=LEFT)
             self.label_installation2 = Label(self.cadre_img2, text="Description: Entrepot pour construire vaisseaux",bg="#DCE0D9")
             self.label_installation2.pack()
@@ -840,9 +855,22 @@ class Vue():
         self.btncreercargo.pack(fill=X)
         self.btncreereclaireur.pack(fill=X)
 
+
+    def afficherNotification(self, notification):
+
+
+        if notification is not None:
+            self.cadre_notification = Frame(self.cadrejeu, bg=None)
+            self.label_notification = Label(self.cadre_notification, bg="#606060", fg="#c4c4c4")
+            #afficher n pendant un délaie de 5 secondes
+            self.label_notification.config(text=notification)
+            #retier n de la liste
+
+        self.cadre_notification.grid(column=0, row=0, sticky=E + N, padx=10, pady=10)
+        self.label_notification.pack()
+
     def ameliorer_etoile(self): # Quand on clique sur le bouton ameliorer etoile. A faire: Faire disparaitre le UI pour indiquer l'amelioration
         self.recup = self.parent.recupEtoile(self.ma_selection[1])
-
         self.parent.ameliorer_etoile(self.recup.id)
 
     def menu_ressource(self):# on arrive ici quand on clique sur le bouton "Inventaire" -> inventaire de ce que possede le joueur
@@ -951,13 +979,18 @@ class Vue():
     def construire_entrepot(self):#on arrive ici quand on clique sur le bouton "Construire Entrepot"
         self.cadre_menu_installation.pack_forget()
         self.parent.construireInstallation("entrepot", self.ma_selection[1]) #pour construire entrepot -> la fonction va veifier si on peut construire entrepot
-        self.timer_start(self.parent.cadrejeu,"entrepot") #on lance le timer pour construire entrepot 110/335 -> cadreJeu a le nbr de tick du jeu...
+        self.laConstruction = "entrepot"
+        #self.timer_start(self.parent.cadrejeu,"entrepot") #on lance le timer pour construire entrepot
 
     def construire_usine(self):# on arrive ici quand on clique sur bouton construire_usine
         self.cadre_menu_installation.pack_forget()
         self.parent.construireInstallation("usine", self.ma_selection[1])
-        self.timer_start(self.parent.cadrejeu,"usine")
+        self.laConstruction = "usine"
+        #self.timer_start(self.parent.cadrejeu,"usine")
 
+    def ameliorer_usine(self): #on arrive ici quand on clique sur le bouton ameliorer_usine
+        self.cadre_menu_installation.pack_forget()
+        self.parent.ameliorer_installation("usine", self.ma_selection[1])
 
 
 
@@ -1164,7 +1197,6 @@ class Vue():
         self.forget_all()
         type_vaisseau = evt.widget.cget("text")#on recupere le type de vaisseau que lon veut creer
         self.parent.creer_vaisseau(type_vaisseau, int(self.selectedTags[3]) + random.choice([i for i in range(-30, 30) if i not in [-10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]]), int(self.selectedTags[4]) + random.choice([i for i in range(-30, 30) if i not in [-10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]]), self.ma_selection[1])
-        self.ma_selection = None
         self.canevas.delete("marqueur")
         self.timer_start(self.parent.cadrejeu,"vaisseau")
 

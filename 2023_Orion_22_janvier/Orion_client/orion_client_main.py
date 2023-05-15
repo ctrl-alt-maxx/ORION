@@ -12,6 +12,8 @@ from orion_vue import *
 
 class Controleur():
     def __init__(self):
+        self.notification =""
+        """Liste qui représente les notifications de l'état du jeu à afficher"""
         self.mon_nom = self.generer_nom()
         """nom de joueur, sert d'identifiant dans le jeu - ici, avec auto-generation"""
         self.joueur_createur = 0
@@ -47,6 +49,8 @@ class Controleur():
 
         self.vue.root.mainloop()
         """la boucle des evenements (souris, click, clavier)"""
+
+
 
     ######################################################################################################
     ### FONCTIONS RESERVEES - INTERDICTION DE MODIFIER SANS AUTORISATION PREALABLE SAUF CHOIX DE RANDOM SEED LIGNE 94-95
@@ -147,6 +151,10 @@ class Controleur():
         self.vue.refresh(self.cadrejeu)
         self.vue.refreshEtoile(self.mon_nom)
 
+        if self.notification != "":
+            self.vue.afficherNotification(self.notification)
+            self.notification = ""
+
         if self.cadrejeu % self.moduloappeler_serveur == 0:  # appel périodique au serveur
             if self.actionsrequises:
                 actions = self.actionsrequises
@@ -222,7 +230,7 @@ class Controleur():
     ############            OUTILS           ###################
     # generateur de nouveau nom, peut y avoir collision
     def generer_nom(self):
-        mon_nom = "JAJA_" + str(random.randrange(100, 1000))
+        mon_nom = "PLAYER_" + str(random.randrange(100, 1000))
         return mon_nom
 
     def abandonner(self):
@@ -262,10 +270,13 @@ class Controleur():
 
     def recupQuantiteMatiereDeUtilisateur(self, chargement, idcargo):#dans chargement je met les quantites de matiere presente sur etoile
         self.actionsrequises.append([self.mon_nom, "transfererRessources",[chargement, idcargo]])#ajoute dans modele
+    def constructionStart(self):
+        self.vue.timer_start(self.cadrejeu,self.vue.laConstruction)
+    def construireInstallation(self, installation, id):
+        self.actionsrequises.append([self.mon_nom, "construire", [installation, id, self.cadrejeu]])
 
-
-    def construireInstallation(self, installation, id):#construit entrepot sur id_151
-        self.actionsrequises.append([self.mon_nom, "construire", [installation, id, self.cadrejeu]])#cardrejeu = 135
+    def ameliorer_installation(self, installation, id):
+        self.actionsrequises.append([self.mon_nom, "ameliorer", [installation, id]])
 
     def recupererValeurEstAccoste(self, estAccoste, cargoEstAccoste):#on lappel l.408 dans modele
          self.vue.savoirSiAccoste(estAccoste, cargoEstAccoste)
@@ -273,9 +284,14 @@ class Controleur():
     def to_secondes(self, nb_ticks):
         return nb_ticks // 16
 
+
+    def tempConstruction(self, installation):
+        return self.modele.dicConstruction[installation]
+      
     def ameliorer_etoile(self, id_etoile):
         etoile = self.recupEtoile(id_etoile)
         etoile.ameliorer_etoile()
+
 
 
 if __name__ == "__main__":
