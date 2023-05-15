@@ -53,6 +53,7 @@ class Vue():
         self.debut_selection = []
         self.selecteur_actif = None
         self.shipSelected = []
+        self.dictTimers = {}
 
         #Chercher les images
 
@@ -473,7 +474,8 @@ class Vue():
         self.cadreoutils = Frame(self.cadrepartie, width=200, height=200, bg="#3E363D")  #petite fenetre sur la gauche (celle juste au dessus de la mini map)->ici que l<on affiche le menu
         self.cadreoutils.pack(side=LEFT, fill=Y)
 
-        self.cadre_option = Frame(self.cadrejeu, width=200, height=200, bg="#3E363D") # petite fenetre sur la droite / en construction
+        self.cadre_option = Frame(self.cadrejeu, width=150, height=200, bg="#3E363D") # petite fenetre sur la droite / en construction
+        self.cadre_option.grid(column=0, row=0, sticky=S + E , padx=20, pady=20)
 
         self.cadreinfo = Frame(self.cadreoutils, width=200, height=200, bg="darkgrey")#??????????
         self.cadreinfo.pack(fill=BOTH)
@@ -614,16 +616,42 @@ class Vue():
         :param cadre: le temps actuel
         """
 
-        tempC = cadre - self.startTime
-        if(self.started == True and self.strPourcentage < 100):
-            self.strPourcentage = int((tempC / self.parent.tempConstruction(self.objet)) * 100)
-            self.percentage_label.config(text=self.strName + str(self.strPourcentage) + "%")
+        #TODO: ajouter nom des obj
+        keysJoueurs = self.modele.joueurs.keys()
+        for kj in keysJoueurs:
+            joueur = self.modele.joueurs.get(kj)
+            for t in joueur.timers:
+                tempC = cadre - t.temps_debut
+                timerStr = (tempC / (t.temps - t.temps_debut)) * 100
+                print(timerStr)
+                print(self.dictTimers)
+                if t.id not in self.dictTimers.keys():
+                    label = Label(self.cadreoutils, text=timerStr)
+                    self.dictTimers[t.id] = label
+                    label.pack()
+                else :
+                    if timerStr >=  100:
+                        self.dictTimers[t.id].pack_forget()
+                        self.dictTimers.pop(t.id)
+                        joueur.timers.remove(t)
+                    else:
+                        self.dictTimers[t.id].config(text=timerStr)
 
-            print(self.strPourcentage)
-            self.percentage_label.pack()
 
-        elif self.strPourcentage == 100:
-            self.timer_end()
+
+
+
+
+
+        # if(self.started == True and self.strPourcentage < 100):
+        #     self.strPourcentage = int((tempC / self.parent.tempConstruction(self.objet)) * 100)
+        #     self.percentage_label.config(text=self.strName + str(self.strPourcentage) + "%")
+        #
+        #     print(self.strPourcentage)
+        #     self.percentage_label.pack()
+        #
+        # elif self.strPourcentage == 100:
+        #     self.timer_end()
 
     def refreshEtoile(self,mon_nom):
         """

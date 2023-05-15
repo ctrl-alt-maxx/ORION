@@ -13,6 +13,8 @@ tempConstructionUsine = 100
 tempConstructionEntrepot = 200
 tempConstructionVaisseau = 50
 
+
+
 class Porte_de_vers(): #Porte dans laquelle on rentre dans le trou de ver
     def __init__(self, parent, x, y, couleur, taille):
         self.parent = parent
@@ -160,6 +162,7 @@ class Etoile():
             self.inventaire.update({"Plutonium":    self.inventaire.get("Plutonium") - installation.cout.get("Plutonium")})
             self.inventaire.update({"Antimatiere":  self.inventaire.get("Antimatiere") - installation.cout.get("Antimatiere")})
             self.en_construction.update({installation.type:installation})
+            self.parent.joueurs.get(self.proprietaire).timers.append(Timer(installation.cadre_debut_construction,installation.cadre_debut_construction + self.parent.dicConstruction.get(installation.type)))
             print(self.en_construction)
         else :
             print("L'étoile " + self.nomEtoile + " ne possède pas les ressources nécessaires pour construire une installation de type " + installation.type)
@@ -463,6 +466,7 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
                         "transfererRessources": self.transfert}      #Appel la fonction
 
         self.poubelle = []
+        self.timers = []
 
     def construire(self, params):
         typeInstallation = params[0]
@@ -747,11 +751,13 @@ class Entrepot(Installation):
                     self.capacite.update({k:None})
 
 class Timer(): #TODO: à compléter
-    def __init__(self, parent, temps):
-        self.parent = parent
+    def __init__(self,temps_debut,temps):
+        self.temps_debut = temps_debut
         self.temps = temps
-        self.cadre_debut = self.parent.cadre
-        self.cadre_fin = self.cadre_debut + self.temps
+        self.id = get_prochain_id()
+
+
+
 class Modele():
     def __init__(self, parent, joueurs):
 
