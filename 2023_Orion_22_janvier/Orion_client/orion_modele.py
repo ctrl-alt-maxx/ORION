@@ -13,6 +13,7 @@ tempConstructionUsine = 100
 tempConstructionEntrepot = 200
 tempConstructionVaisseau = 50
 
+
 class Porte_de_vers(): #Porte dans laquelle on rentre dans le trou de ver
     def __init__(self, parent, x, y, couleur, taille):
         self.parent = parent
@@ -65,13 +66,13 @@ class Etoile():
         self.vaisseaux = None # [] de vaisseaux pose sur letoile
         self.estEclaire = False #etoile selectionne ou pas True ou False = False au debut du jeu
         self.niveauEtoile = 1 #niveau de l'étoile = 1/2/3 = toutes les étoiles seront de niveau 1 au debut du jeu
-        self.inventaire ={"Fer":100,
-                          "Cuivre":35,
-                          "Or":5,
-                          "Titane":0,
-                          "Hydrogene":30,
-                          "Plutonium":0,
-                          "Antimatiere":0}
+        self.inventaire ={"Fer":10000,
+                          "Cuivre":3500,
+                          "Or":5000,
+                          "Titane":10000,
+                          "Hydrogene":3000,
+                          "Plutonium":10000,
+                          "Antimatiere":100000}
 
         self.vie = 200 # nbr de vie de la planete
         self.key_en_construction = None
@@ -131,10 +132,12 @@ class Etoile():
                 self.inventaire.update({i: self.inventaire.get(i) - self.cout.get(i)})
             self.niveauEtoile += 1
             self.cout_selon_niveau()
+
             print("L'étoile ", self.nomEtoile, " a été amélioré. Elle est maintenant au niveau ", self.niveauEtoile,
                   ".")
         else:
             print("L'étoile ", self.nomEtoile, " ne peux pas être améliorée.")
+
 
     # Construction des installations
     '''
@@ -150,7 +153,7 @@ class Etoile():
         if self.is_construisible(installation):
 
             #TODO POSSIBILITÉ DE CHANGER LA FONCTION EN BOUCLE
-            self.parent.parent.constructionStart()
+            self.parent.parent.constructionStart(type)
 
             self.inventaire.update({"Fer":          self.inventaire.get("Fer") - installation.cout.get("Fer")})
             self.inventaire.update({"Cuivre":       self.inventaire.get("Cuivre") - installation.cout.get("Cuivre")})
@@ -163,9 +166,6 @@ class Etoile():
             print(self.en_construction)
         else :
             print("L'étoile " + self.nomEtoile + " ne possède pas les ressources nécessaires pour construire une installation de type " + installation.type)
-
-
-
 
     '''
     Permet de déterminer si l'étoile possède les ressources suffisantes pour construire ou améliorer l'installation voulue.
@@ -187,7 +187,7 @@ class Etoile():
     Returns true si l'étoile possède toutes les ressources nécéssaires, false si l'étoile ne possède pas toutes les ressources nécéssaires
     '''
     def isRessourcesValides(self, installation):
-        listeRessources = self.inventaire.keys()
+        listeRessources = self.inventaire.keys()#va chercher les cle de linventaire de letoile
         for i in listeRessources:
             if self.inventaire.get(i) < installation.cout.get(i):
                 return False
@@ -249,6 +249,13 @@ class Etoile():
                     qt = valeursRessources.get(k) * (usine.niveau + 1)
                     newValeur = self.inventaire.get(k) + qt
                     self.inventaire.update({k:newValeur})
+
+    def ameliorerEntrepot(self):
+        keysInstallation = self.installations.keys()
+        for k in keysInstallation:
+            if k == "entrepot":
+                self.installations.get(k).upgradeTempsConstructionEtNiveau()  # fonction appele depuis la class Entrepot du fichier modele
+
 
 class Position():
     def __init__(self, x, y):
@@ -461,7 +468,9 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
                         "ciblerflotte": self.ciblerflotte,
                         "construire": self.construire,
                         "transfererRessources": self.transfert,
+                        "ameliorerEntrepot": self.ameliorerEntrepot,      #Appel la fonction #Ameilorer entrepot et dans modele
                         "ameliorer": self.ameliorer}      #Appel la fonction
+
 
         self.poubelle = []
 
@@ -476,6 +485,11 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
         dictCargo = self.flotte.get("Cargo")
         dictCargo.get(params[1]).transfererRessources(params[0])
 
+    def ameliorerEntrepot(self, params):#params = id etoile cest un tab
+        idEtoile = params[0]
+        for e in self.etoilescontrolees:# etoile controle est definie dans class Joueur
+            if e.id == idEtoile: #etoilecontrole contient toutes les etoiles du joueur
+                e.ameliorerEntrepot()#fonction dans class Etoile du fichier modele
     def ameliorer(self, params):
         type_installation = params[0]
         id_etoile = params[1]
@@ -487,19 +501,18 @@ class Joueur(): #TODO renommer dictionnaire Vaisseau pour Explorateur, ajouter a
                     e.installations.get(type_installation).ameliorer_entrepot()
 
 
-
     def creervaisseau(self, params): #Fonction qui permet de créer un vaisseau \\\ À DÉPLACER DANS LA CLASSE ENTREPOT : IL FAUT CRÉER UN VAISSEAU DANS UN ENTREPOT, PAS PAR LE JOUEUR
         for e in self.etoilescontrolees:
             if e.id == params[3]:
                 if e.installations.get("entrepot").isLibre() is not None:
                     type_vaisseau = params[0]
-                    cadreDebutConstruction = params[4]
+                    cadreDebutConstruction = params[4]#contient int 405
                     if type_vaisseau == "Cargo":
                         v = Cargo(self, self.nom, int(params[1]) + 10, int(params[2]), e.id, 15, cadreDebutConstruction, type_vaisseau)
                     elif type_vaisseau == "Attack":
                         v = Attack(self, self.nom, int(params[1]) + 10, int(params[2]), e.id, 15, cadreDebutConstruction, type_vaisseau)
                     else:
-                        v = Eclaireur(self, self.nom, int(params[1]) + 10, int(params[2]), e.id, 15, cadreDebutConstruction, type_vaisseau)
+                        v = Eclaireur(self, self.nom, int(params[1]) + 10, int(params[2]), e.id, 15, cadreDebutConstruction, type_vaisseau)#cadreDebutConstruction = tick au moment ou jai cliquer sur consrtuire le vaisseau
 
                     slot = e.installations.get("entrepot").isLibre()
                     e.installations.get("entrepot").capacite.update({slot:v}) #Attribue le vaisseau en construction dans le premier slot de l'entrepot
@@ -656,7 +669,7 @@ class Installation():
     def cout_selon_niveau(self):
         if self.type == "entrepot":
             if self.niveau == 0: #niveau 0 = entrepôt à construire
-                self.cout = {"Fer":50,
+                temp = {"Fer":50,
                              "Cuivre":15,
                              "Or":0,
                              "Titane":0,
@@ -664,7 +677,7 @@ class Installation():
                              "Plutonium":0,
                              "Antimatiere":0}
             elif self.niveau == 1:
-                self.cout = {"Fer":75,
+                temp = {"Fer":75,
                              "Cuivre":25,
                              "Or":5,
                              "Titane": 0,
@@ -672,7 +685,7 @@ class Installation():
                              "Plutonium":0,
                              "Antimatiere":0}
             elif self.niveau == 2:
-                self.cout = {"Fer":100,
+                temp = {"Fer":100,
                              "Cuivre":35,
                              "Or":15,
                              "Titane": 0,
@@ -680,7 +693,7 @@ class Installation():
                              "Plutonium": 5,
                              "Antimatiere":0}
             elif self.niveau == 3:
-                self.cout = {"Fer": 150,
+                temp = {"Fer": 150,
                              "Cuivre": 55,
                              "Or": 25,
                              "Titane": 15,
@@ -690,7 +703,7 @@ class Installation():
 
         elif self.type == "usine":
             if self.niveau == 0: #niveau 0 = usine à construire
-                self.cout = {"Fer":35,
+                temp = {"Fer":35,
                              "Cuivre":5,
                              "Or": 0,
                              "Titane": 0,
@@ -698,7 +711,7 @@ class Installation():
                              "Plutonium":0,
                              "Antimatiere":0}
             elif self.niveau == 1:
-                self.cout = {"Fer":50,
+                temp = {"Fer":50,
                              "Cuivre":15,
                              "Or":5,
                              "Titane": 0,
@@ -706,7 +719,7 @@ class Installation():
                              "Plutonium":0,
                              "Antimatiere":0}
             elif self.niveau == 2:
-                self.cout = {"Fer":80,
+                temp = {"Fer":80,
                              "Cuivre":30,
                              "Or":15,
                              "Titane": 0,
@@ -714,14 +727,14 @@ class Installation():
                              "Plutonium": 5,
                              "Antimatiere":0}
             elif self.niveau == 3:
-                self.cout = {"Fer": 125,
+                temp = {"Fer": 125,
                              "Cuivre": 55,
                              "Or": 20,
                              "Titane": 25,
                              "Hydrogene": 85,
                              "Plutonium": 45,
                              "Antimatiere":3}
-        return self.cout
+        return temp
 
     # Ne pas utiliser; utiliser les méthodes des sous-classes à la place
     def ameliorer_installation(self):
@@ -752,6 +765,7 @@ class Entrepot(Installation):
                          "slot3": None}
         super().__init__( parent, etoile, proprietaire, type, cadre_debut_construction)
         self.keysSlots = None
+        self.tps_constructionVaisseau = 80
 
 
     '''
@@ -769,12 +783,16 @@ class Entrepot(Installation):
         self.keysSlots = self.capacite.keys()
         for k in self.keysSlots:
             if self.capacite.get(k) is not None:
-                if cadre == self.capacite.get(k).cadreDebutConstruction + 100:
+                if cadre == self.capacite.get(k).cadreDebutConstruction + self.tps_constructionVaisseau:
                     self.v = self.capacite.get(k)
                     print (self.v)
                     self.v.parent.finConstructionVaisseau(self.v)
                     self.capacite.update({k:None})
 
+    def upgradeTempsConstructionEtNiveau(self):
+        if self.ameliorer_installation():
+            self.tps_constructionVaisseau -= 32
+            self.niveau += 1
     def ameliorer_entrepot(self):
         if super().ameliorer_installation():
             pass # Changer pour effectuer les changements souhaités pour l'entrepot
@@ -813,10 +831,10 @@ class Modele():
 
     def recupererEtoile(self, id):
         id_text = str(id)
-        for e in self.etoiles:
+        for e in self.etoiles:#etoiles represente toutes les etoiles du jeu (neutre ou pas)
             if e.id == id_text:
                 recup = e
-        return recup
+        return recup #recup a letoile trouve avec tout ce qui a dedans (ou pas)
 
     def recupererJoueur(self, id):
         keys = self.joueurs.keys()
@@ -1016,6 +1034,17 @@ class Modele():
 
     def creer_bibittes_spatiales(self, nb_biittes=0):
         pass
+
+    def verifierFin(self):
+        listeJoueursElimines = []
+        keysJoueurs = self.joueurs.keys()
+        for k in keysJoueurs:
+            j = self.joueurs.get(k)
+            if len(j.etoilescontrolees) == 0:
+                listeJoueursElimines.append(j)
+
+        return len(listeJoueursElimines) / len(self.joueurs) >= 0.5
+
 
     #############################################################################
     # ATTENTION : NE PAS TOUCHER
