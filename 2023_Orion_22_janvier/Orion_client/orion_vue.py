@@ -863,7 +863,7 @@ class Vue():
             self.label_pluto = Label(self.cadre_menu_ressource, text="Plutonium : " + str(self.recup.inventaire.get("Plutonium")), anchor=CENTER, width=25, height=2, border=2,
                                        borderwidth=1, relief="solid", bg="yellow")
             #
-            self.label_antimatiere = Label(self.cadre_menu_ressource, text="???? : " + str(self.recup.inventaire.get("Antimatiere")), anchor=CENTER, width=25, height=2, border=2,
+            self.label_antimatiere = Label(self.cadre_menu_ressource, text="Anti-Matière : " + str(self.recup.inventaire.get("Antimatiere")), anchor=CENTER, width=25, height=2, border=2,
                                                    borderwidth=1,
                                                    relief="solid", bg="purple")
 
@@ -1202,7 +1202,7 @@ class Vue():
                         self.canevas.create_image(j.x, j.y, image= self.images["Atck"+ recupCouleur.couleur],
                                                       tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact", "True"))
                     elif k == "Cargo":  # CREATION DU CARGO
-                        x = self.canevas.create_image(j.x, j.y, image=self.images["cargo"],
+                        x = self.canevas.create_image(j.x, j.y, image=self.images["Cargo" + recupCouleur.couleur],
                                                       tags=(
                                                       j.proprietaire, str(j.id), "Flotte", k, "artefact", "False"))
                         self.listeVaisseau.append(x)
