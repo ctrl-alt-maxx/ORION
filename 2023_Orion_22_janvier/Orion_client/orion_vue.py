@@ -128,12 +128,15 @@ class Vue():
 
         self.started = False
         self.nbr_entrepot = 0
+        self.capacite_entrepot = 1
         self.nbr_usine = 0
         self.recup = None
         self.idCargo = None
         self.objet = ""
         self.etoileSelectionne = None
         self.etoileOuEstPoseLeCargo = None
+        self.accelerer_timer = False
+        self.nbUpgrade = 0
 
 
 
@@ -564,7 +567,7 @@ class Vue():
         self.parent.connecter_serveur(url_serveur)
 
 
-    def timer_start(self,start_time,obj):
+    def timer_start(self,start_time,obj):#start_time contient un int (ex:118)
         """
         fonction qui demarre le timer
         :param start_time: le temps de depart
@@ -613,7 +616,6 @@ class Vue():
         fonction qui est appeler a chaque tick dans le main
         :param cadre: le temps actuel
         """
-
         tempC = cadre - self.startTime
         if(self.started == True and self.strPourcentage < 100 and self.laConstruction != ""):
 
@@ -649,7 +651,7 @@ class Vue():
 
 
     def menu_installation(self):#est appele quand je clique sur le bouton "Installation"
-            self.recup = self.parent.recupEtoile(self.ma_selection[1])
+            self.recup = self.parent.recupEtoile(self.ma_selection[1])#self.ma_selection[1] -> la jai lid de letoile que jai selectione
             self.forget_all() #on oublie tout les cadres
 
             #on creer un cadre
@@ -738,20 +740,25 @@ class Vue():
                                                    background='#242423', font=('Arial', 12))
             self.boutonConstruireEntrepot.config(command=self.construire_entrepot)
 
-            self.boutonAmeliorerEntrepot = Button(self.cadre_bouton_construction_entrepot, text="Ameliorer Entrepot", foreground='#CB92CE',
-                                                  background='#242423', font=('Arial', 12))
-
             self.cadre_nbr_installation_entrepot_present = Frame(self.cadre_menu_installation, height=200, width=200)#cadre
             self.cadre_nbr_installation_entrepot_present.pack(fill=X)
 
             if recupEtoile.installations.get("entrepot") is not None: #si il y a un entrepot
                 self.nbr_entrepot = 1
+                if recupEtoile.installations.get("entrepot").capacite.get("slot2") is not None:
+                    self.capacite_entrepot = 2
             else:
                 self.nbr_entrepot = 0
-            self.label_titre_nbr_installation_entrepot_present = Label(self.cadre_nbr_installation_entrepot_present, text=" Nbr Entrepot prensent sur Etoile: " + (str) (self.nbr_entrepot) +"/ 1")
+            self.label_titre_nbr_installation_entrepot_present = Label(self.cadre_nbr_installation_entrepot_present, text=" Nbr Entrepot present sur Etoile: " + (str) (self.nbr_entrepot) +"/ 1")
             print("nbr entrepot: " + (str)(self.nbr_entrepot))
 
-            self.label_titre_nbr_installation_entrepot_present.pack(side=TOP)
+
+
+            self.label_titre_capacite_entrepot = Label(self.cadre_nbr_installation_entrepot_present, text= "Capacite de lentrepot: "+ (str)(self.capacite_entrepot) + "/3")
+
+            if self.nbr_entrepot == 1:
+                self.label_titre_nbr_installation_entrepot_present.pack(side=TOP)
+                self.label_titre_capacite_entrepot.pack(fill=X)
 
             self.cadre_ressouce_demande = Frame(self.cadre_menu_installation, height= 200, width=200,bg="#DCE0D9")
             self.cadre_ressouce_demande.pack(fill=X)
@@ -774,6 +781,7 @@ class Vue():
                 self.boutonConstruireEntrepot.config(command=self.construire_entrepot)
                 self.boutonAmeliorerEntrepot = Button(self.cadre_bouton_construction_entrepot, text="Ameliorer Entrepot",
                                                       foreground='#CB92CE', background='#242423', font=('Arial', 12))
+                self.boutonAmeliorerEntrepot.config(command=self.amelioration_entrepot)
                 self.boutonConstruireEntrepot.pack(fill=X)
 
                 # afficher menu creation vaisseau (entrepot existe)
@@ -788,6 +796,44 @@ class Vue():
             else:  # si il ny a pas dentrepot affiche le bouton construire entrepot
                 # afficher menu creation entrepot (entrepot existe pas)
                 self.boutonConstruireEntrepot.pack(fill=X)
+
+
+
+    def amelioration_entrepot(self):
+        self.cadre_menu_installation.pack_forget()
+        #faire un cadre dans cadre_outil
+        self.cadre_ameliorer_entrepot = Frame(self.cadreoutils, height=200,width=200,bg="#DCE0D9")
+        self.cadre_ameliorer_entrepot.pack(fill=X)
+        self.cadre_description_amelioEntrepot = Frame(self.cadre_ameliorer_entrepot, height=200,width=200,bg="#DCE0D9")
+        self.label_descritpion_ameliorer_entrepot = Label(self.cadre_description_amelioEntrepot, text="Permet d'acceler la vitesse de construction d'un vaisseau " ,bg="#DCE0D9")
+        self.cadre_description_amelioEntrepot.pack(fill = X)
+        self.label_descritpion_ameliorer_entrepot.pack(fill=X)
+        #ressource demande
+        #faire cadre ressource deande
+        self.cadre_ressource_demade = Frame(self.cadre_ameliorer_entrepot, height=200, width=200, bg="#DCE0D9")
+        self.label_ressource_demande_pour_ameliorer = Label(self.cadre_ressource_demade, text="50 fer, 100 or ect...")
+        self.cadre_ressource_demade.pack(fill=X)
+        self.label_ressource_demande_pour_ameliorer.pack(fill=X)
+
+        #faire bouton ameliorer entrepot
+        self.cadre_bouton_confirm_ameliore = Frame(self.cadre_ameliorer_entrepot, height=200, width=200, bg="#DCE0D9")
+        self.bouton_confir_ameliorer_entrepot = Button(self.cadre_bouton_confirm_ameliore, text="confirmer ameliorer entrepot")
+        self.bouton_confir_ameliorer_entrepot.config(command=self.ameliorer_entrepot)
+        self.cadre_bouton_confirm_ameliore.pack(fill=X)
+        self.bouton_confir_ameliorer_entrepot.pack(fill=X)
+
+    def ameliorer_entrepot(self):
+        # accelerer le timer pour construire un vaisseau plus vite
+        # possibilite de construire plusieurs vaisseaux a la fois
+        # chaque etoile a un entrepot donc recuperer id de letoile...
+        # enlever ce quil y a dans
+
+        self.nbUpgrade += 1
+        if self.nbUpgrade <= 3:
+            self.parent.ameliorerEntrepot(self.ma_selection[1])
+        #revenir au menu
+        self.cadre_ameliorer_entrepot.pack_forget()
+
 
     def construction_vaisseau(self):# on arrive ici quand on clique sur le bouton "construire Vaisseau"
         #on affiche les boutons
@@ -1154,7 +1200,7 @@ class Vue():
 
     def creer_vaisseau(self, evt):
         self.forget_all()
-        type_vaisseau = evt.widget.cget("text")
+        type_vaisseau = evt.widget.cget("text")#on recupere le type de vaisseau que lon veut creer
         self.parent.creer_vaisseau(type_vaisseau, int(self.selectedTags[3]) + random.choice([i for i in range(-30, 30) if i not in [-10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]]), int(self.selectedTags[4]) + random.choice([i for i in range(-30, 30) if i not in [-10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]]), self.ma_selection[1])
         self.canevas.delete("marqueur")
         self.laConstruction = "vaisseau"
@@ -1253,7 +1299,7 @@ class Vue():
 
     def cliquer_cosmos(self, evt):  # DES QU'ON CLIQUE QUELQUE PART DANS LE JEU -> travailler avec ca
         self.selectedTags = self.canevas.gettags(CURRENT)
-        tags = self.selectedTags #contient
+        tags = self.selectedTags #contient: 'JAJA_106','id_151', 'Etoile'...
         if tags:  # Il y a des tags => On a cliqué sur un objet de la carte (Vaisseau, Étoile, ...)
 
             if tags[0] == self.mon_nom:#si je clique sur quelque chose qui mappartient
@@ -1304,18 +1350,6 @@ class Vue():
                     self.cadre_menu_ressource.pack_forget()#on enleve le menu de linventaire
                     self.cadre_menu_ressource_ex.pack_forget()
                     self.forget_all()
-                    #si je clique sur le cargot
-                    # if(self.type_vaisseau_selectionne == "Cargo"):
-                    #     if(self.cargoArrive):#si il est accoste
-                    #         #avoir id de letoile ou il est accoste
-                    #         self.etoileOuEstPoseLeCargo = tags[1]
-                            # print("Val CargoEstAccoste : " + str(self.cargoArrive))
-                            # print("Cargot est accoste sur letoile : " + self.etoileOuEstPoseLeCargo)
-
-
-
-                        # elif(self.estAccos == False):#mais quand il reaprt il ne repasse pas a False seul..
-                        #     self.cadre_bouton_transferer.pack_forget()
 
                     self.shipSelected.append(tags)
             elif ("Etoile" == tags[2] or "Porte_de_ver" == tags[2]) and self.shipSelected != []:

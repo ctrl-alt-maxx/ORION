@@ -145,6 +145,7 @@ class Controleur():
 
     def boucler_sur_jeu(self):
         self.cadrejeu += 1  # increment du compteur de boucle de jeu
+
         # TODO: appeler refresh de la vue
 
         self.vue.refresh(self.cadrejeu)
@@ -254,21 +255,21 @@ class Controleur():
     def lister_objet(self, objet, id, niveau):
         self.vue.lister_objet(objet, id, niveau)
 
-    def recupEtoile(self, vaisseau):
-        recup = self.modele.recupererEtoile(vaisseau)
-        print("ok")
+    def recupEtoile(self, idEtoile):
+        recup = self.modele.recupererEtoile(idEtoile)
         return recup
 
     def recupQuantiteMatiereDeUtilisateur(self, chargement):#dans chargement je met les quantites de matiere presente sur etoile
      self.actionsrequises.append(self.monrecup_nom, "transfererRessources",[chargement])#chargement est un dictionnaire contenant les quantites de matieres que lutilisateurs souhaite
 
+    def ameliorerEntrepot(self, id):
+        self.actionsrequises.append([self.mon_nom, "ameliorerEntrepot", [id]])
     def recupJoueur(self, nom):
         recup = self.modele.recupererJoueur(nom)
         return recup
 
     def recupQuantiteMatiereDeUtilisateur(self, chargement, idcargo):#dans chargement je met les quantites de matiere presente sur etoile
         self.actionsrequises.append([self.mon_nom, "transfererRessources",[chargement, idcargo]])#ajoute dans modele
-
     def constructionStart(self):
         self.vue.timer_start(self.cadrejeu,self.vue.laConstruction)
     def construireInstallation(self, installation, id):
