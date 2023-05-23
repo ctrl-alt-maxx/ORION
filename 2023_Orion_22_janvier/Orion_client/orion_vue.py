@@ -626,7 +626,7 @@ class Vue():
                 print(timerStr)
                 print(self.dictTimers)
                 if t.id not in self.dictTimers.keys():
-                    label = Label(self.cadreoutils, text=timerStr)
+                    label = Label(self.cadreoutils, text=self.objet + ": " + str(int(timerStr)+ "%"), foreground='#FCFCFC',bg='#30292F',font=('Arial', 12))
                     self.dictTimers[t.id] = label
                     label.pack()
                 else :
@@ -635,7 +635,7 @@ class Vue():
                         self.dictTimers.pop(t.id)
                         joueur.timers.remove(t)
                     else:
-                        self.dictTimers[t.id].config(text=timerStr)
+                        self.dictTimers[t.id].config(text=self.objet + ": " + str(int(timerStr)+ "%"), foreground='#FCFCFC',bg='#30292F',font=('Arial', 12))
 
 
 
