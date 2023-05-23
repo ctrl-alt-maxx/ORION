@@ -738,11 +738,6 @@ class Vue():
                                                    background='#242423', font=('Arial', 12))
             self.boutonConstruireEntrepot.config(command=self.construire_entrepot)
 
-            #self.boutonAmeliorerEntrepot = Button(self.cadre_bouton_construction_entrepot, text="Ameliorer Entrepot", foreground='#CB92CE',
-                                                  #background='#242423', font=('Arial', 12))
-
-
-
             self.cadre_nbr_installation_entrepot_present = Frame(self.cadre_menu_installation, height=200, width=200)#cadre
             self.cadre_nbr_installation_entrepot_present.pack(fill=X)
 
@@ -750,10 +745,14 @@ class Vue():
                 self.nbr_entrepot = 1
             else:
                 self.nbr_entrepot = 0
-            self.label_titre_nbr_installation_entrepot_present = Label(self.cadre_nbr_installation_entrepot_present, text=" Nbr Entrepot prensent sur Etoile: " + (str) (self.nbr_entrepot) +"/ 1")
+            self.label_titre_nbr_installation_entrepot_present = Label(self.cadre_nbr_installation_entrepot_present, text=" Nbr Entrepot present sur Etoile: " + (str) (self.nbr_entrepot) +"/ 1")
             print("nbr entrepot: " + (str)(self.nbr_entrepot))
 
-            self.label_titre_nbr_installation_entrepot_present.pack(side=TOP)
+            self.label_titre_capacite_entrepot = Label(self.cadre_nbr_installation_entrepot_present, text= "Capacite de lentrepot: "+"1/3")
+
+            if self.nbr_entrepot == 1:
+                self.label_titre_nbr_installation_entrepot_present.pack(side=TOP)
+                self.label_titre_capacite_entrepot.pack(fill=X)
 
             self.cadre_ressouce_demande = Frame(self.cadre_menu_installation, height= 200, width=200,bg="#DCE0D9")
             self.cadre_ressouce_demande.pack(fill=X)
