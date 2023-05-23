@@ -615,8 +615,9 @@ class Vue():
         """
 
         tempC = cadre - self.startTime
-        if(self.started == True and self.strPourcentage < 100):
-            self.strPourcentage = int((tempC / self.parent.tempConstruction(self.objet)) * 100)
+        if(self.started == True and self.strPourcentage < 100 and self.laConstruction != ""):
+
+            self.strPourcentage = int((tempC / self.parent.tempConstruction(self.laConstruction)) * 100)
             self.percentage_label.config(text=self.strName + str(self.strPourcentage) + "%")
 
             print(self.strPourcentage)
@@ -1156,7 +1157,8 @@ class Vue():
         type_vaisseau = evt.widget.cget("text")
         self.parent.creer_vaisseau(type_vaisseau, int(self.selectedTags[3]) + random.choice([i for i in range(-30, 30) if i not in [-10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]]), int(self.selectedTags[4]) + random.choice([i for i in range(-30, 30) if i not in [-10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]]), self.ma_selection[1])
         self.canevas.delete("marqueur")
-        self.timer_start(self.parent.cadrejeu,"vaisseau")
+        self.laConstruction = "vaisseau"
+        #self.timer_start(self.parent.cadrejeu,"vaisseau")
 
 
 
