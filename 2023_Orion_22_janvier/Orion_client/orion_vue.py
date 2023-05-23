@@ -128,6 +128,7 @@ class Vue():
 
         self.started = False
         self.nbr_entrepot = 0
+        self.capacite_entrepot = 1
         self.nbr_usine = 0
         self.recup = None
         self.idCargo = None
@@ -743,12 +744,16 @@ class Vue():
 
             if recupEtoile.installations.get("entrepot") is not None: #si il y a un entrepot
                 self.nbr_entrepot = 1
+                if recupEtoile.installations.get("entrepot").capacite.get("slot2") is not None:
+                    self.capacite_entrepot = 2
             else:
                 self.nbr_entrepot = 0
             self.label_titre_nbr_installation_entrepot_present = Label(self.cadre_nbr_installation_entrepot_present, text=" Nbr Entrepot present sur Etoile: " + (str) (self.nbr_entrepot) +"/ 1")
             print("nbr entrepot: " + (str)(self.nbr_entrepot))
 
-            self.label_titre_capacite_entrepot = Label(self.cadre_nbr_installation_entrepot_present, text= "Capacite de lentrepot: "+"1/3")
+
+
+            self.label_titre_capacite_entrepot = Label(self.cadre_nbr_installation_entrepot_present, text= "Capacite de lentrepot: "+ (str)(self.capacite_entrepot) + "/3")
 
             if self.nbr_entrepot == 1:
                 self.label_titre_nbr_installation_entrepot_present.pack(side=TOP)

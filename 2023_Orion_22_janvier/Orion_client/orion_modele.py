@@ -763,7 +763,7 @@ class Entrepot(Installation):
                          "slot3": None}
         super().__init__( parent, etoile, proprietaire, type, cadre_debut_construction)
         self.keysSlots = None
-        self.tps_constructionVaisseau = 100
+        self.tps_constructionVaisseau = 80
 
 
     '''
@@ -789,7 +789,7 @@ class Entrepot(Installation):
 
     def upgradeTempsConstructionEtNiveau(self):
         if self.ameliorer_installation():
-            self.tps_constructionVaisseau -= 25
+            self.tps_constructionVaisseau -= 32
             self.niveau += 1
     def ameliorer_entrepot(self):
         if super().ameliorer_installation():
