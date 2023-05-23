@@ -987,13 +987,12 @@ class Vue():
         self.cadre_menu_installation.pack_forget()
         self.parent.construireInstallation("entrepot", self.ma_selection[1]) #pour construire entrepot -> la fonction va veifier si on peut construire entrepot
         self.laConstruction = "entrepot"
-        #self.timer_start(self.parent.cadrejeu,"entrepot") #on lance le timer pour construire entrepot
 
     def construire_usine(self):# on arrive ici quand on clique sur bouton construire_usine
         self.cadre_menu_installation.pack_forget()
         self.parent.construireInstallation("usine", self.ma_selection[1])
         self.laConstruction = "usine"
-        #self.timer_start(self.parent.cadrejeu,"usine")
+
 
     def ameliorer_usine(self): #on arrive ici quand on clique sur le bouton ameliorer_usine
         self.cadre_menu_installation.pack_forget()
@@ -1133,13 +1132,7 @@ class Vue():
             self.canevas_minimap.create_rectangle(minix, miniy, minix + 0, miniy + 0,
                                                   fill="black",
                                                   tags=("mini", "Etoile"))
-        # # affichage des etoiles possedees par les joueurs
-        # for i in mod.joueurs.keys():
-        #     for j in mod.joueurs[i].etoilescontrolees:
-        #         t = j.taille * self.zoom
-        #         self.canevas.create_oval(j.x - t, j.y - t, j.x + t, j.y + t,
-        #                                  fill=mod.joueurs[i].couleur,
-        #                                  tags=(j.proprietaire, str(j.id),  "Etoile"))
+
 
     def centrer_planetemere(self, evt):#pour centre etoile pricincipal du joueur
         self.centrer_objet(self.modele.joueurs[self.mon_nom].etoilemere)
@@ -1206,7 +1199,7 @@ class Vue():
         self.parent.creer_vaisseau(type_vaisseau, int(self.selectedTags[3]) + random.choice([i for i in range(-30, 30) if i not in [-10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]]), int(self.selectedTags[4]) + random.choice([i for i in range(-30, 30) if i not in [-10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]]), self.ma_selection[1])
         self.canevas.delete("marqueur")
         self.laConstruction = "vaisseau"
-        #self.timer_start(self.parent.cadrejeu,"vaisseau")
+        self.parent.constructionStart()
 
 
 
@@ -1412,6 +1405,10 @@ class Vue():
         self.cadre_fin = Frame(self.root, width=500, height=400, bg="red")
         self.label_fin = Label(self.cadre_fin, text="Fin", anchor=CENTER, width=25, height=2, border=2, borderwidth=1,
                                   relief="solid", bg="green")
+        self.label_fin.pack()
+        self.cadre_fin.pack()
+
+        self.root.mainloop()
 
 
     ### FIN du multiselect
