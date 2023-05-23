@@ -615,8 +615,9 @@ class Vue():
         """
 
         tempC = cadre - self.startTime
-        if(self.started == True and self.strPourcentage < 100):
-            self.strPourcentage = int((tempC / self.parent.tempConstruction(self.objet)) * 100)
+        if(self.started == True and self.strPourcentage < 100 and self.laConstruction != ""):
+
+            self.strPourcentage = int((tempC / self.parent.tempConstruction(self.laConstruction)) * 100)
             self.percentage_label.config(text=self.strName + str(self.strPourcentage) + "%")
 
             print(self.strPourcentage)
@@ -864,7 +865,7 @@ class Vue():
             self.label_pluto = Label(self.cadre_menu_ressource, text="Plutonium : " + str(self.recup.inventaire.get("Plutonium")), anchor=CENTER, width=25, height=2, border=2,
                                        borderwidth=1, relief="solid", bg="yellow")
             #
-            self.label_antimatiere = Label(self.cadre_menu_ressource, text="???? : " + str(self.recup.inventaire.get("Antimatiere")), anchor=CENTER, width=25, height=2, border=2,
+            self.label_antimatiere = Label(self.cadre_menu_ressource, text="Anti-Matière : " + str(self.recup.inventaire.get("Antimatiere")), anchor=CENTER, width=25, height=2, border=2,
                                                    borderwidth=1,
                                                    relief="solid", bg="purple")
 
@@ -1157,7 +1158,8 @@ class Vue():
         type_vaisseau = evt.widget.cget("text")
         self.parent.creer_vaisseau(type_vaisseau, int(self.selectedTags[3]) + random.choice([i for i in range(-30, 30) if i not in [-10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]]), int(self.selectedTags[4]) + random.choice([i for i in range(-30, 30) if i not in [-10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]]), self.ma_selection[1])
         self.canevas.delete("marqueur")
-        self.timer_start(self.parent.cadrejeu,"vaisseau")
+        self.laConstruction = "vaisseau"
+        #self.timer_start(self.parent.cadrejeu,"vaisseau")
 
 
 
@@ -1203,7 +1205,7 @@ class Vue():
                         self.canevas.create_image(j.x, j.y, image= self.images["Atck"+ recupCouleur.couleur],
                                                       tags=(j.proprietaire, str(j.id), "Flotte", k, "artefact", "True"))
                     elif k == "Cargo":  # CREATION DU CARGO
-                        x = self.canevas.create_image(j.x, j.y, image=self.images["cargo"],
+                        x = self.canevas.create_image(j.x, j.y, image=self.images["Cargo" + recupCouleur.couleur],
                                                       tags=(
                                                       j.proprietaire, str(j.id), "Flotte", k, "artefact", "False"))
                         self.listeVaisseau.append(x)
